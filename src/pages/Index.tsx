@@ -17,91 +17,7 @@ const Index = () => {
       {/* Hero Section */}
       <Hero />
       
-      {/* Category Section */}
-      <section className="page-container py-16">
-        <div className="text-center mb-12">
-          <h2 className="section-title">Explore Categories</h2>
-          <p className="section-subtitle mx-auto">
-            Discover our collection of handmade crochet items for every occasion
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Category Card 1 */}
-          <div className="relative group overflow-hidden rounded-xl aspect-[3/4]">
-            <img 
-              src="https://images.unsplash.com/photo-1627225924765-552d49cf47ad" 
-              alt="Home Decor"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6 sm:p-8">
-              <div>
-                <h3 className="text-white text-xl sm:text-2xl font-display font-medium mb-2">Home Decor</h3>
-                <Button 
-                  asChild
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-black"
-                >
-                  <a href="/shop?category=home-decor">
-                    Explore
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Category Card 2 */}
-          <div className="relative group overflow-hidden rounded-xl aspect-[3/4]">
-            <img 
-              src="https://images.unsplash.com/photo-1604842876324-d39d860442c8" 
-              alt="Accessories"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6 sm:p-8">
-              <div>
-                <h3 className="text-white text-xl sm:text-2xl font-display font-medium mb-2">Accessories</h3>
-                <Button 
-                  asChild
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-black"
-                >
-                  <a href="/shop?category=accessories">
-                    Explore
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Category Card 3 */}
-          <div className="relative group overflow-hidden rounded-xl aspect-[3/4]">
-            <img 
-              src="https://images.unsplash.com/photo-1551454217-84195fd91b3c" 
-              alt="Baby Items"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6 sm:p-8">
-              <div>
-                <h3 className="text-white text-xl sm:text-2xl font-display font-medium mb-2">Baby Items</h3>
-                <Button 
-                  asChild
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-black"
-                >
-                  <a href="/shop?category=baby-items">
-                    Explore
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Featured Products */}
+      {/* Featured Products Section */}
       <FeaturedProducts />
       
       {/* Customization Section */}
@@ -157,7 +73,7 @@ const Index = () => {
               </div>
             </div>
             <p className="text-crochet-700">
-              "I ordered a custom sweater and the attention to detail is amazing. It fits perfectly and the color is exactly what I wanted. Worth every penny."
+              "I ordered a custom sweater and the attention to detail is amazing. It fits perfectly and the color is exactly what I wanted. Worth every rupee."
             </p>
           </div>
           
@@ -179,7 +95,7 @@ const Index = () => {
               </div>
             </div>
             <p className="text-crochet-700">
-              "The home decor items I purchased are beautiful and unique. They've added so much charm to my living room. Shipping was fast too!"
+              "The items I purchased are beautiful and unique. They've added so much charm to my living room. Shipping was fast too!"
             </p>
           </div>
         </div>

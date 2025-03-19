@@ -9,7 +9,7 @@ const featuredProducts: Product[] = [
   {
     id: 1,
     name: "Hand-knit Wool Sweater",
-    price: 89.99,
+    price: 8999,
     image: "https://images.unsplash.com/photo-1623421536546-fa1c86c52074",
     category: "Sweaters",
     isFeatured: true
@@ -17,7 +17,7 @@ const featuredProducts: Product[] = [
   {
     id: 2,
     name: "Crochet Baby Blanket",
-    price: 45.00,
+    price: 4500,
     image: "https://images.unsplash.com/photo-1586102901518-ca0f178acb5f",
     category: "Baby",
     isNew: true
@@ -25,7 +25,7 @@ const featuredProducts: Product[] = [
   {
     id: 3,
     name: "Handmade Beanie Hat",
-    price: 29.99,
+    price: 2999,
     image: "https://images.unsplash.com/photo-1638079399920-34c2394ee319",
     category: "Accessories",
     isFeatured: true
@@ -33,7 +33,7 @@ const featuredProducts: Product[] = [
   {
     id: 4,
     name: "Crochet Plant Hanger",
-    price: 19.99,
+    price: 1999,
     image: "https://images.unsplash.com/photo-1679752583774-8b5b0c2d8e75",
     category: "Home Decor",
     isNew: true

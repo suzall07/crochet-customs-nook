@@ -82,21 +82,20 @@ const Hero = () => {
 
   return (
     <div className="hero-section">
-      {/* Background Image */}
-      <div
-        className={cn(
-          "absolute inset-0 w-full h-full transition-opacity duration-500",
-          isAnimating ? "opacity-0" : "opacity-100"
-        )}
-        style={{
-          backgroundImage: `url(${slide.image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30" />
+      {/* Plain Image Background */}
+      <div className="relative h-full w-full overflow-hidden">
+        <img
+          src={slide.image}
+          alt={slide.title}
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-500",
+            isAnimating ? "opacity-0" : "opacity-100"
+          )}
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
       
       {/* Content */}
       <div className="relative z-10 h-full flex items-center">
@@ -129,7 +128,7 @@ const Hero = () => {
         </div>
       </div>
       
-      {/* Navigation */}
+      {/* Simple Navigation */}
       <div className="absolute bottom-8 right-8 z-20 flex space-x-4">
         <Button 
           variant="outline" 

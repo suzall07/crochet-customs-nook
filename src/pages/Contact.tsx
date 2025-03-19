@@ -102,10 +102,10 @@ const Contact = () => {
                   <h3 className="font-medium text-lg mb-1">Phone</h3>
                   <p className="text-crochet-600 mb-1">Customer support:</p>
                   <a 
-                    href="tel:+1234567890" 
+                    href="tel:+977980101097" 
                     className="text-crochet-700 hover:text-crochet-900 hover:underline"
                   >
-                    (123) 456-7890
+                    980101097
                   </a>
                 </div>
               </div>
@@ -117,9 +117,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-medium text-lg mb-1">Address</h3>
                   <p className="text-crochet-600">
-                    123 Yarn Street<br />
-                    Crochet Town, CT 12345<br />
-                    United States
+                    Kimdol, KTM<br />
+                    Nepal
                   </p>
                 </div>
               </div>
@@ -256,7 +255,7 @@ const Contact = () => {
         </div>
       </section>
       
-      {/* Map Section */}
+      {/* Simplified Map Section */}
       <section className="bg-crochet-50 py-16">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
@@ -267,12 +266,10 @@ const Contact = () => {
           </div>
           
           <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-crochet-100 animate-scale-in">
-            {/* Placeholder for map - in a real app, you'd integrate Google Maps or similar */}
             <div className="aspect-video bg-crochet-100 w-full">
               <div className="w-full h-full flex items-center justify-center">
                 <p className="text-crochet-600 text-center px-4">
-                  Interactive map would be displayed here.<br />
-                  In a real implementation, this would be a Google Maps or similar integration.
+                  Kimdol, Kathmandu, Nepal
                 </p>
               </div>
             </div>
@@ -280,7 +277,7 @@ const Contact = () => {
         </div>
       </section>
       
-      {/* FAQ Section */}
+      {/* FAQ Section - Simplified */}
       <section className="page-container py-16">
         <div className="text-center mb-12">
           <h2 className="section-title">Frequently Asked Questions</h2>
@@ -294,7 +291,7 @@ const Contact = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
             <h3 className="font-medium text-lg mb-2">How long does shipping take?</h3>
             <p className="text-crochet-600">
-              Standard shipping takes 3-5 business days within the US. International shipping typically takes 7-14 business days, depending on the destination.
+              Standard shipping takes 3-5 business days within Nepal. International shipping typically takes 7-14 business days, depending on the destination.
             </p>
           </div>
           
