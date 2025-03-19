@@ -3,13 +3,13 @@ import { useState } from 'react';
 import ProductCard, { Product } from '@/components/ProductCard';
 import { Separator } from '@/components/ui/separator';
 
-// Mock data - popular products
+// Mock data - popular products with updated images
 const popularProducts: Product[] = [
   {
     id: 1,
     name: "Hand-knit Wool Sweater",
     price: 8999,
-    image: "https://images.unsplash.com/photo-1623421536546-fa1c86c52074?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.unsplash.com/photo-1626847152055-9bb0635fa1ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     category: "Sweaters",
     isFeatured: true
   },
@@ -17,22 +17,22 @@ const popularProducts: Product[] = [
     id: 3,
     name: "Handmade Beanie Hat",
     price: 2999,
-    image: "https://images.unsplash.com/photo-1638079399920-34c2394ee319?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Accessories",
+    image: "https://images.unsplash.com/photo-1594750852562-203fb71f0b91?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    category: "Hats",
     isFeatured: true
   },
   {
     id: 6,
     name: "Wool Mittens",
     price: 1499,
-    image: "https://images.unsplash.com/photo-1576035407865-975df3193c40?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Accessories"
+    image: "https://images.unsplash.com/photo-1532774788000-afc4d8ce089f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    category: "Mittens"
   },
   {
     id: 9,
     name: "Crochet Wall Hanging",
     price: 4999,
-    image: "https://images.unsplash.com/photo-1598300042233-f5d02dea2ac6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.unsplash.com/photo-1601379327928-bedfaf9da2e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     category: "Home Decor",
     isFeatured: true
   },

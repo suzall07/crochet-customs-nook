@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Heart, Eye } from 'lucide-react';
+import { ShoppingCart, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
@@ -30,6 +30,15 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     e.preventDefault();
     e.stopPropagation();
     
+    // Get existing cart from localStorage or initialize empty array
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    // Add product to cart if not already present
+    if (!existingCart.some((item: Product) => item.id === product.id)) {
+      const updatedCart = [...existingCart, product];
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    }
+    
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,
@@ -39,6 +48,15 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Get existing wishlist from localStorage or initialize empty array
+    const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    
+    // Add product to wishlist if not already present
+    if (!existingWishlist.some((item: Product) => item.id === product.id)) {
+      const updatedWishlist = [...existingWishlist, product];
+      localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+    }
     
     toast({
       title: "Added to wishlist",

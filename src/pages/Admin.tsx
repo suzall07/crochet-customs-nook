@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,25 +12,48 @@ const Admin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [error, setError] = useState('');
   const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
-    // Simple demo login - in a real app, this would validate against a backend
+    // Simple demo login - any email with admin@example.com and password
     if (email === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
+      localStorage.setItem('adminLoggedIn', 'true');
       toast({
         title: "Login successful",
         description: "Welcome to the admin panel",
       });
     } else {
+      setError('Invalid email or password. Try admin@example.com / password');
       toast({
         title: "Login failed",
         description: "Invalid email or password. Try admin@example.com / password",
         variant: "destructive",
       });
     }
+  };
+
+  // Check if admin is already logged in
+  useEffect(() => {
+    const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+    if (adminLoggedIn === 'true') {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setEmail('');
+    setPassword('');
+    localStorage.removeItem('adminLoggedIn');
+    toast({
+      title: "Logged out",
+      description: "You have been logged out successfully",
+    });
   };
 
   if (!isLoggedIn) {
@@ -70,6 +93,7 @@ const Admin = () => {
                   For demo: use admin@example.com / password
                 </p>
               </div>
+              {error && <p className="text-sm text-red-600">{error}</p>}
             </CardContent>
             <CardFooter>
               <Button type="submit" className="w-full bg-crochet-800">Login</Button>
@@ -87,11 +111,7 @@ const Admin = () => {
           <h1 className="text-3xl font-medium">Admin Dashboard</h1>
           <Button 
             variant="outline"
-            onClick={() => {
-              setIsLoggedIn(false);
-              setEmail('');
-              setPassword('');
-            }}
+            onClick={handleLogout}
           >
             Logout
           </Button>

@@ -1,16 +1,15 @@
 
 import { useState } from 'react';
 import ProductCard, { Product } from '@/components/ProductCard';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-// Mock data
+// Updated mock data with yarn crochet images
 const shopProducts: Product[] = [
   {
     id: 1,
     name: "Hand-knit Wool Sweater",
     price: 8999,
-    image: "https://images.unsplash.com/photo-1623421536546-fa1c86c52074?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.unsplash.com/photo-1626847152055-9bb0635fa1ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     category: "Sweaters",
     isFeatured: true
   },
@@ -18,54 +17,17 @@ const shopProducts: Product[] = [
     id: 2,
     name: "Crochet Baby Blanket",
     price: 4500,
-    image: "https://images.unsplash.com/photo-1586102901518-ca0f178acb5f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Baby",
+    image: "https://images.unsplash.com/photo-1532774788000-afc4d8ce089f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    category: "Blankets",
     isNew: true
   },
   {
     id: 3,
     name: "Handmade Beanie Hat",
     price: 2999,
-    image: "https://images.unsplash.com/photo-1638079399920-34c2394ee319?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Accessories",
+    image: "https://images.unsplash.com/photo-1594750852562-203fb71f0b91?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    category: "Hats",
     isFeatured: true
-  },
-  {
-    id: 4,
-    name: "Crochet Plant Hanger",
-    price: 1999,
-    image: "https://images.unsplash.com/photo-1679752583774-8b5b0c2d8e75?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Home Decor",
-    isNew: true
-  },
-  {
-    id: 5,
-    name: "Crochet Table Runner",
-    price: 3599,
-    image: "https://images.unsplash.com/photo-1617005082133-5c6c0eb38b27?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Home Decor"
-  },
-  {
-    id: 6,
-    name: "Wool Mittens",
-    price: 1499,
-    image: "https://images.unsplash.com/photo-1576035407865-975df3193c40?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Accessories"
-  },
-  {
-    id: 7,
-    name: "Crochet Market Bag",
-    price: 2199,
-    image: "https://images.unsplash.com/photo-1591710668263-bee1e9db2a26?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Accessories",
-    isNew: true
-  },
-  {
-    id: 8,
-    name: "Baby Booties",
-    price: 999,
-    image: "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    category: "Baby"
   }
 ];
 
@@ -80,7 +42,7 @@ const Shop = () => {
         
         <Separator className="mb-8" />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
