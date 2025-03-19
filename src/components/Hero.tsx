@@ -4,13 +4,13 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Simplified hero slides with direct image URLs
+// Updated hero slides with yarn crochet images
 const heroSlides = [
   {
     id: 1,
     title: "Handcrafted with Love",
     subtitle: "Unique crochet creations made with passion",
-    image: "https://images.unsplash.com/photo-1532774788000-afc4d8ce089f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.unsplash.com/photo-1615310748170-99ffc9448db3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     cta: "Shop Collection",
     link: "/shop"
   },
@@ -18,7 +18,7 @@ const heroSlides = [
     id: 2,
     title: "Custom Crochet Designs",
     subtitle: "Personalize your crochet items with colors and designs",
-    image: "https://images.unsplash.com/photo-1601379327928-bedfaf9da2e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.unsplash.com/photo-1598867183829-ded54ce2d3a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     cta: "Customize Now",
     link: "/customize"
   },
@@ -26,7 +26,7 @@ const heroSlides = [
     id: 3,
     title: "The Art of Crochet",
     subtitle: "Each stitch tells a story of craftsmanship",
-    image: "https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.unsplash.com/photo-1626642246917-4de0761afe8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     cta: "Explore Techniques",
     link: "/about"
   }
@@ -36,12 +36,14 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const nextSlide = () => {
     if (isAnimating) return;
     setDirection('next');
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    setImageLoaded(false);
   };
 
   const prevSlide = () => {
@@ -49,6 +51,7 @@ const Hero = () => {
     setDirection('prev');
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    setImageLoaded(false);
   };
 
   useEffect(() => {
@@ -74,11 +77,18 @@ const Hero = () => {
     <div className="hero-section">
       {/* Simple Background */}
       <div className="relative h-full w-full overflow-hidden">
+        {!imageLoaded && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        )}
         <img
           src={slide.image}
           alt={slide.title}
-          className="absolute inset-0 w-full h-full object-cover"
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover transition-opacity duration-300", 
+            imageLoaded ? "opacity-100" : "opacity-0"
+          )}
           loading="lazy"
+          onLoad={() => setImageLoaded(true)}
         />
         
         {/* Simple Overlay */}

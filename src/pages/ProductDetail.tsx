@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import ProductCard, { Product } from '@/components/ProductCard';
 
-// Mock data with updated images
+// Mock data with yarn crochet images
 const allProducts: Product[] = [
   {
     id: 1,
@@ -49,8 +49,6 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [cart, setCart] = useState<Product[]>([]);
-  const [wishlist, setWishlist] = useState<Product[]>([]);
 
   useEffect(() => {
     // Find product by ID
@@ -67,27 +65,52 @@ const ProductDetail = () => {
     
     // Scroll to top when product changes
     window.scrollTo(0, 0);
+    setImageLoaded(false);
   }, [id]);
 
   const handleAddToCart = () => {
     if (product) {
-      setCart(prev => [...prev, product]);
+      // Get existing cart from localStorage or initialize empty array
+      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
       
-      toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your cart.`,
-      });
+      // Add product to cart if not already present
+      if (!existingCart.some((item: Product) => item.id === product.id)) {
+        const updatedCart = [...existingCart, product];
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        
+        toast({
+          title: "Added to cart",
+          description: `${product.name} has been added to your cart.`,
+        });
+      } else {
+        toast({
+          title: "Already in cart",
+          description: `${product.name} is already in your cart.`,
+        });
+      }
     }
   };
 
   const handleAddToWishlist = () => {
     if (product) {
-      setWishlist(prev => [...prev, product]);
+      // Get existing wishlist from localStorage or initialize empty array
+      const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
       
-      toast({
-        title: "Added to wishlist",
-        description: `${product.name} has been added to your wishlist.`,
-      });
+      // Add product to wishlist if not already present
+      if (!existingWishlist.some((item: Product) => item.id === product.id)) {
+        const updatedWishlist = [...existingWishlist, product];
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        
+        toast({
+          title: "Added to wishlist",
+          description: `${product.name} has been added to your wishlist.`,
+        });
+      } else {
+        toast({
+          title: "Already in wishlist",
+          description: `${product.name} is already in your wishlist.`,
+        });
+      }
     }
   };
 

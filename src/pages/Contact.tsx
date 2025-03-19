@@ -54,6 +54,7 @@ const Contact = () => {
           <img 
             src="https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6"
             alt="Background" 
+            loading="lazy"
             className="w-full h-full object-cover mix-blend-overlay opacity-30" 
           />
         </div>
@@ -273,50 +274,6 @@ const Contact = () => {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* FAQ Section - Simplified */}
-      <section className="page-container py-16">
-        <div className="text-center mb-12">
-          <h2 className="section-title">Frequently Asked Questions</h2>
-          <p className="section-subtitle mx-auto">
-            Find answers to commonly asked questions about our products and services
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* FAQ Item 1 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
-            <h3 className="font-medium text-lg mb-2">How long does shipping take?</h3>
-            <p className="text-crochet-600">
-              Standard shipping takes 3-5 business days within Nepal. International shipping typically takes 7-14 business days, depending on the destination.
-            </p>
-          </div>
-          
-          {/* FAQ Item 2 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
-            <h3 className="font-medium text-lg mb-2">Can I return or exchange items?</h3>
-            <p className="text-crochet-600">
-              We accept returns within 30 days of delivery for most items. Custom orders are non-returnable unless there's a defect in the product.
-            </p>
-          </div>
-          
-          {/* FAQ Item 3 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
-            <h3 className="font-medium text-lg mb-2">How do I care for my crochet items?</h3>
-            <p className="text-crochet-600">
-              Most of our items are hand-washable in cold water with mild detergent. Lay flat to dry. Detailed care instructions are included with each product.
-            </p>
-          </div>
-          
-          {/* FAQ Item 4 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
-            <h3 className="font-medium text-lg mb-2">How long do custom orders take?</h3>
-            <p className="text-crochet-600">
-              Custom orders typically take 2-3 weeks to complete, depending on complexity and our current order volume. We'll provide an estimated completion date when you place your order.
-            </p>
           </div>
         </div>
       </section>

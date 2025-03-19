@@ -37,12 +37,17 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     if (!existingCart.some((item: Product) => item.id === product.id)) {
       const updatedCart = [...existingCart, product];
       localStorage.setItem('cart', JSON.stringify(updatedCart));
+      
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart.`,
+      });
+    } else {
+      toast({
+        title: "Already in cart",
+        description: `${product.name} is already in your cart.`,
+      });
     }
-    
-    toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
-    });
   };
   
   const handleAddToWishlist = (e: React.MouseEvent) => {
@@ -56,12 +61,17 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     if (!existingWishlist.some((item: Product) => item.id === product.id)) {
       const updatedWishlist = [...existingWishlist, product];
       localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+      
+      toast({
+        title: "Added to wishlist",
+        description: `${product.name} has been added to your wishlist.`,
+      });
+    } else {
+      toast({
+        title: "Already in wishlist",
+        description: `${product.name} is already in your wishlist.`,
+      });
     }
-    
-    toast({
-      title: "Added to wishlist",
-      description: `${product.name} has been added to your wishlist.`,
-    });
   };
 
   return (
