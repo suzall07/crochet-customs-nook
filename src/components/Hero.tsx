@@ -14,29 +14,29 @@ interface HeroSlide {
   link: string;
 }
 
-// Sample hero slides
+// Updated hero slides with direct image URLs that work
 const heroSlides: HeroSlide[] = [
   {
     id: 1,
     title: "Handcrafted with Love",
-    subtitle: "Unique crochet creations made with passion and attention to detail",
-    image: "https://images.unsplash.com/photo-1615834307573-4e51ade23d28",
+    subtitle: "Unique crochet creations made with passion",
+    image: "https://images.unsplash.com/photo-1615834307573-4e51ade23d28?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     cta: "Shop Collection",
     link: "/shop"
   },
   {
     id: 2,
     title: "Custom Crochet Designs",
-    subtitle: "Personalize your crochet items with colors and designs that reflect your style",
-    image: "https://images.unsplash.com/photo-1511436868135-bea7c3eca603",
+    subtitle: "Personalize your crochet items with colors and designs",
+    image: "https://images.unsplash.com/photo-1511436868135-bea7c3eca603?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     cta: "Customize Now",
     link: "/customize"
   },
   {
     id: 3,
     title: "The Art of Crochet",
-    subtitle: "Each stitch tells a story of craftsmanship and creativity",
-    image: "https://images.unsplash.com/photo-1604955562882-30ee1ded2ba0",
+    subtitle: "Each stitch tells a story of craftsmanship",
+    image: "https://images.unsplash.com/photo-1604955562882-30ee1ded2ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     cta: "Explore Techniques",
     link: "/about"
   }
@@ -45,7 +45,23 @@ const heroSlides: HeroSlide[] = [
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState<boolean[]>([false, false, false]);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
+
+  // Preload all images
+  useEffect(() => {
+    heroSlides.forEach((slide, index) => {
+      const img = new Image();
+      img.src = slide.image;
+      img.onload = () => {
+        setImagesLoaded(prev => {
+          const newState = [...prev];
+          newState[index] = true;
+          return newState;
+        });
+      };
+    });
+  }, []);
 
   const nextSlide = () => {
     if (isAnimating) return;
@@ -79,45 +95,49 @@ const Hero = () => {
   }, [currentSlide, isAnimating]);
 
   const slide = heroSlides[currentSlide];
+  const isCurrentImageLoaded = imagesLoaded[currentSlide];
 
   return (
     <div className="hero-section">
       {/* Plain Image Background */}
       <div className="relative h-full w-full overflow-hidden">
+        {!isCurrentImageLoaded && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        )}
+        
         <img
           src={slide.image}
           alt={slide.title}
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-500",
-            isAnimating ? "opacity-0" : "opacity-100"
+            isCurrentImageLoaded ? "opacity-100" : "opacity-0"
           )}
+          loading="lazy"
         />
         
-        {/* Overlay */}
+        {/* Simple Overlay */}
         <div className="absolute inset-0 bg-black/40" />
       </div>
       
       {/* Content */}
       <div className="relative z-10 h-full flex items-center">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
-          <div 
-            className={cn(
-              "max-w-3xl text-white transition-all duration-700",
-              isAnimating ? 
-                (direction === 'next' ? "translate-x-10 opacity-0" : "-translate-x-10 opacity-0") : 
-                "translate-x-0 opacity-100"
-            )}
-          >
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-semibold mb-4">
+        <div className="container mx-auto px-4">
+          <div className={cn(
+            "max-w-lg text-white transition-all duration-700",
+            isAnimating ? 
+              (direction === 'next' ? "translate-x-10 opacity-0" : "-translate-x-10 opacity-0") : 
+              "translate-x-0 opacity-100"
+          )}>
+            <h1 className="text-3xl md:text-4xl font-medium mb-3">
               {slide.title}
             </h1>
-            <p className="text-lg md:text-xl opacity-90 mb-8 max-w-xl">
+            <p className="text-lg opacity-90 mb-6">
               {slide.subtitle}
             </p>
             <Button 
               asChild
               size="lg" 
-              className="button-effect text-md px-8 py-6 bg-white text-crochet-900 hover:bg-white/90"
+              className="bg-white text-crochet-900 hover:bg-white/90"
             >
               <a href={slide.link}>
                 {slide.cta} 
@@ -129,12 +149,12 @@ const Hero = () => {
       </div>
       
       {/* Simple Navigation */}
-      <div className="absolute bottom-8 right-8 z-20 flex space-x-4">
+      <div className="absolute bottom-6 right-6 z-20 flex space-x-2">
         <Button 
           variant="outline" 
           size="icon" 
           onClick={prevSlide}
-          className="bg-white/20 backdrop-blur-sm hover:bg-white/30 border-white/30"
+          className="bg-white/20 hover:bg-white/30 border-white/30"
         >
           <ArrowLeft className="h-5 w-5 text-white" />
         </Button>
@@ -142,14 +162,14 @@ const Hero = () => {
           variant="outline" 
           size="icon" 
           onClick={nextSlide}
-          className="bg-white/20 backdrop-blur-sm hover:bg-white/30 border-white/30"
+          className="bg-white/20 hover:bg-white/30 border-white/30"
         >
           <ArrowRight className="h-5 w-5 text-white" />
         </Button>
       </div>
       
       {/* Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
         {heroSlides.map((_, index) => (
           <button
             key={index}
@@ -159,9 +179,9 @@ const Hero = () => {
               setIsAnimating(true);
             }}
             className={cn(
-              "w-3 h-3 rounded-full transition-all duration-300",
+              "w-2 h-2 rounded-full transition-all duration-300",
               index === currentSlide 
-                ? "bg-white w-6" 
+                ? "bg-white w-4" 
                 : "bg-white/50 hover:bg-white/70"
             )}
             aria-label={`Go to slide ${index + 1}`}

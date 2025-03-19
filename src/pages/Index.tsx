@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import Hero from '@/components/Hero';
 import FeaturedProducts from '@/components/FeaturedProducts';
 import CustomizationSection from '@/components/CustomizationSection';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const Index = () => {
   // Scroll to top on page load
@@ -24,23 +22,23 @@ const Index = () => {
       <CustomizationSection />
       
       {/* Testimonials */}
-      <section className="page-container py-16">
-        <div className="text-center mb-12">
-          <h2 className="section-title">What Our Customers Say</h2>
-          <p className="section-subtitle mx-auto">
+      <section className="container mx-auto px-4 py-12">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-medium">What Our Customers Say</h2>
+          <p className="text-muted-foreground mt-2">
             Read reviews from customers who love our handcrafted crochet items
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Testimonial 1 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-crochet-100">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
-                JD
+              <div className="w-10 h-10 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
+                R
               </div>
               <div className="ml-4">
-                <h4 className="font-medium">Jane Doe</h4>
+                <h4 className="font-medium">Ragita</h4>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -56,13 +54,13 @@ const Index = () => {
           </div>
           
           {/* Testimonial 2 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-crochet-100">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
-                MS
+              <div className="w-10 h-10 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
+                A
               </div>
               <div className="ml-4">
-                <h4 className="font-medium">Michael Smith</h4>
+                <h4 className="font-medium">Anish</h4>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -78,13 +76,13 @@ const Index = () => {
           </div>
           
           {/* Testimonial 3 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-crochet-100">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-crochet-100">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
-                AL
+              <div className="w-10 h-10 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
+                S
               </div>
               <div className="ml-4">
-                <h4 className="font-medium">Amanda Lee</h4>
+                <h4 className="font-medium">Sonal</h4>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
