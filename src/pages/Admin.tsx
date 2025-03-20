@@ -8,6 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlusCircle, Edit, Trash } from 'lucide-react';
+import AdminProductList from '@/components/admin/AdminProductList';
+import AdminOrderList from '@/components/admin/AdminOrderList';
+import AdminCustomerList from '@/components/admin/AdminCustomerList';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -21,14 +25,13 @@ const Admin = () => {
     e.preventDefault();
     setError('');
     
-    // Check if admin exists in sessionStorage
-    const storedAdmin = sessionStorage.getItem('admin');
+    // Check if admin exists in localStorage (changed from sessionStorage)
+    const storedAdmin = localStorage.getItem('admin');
     if (storedAdmin) {
       const admin = JSON.parse(storedAdmin);
-      // Important fix: Don't check password === 'password' for registered users
-      if (admin.email === email) {
+      if (admin.email === email && admin.password === password) {
         setIsLoggedIn(true);
-        sessionStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminLoggedIn', 'true');
         toast({
           title: "Login successful",
           description: "Welcome back to the admin panel",
@@ -40,10 +43,11 @@ const Admin = () => {
     // Demo login fallback
     if (email === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
-      sessionStorage.setItem('adminLoggedIn', 'true');
-      sessionStorage.setItem('admin', JSON.stringify({
+      localStorage.setItem('adminLoggedIn', 'true');
+      localStorage.setItem('admin', JSON.stringify({
         name: 'Admin User',
         email: 'admin@example.com',
+        password: 'password',
         isLoggedIn: true
       }));
       toast({
@@ -51,7 +55,7 @@ const Admin = () => {
         description: "Welcome to the admin panel",
       });
     } else {
-      setError('Invalid email or password. Try admin@example.com / password or use your registered email');
+      setError('Invalid email or password. Try admin@example.com / password or use your registered email & password');
       toast({
         title: "Login failed",
         description: "Invalid credentials. Please try again.",
@@ -62,7 +66,7 @@ const Admin = () => {
 
   // Check if admin is already logged in
   useEffect(() => {
-    const adminLoggedIn = sessionStorage.getItem('adminLoggedIn');
+    const adminLoggedIn = localStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
       setIsLoggedIn(true);
     }
@@ -72,7 +76,7 @@ const Admin = () => {
     setIsLoggedIn(false);
     setEmail('');
     setPassword('');
-    sessionStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminLoggedIn');
     toast({
       title: "Logged out",
       description: "You have been logged out successfully",
@@ -159,119 +163,124 @@ const Admin = () => {
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="customers">Customers</TabsTrigger>
+            <TabsTrigger value="custom-orders">Custom Orders</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="products" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Products Management</CardTitle>
-                <CardDescription>Manage your product catalog</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-end mb-4">
-                  <Button className="bg-crochet-800">Add New Product</Button>
-                </div>
-                <div className="border rounded-md">
-                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-muted">
-                    <div className="col-span-1">ID</div>
-                    <div className="col-span-3">Name</div>
-                    <div className="col-span-2">Category</div>
-                    <div className="col-span-2">Price</div>
-                    <div className="col-span-2">Status</div>
-                    <div className="col-span-2">Actions</div>
-                  </div>
-                  <Separator />
-                  {[1, 2, 3, 4].map((id) => (
-                    <div key={id} className="grid grid-cols-12 gap-2 p-4 items-center">
-                      <div className="col-span-1">{id}</div>
-                      <div className="col-span-3">Product Name {id}</div>
-                      <div className="col-span-2">Category {id}</div>
-                      <div className="col-span-2">Rs {(id * 1000).toLocaleString()}</div>
-                      <div className="col-span-2">
-                        <span className="inline-block px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-span-2 flex space-x-2">
-                        <Button variant="outline" size="sm">Edit</Button>
-                        <Button variant="outline" size="sm" className="text-red-500">Delete</Button>
-                      </div>
-                      <Separator className="col-span-12 mt-2" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="products">
+            <AdminProductList />
           </TabsContent>
           
           <TabsContent value="orders">
+            <AdminOrderList />
+          </TabsContent>
+          
+          <TabsContent value="customers">
+            <AdminCustomerList />
+          </TabsContent>
+          
+          <TabsContent value="custom-orders">
             <Card>
               <CardHeader>
-                <CardTitle>Order Management</CardTitle>
-                <CardDescription>View and manage customer orders</CardDescription>
+                <CardTitle>Custom Order Requests</CardTitle>
+                <CardDescription>Manage custom order requests from customers</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="border rounded-md">
                   <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-muted">
                     <div className="col-span-1">ID</div>
-                    <div className="col-span-3">Customer</div>
+                    <div className="col-span-2">Item Type</div>
+                    <div className="col-span-3">Description</div>
                     <div className="col-span-2">Date</div>
-                    <div className="col-span-2">Amount</div>
                     <div className="col-span-2">Status</div>
                     <div className="col-span-2">Actions</div>
                   </div>
                   <Separator />
-                  {[1, 2, 3].map((id) => (
-                    <div key={id} className="grid grid-cols-12 gap-2 p-4 items-center">
-                      <div className="col-span-1">#{id}000</div>
-                      <div className="col-span-3">Customer {id}</div>
-                      <div className="col-span-2">2025/03/{id}</div>
-                      <div className="col-span-2">Rs {(id * 5000).toLocaleString()}</div>
-                      <div className="col-span-2">
-                        <span className="inline-block px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                          Pending
-                        </span>
-                      </div>
-                      <div className="col-span-2">
-                        <Button variant="outline" size="sm">Details</Button>
-                      </div>
-                      <Separator className="col-span-12 mt-2" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="customers">
-            <Card>
-              <CardHeader>
-                <CardTitle>Customer Management</CardTitle>
-                <CardDescription>View and manage customer accounts</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="border rounded-md">
-                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-muted">
-                    <div className="col-span-1">ID</div>
-                    <div className="col-span-3">Name</div>
-                    <div className="col-span-3">Email</div>
-                    <div className="col-span-2">Orders</div>
-                    <div className="col-span-3">Actions</div>
-                  </div>
-                  <Separator />
-                  {['Ragita', 'Anish', 'Sonal'].map((name, index) => (
-                    <div key={index} className="grid grid-cols-12 gap-2 p-4 items-center">
-                      <div className="col-span-1">{index + 1}</div>
-                      <div className="col-span-3">{name}</div>
-                      <div className="col-span-3">{name.toLowerCase()}@example.com</div>
-                      <div className="col-span-2">{index + 2}</div>
-                      <div className="col-span-3 flex space-x-2">
-                        <Button variant="outline" size="sm">View</Button>
-                        <Button variant="outline" size="sm">Email</Button>
-                      </div>
-                      <Separator className="col-span-12 mt-2" />
-                    </div>
-                  ))}
+                  {(() => {
+                    try {
+                      const customOrders = JSON.parse(localStorage.getItem('customOrders') || '[]');
+                      
+                      if (customOrders.length === 0) {
+                        return (
+                          <div className="p-8 text-center text-muted-foreground">
+                            No custom order requests yet.
+                          </div>
+                        );
+                      }
+                      
+                      return customOrders.map((order: any, index: number) => (
+                        <div key={order.id || index} className="grid grid-cols-12 gap-2 p-4 items-center">
+                          <div className="col-span-1">#{(index + 1).toString().padStart(3, '0')}</div>
+                          <div className="col-span-2">{order.itemType}</div>
+                          <div className="col-span-3" title={order.description}>
+                            {order.description.length > 50 ? `${order.description.substring(0, 50)}...` : order.description}
+                          </div>
+                          <div className="col-span-2">
+                            {new Date(order.date).toLocaleDateString()}
+                          </div>
+                          <div className="col-span-2">
+                            <span className={`inline-block px-2 py-1 rounded-full text-xs ${
+                              order.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                              order.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 
+                              'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {order.status}
+                            </span>
+                          </div>
+                          <div className="col-span-2 flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                // Update status logic
+                                const updatedOrders = customOrders.map((o: any) => 
+                                  o.id === order.id ? 
+                                  {...o, status: o.status === 'Pending' ? 'In Progress' : 
+                                             o.status === 'In Progress' ? 'Completed' : 'Pending'} : o
+                                );
+                                localStorage.setItem('customOrders', JSON.stringify(updatedOrders));
+                                toast({
+                                  title: "Status Updated",
+                                  description: `Order status changed to ${
+                                    order.status === 'Pending' ? 'In Progress' : 
+                                    order.status === 'In Progress' ? 'Completed' : 'Pending'
+                                  }`,
+                                });
+                                // Force re-render
+                                window.dispatchEvent(new Event('storage'));
+                              }}
+                            >
+                              Update Status
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-red-500"
+                              onClick={() => {
+                                const updatedOrders = customOrders.filter((o: any) => o.id !== order.id);
+                                localStorage.setItem('customOrders', JSON.stringify(updatedOrders));
+                                toast({
+                                  title: "Custom Order Deleted",
+                                  description: "The custom order request has been deleted",
+                                });
+                                // Force re-render
+                                window.dispatchEvent(new Event('storage'));
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                          <Separator className="col-span-12 mt-2" />
+                        </div>
+                      ));
+                    } catch (error) {
+                      console.error('Error rendering custom orders:', error);
+                      return (
+                        <div className="p-8 text-center text-red-600">
+                          Error loading custom orders.
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
               </CardContent>
             </Card>

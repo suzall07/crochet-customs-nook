@@ -46,6 +46,9 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           title: "Added to cart",
           description: `${product.name} has been added to your cart.`,
         });
+        
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new Event('cartUpdated'));
       } else {
         toast({
           title: "Already in cart",

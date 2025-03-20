@@ -18,6 +18,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartItemCount, setCartItemCount] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,6 +29,40 @@ const Header = () => {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Update cart count whenever the cart changes
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        setCartItemCount(cart.length);
+      } catch (error) {
+        console.error('Error reading cart data:', error);
+        setCartItemCount(0);
+      }
+    };
+    
+    // Initial count
+    updateCartCount();
+    
+    // Set up storage event listener
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'cart') {
+        updateCartCount();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Custom event for cart updates
+    const handleCustomEvent = () => updateCartCount();
+    window.addEventListener('cartUpdated', handleCustomEvent);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cartUpdated', handleCustomEvent);
+    };
   }, []);
 
   // Close mobile menu when route changes
@@ -90,7 +125,7 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Action Buttons - Removed Heart/Wishlist */}
+          {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-2">
             <Button 
               variant="ghost" 
@@ -100,8 +135,19 @@ const Header = () => {
             >
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="Cart">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              aria-label="Cart" 
+              className="relative"
+              onClick={() => navigate("/cart")}
+            >
               <ShoppingCart className="h-5 w-5" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-crochet-700 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemCount}
+                </span>
+              )}
             </Button>
             <Button 
               variant="outline"
@@ -154,7 +200,7 @@ const Header = () => {
         )}
       </div>
 
-      {/* Mobile Menu - Removed Wishlist */}
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white pt-16 animate-fade-in">
           <div className="container px-4 py-4">
@@ -198,13 +244,17 @@ const Header = () => {
             </nav>
             
             <div className="mt-6 flex justify-around">
-              <Button variant="ghost" size="icon" aria-label="Cart">
-                <ShoppingCart className="h-5 w-5" />
-                <span className="ml-2">Cart</span>
+              <Button 
+                variant="ghost" 
+                className="flex items-center"
+                onClick={() => navigate("/cart")}
+              >
+                <ShoppingCart className="h-5 w-5 mr-2" />
+                <span>Cart ({cartItemCount})</span>
               </Button>
-              <Button variant="ghost" size="icon" aria-label="Account">
-                <User className="h-5 w-5" />
-                <span className="ml-2">Account</span>
+              <Button variant="ghost" className="flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                <span>Account</span>
               </Button>
             </div>
           </div>

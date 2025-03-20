@@ -9,20 +9,35 @@ import {
   Clock, 
   Send 
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Contact = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: ''
   });
+  const [customOrderData, setCustomOrderData] = useState({
+    itemType: '',
+    description: '',
+    preferredColors: '',
+    budget: '',
+    timeline: ''
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCustomSubmitting, setIsCustomSubmitting] = useState(false);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCustomOrderData(prev => ({ ...prev, [name]: value }));
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,18 +60,43 @@ const Contact = () => {
     }, 1500);
   };
 
+  const handleCustomOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCustomSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      const customOrders = JSON.parse(localStorage.getItem('customOrders') || '[]');
+      const newOrder = {
+        id: Date.now(),
+        ...customOrderData,
+        status: 'Pending',
+        date: new Date().toISOString()
+      };
+      
+      localStorage.setItem('customOrders', JSON.stringify([...customOrders, newOrder]));
+      
+      toast({
+        title: "Custom order request submitted",
+        description: "Thank you for your interest! We'll review your request and contact you soon.",
+      });
+      setCustomOrderData({
+        itemType: '',
+        description: '',
+        preferredColors: '',
+        budget: '',
+        timeline: ''
+      });
+      setIsCustomSubmitting(false);
+    }, 1500);
+  };
+
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}
       <div className="relative bg-crochet-800 text-white py-16 sm:py-24">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-crochet-900 to-crochet-800 opacity-90"></div>
-          <img 
-            src="https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6"
-            alt="Background" 
-            loading="lazy"
-            className="w-full h-full object-cover mix-blend-overlay opacity-30" 
-          />
         </div>
         
         <div className="relative container max-w-7xl mx-auto px-4 sm:px-6 text-center">
@@ -131,9 +171,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-medium text-lg mb-1">Business Hours</h3>
                   <p className="text-crochet-600">
-                    Monday - Friday: 9am - 5pm<br />
-                    Saturday: 10am - 4pm<br />
-                    Sunday: Closed
+                    Sunday - Friday: 10am - 8pm<br />
+                    Saturday: Closed
                   </p>
                 </div>
               </div>
@@ -146,10 +185,10 @@ const Contact = () => {
                 We'd be happy to discuss your ideas and create something unique for you.
               </p>
               <Button 
-                asChild
                 className="bg-crochet-700 hover:bg-crochet-800"
+                onClick={() => document.getElementById('custom-order-form')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <a href="/customize">Request Custom Order</a>
+                Request Custom Order
               </Button>
             </div>
           </div>
@@ -256,24 +295,131 @@ const Contact = () => {
         </div>
       </section>
       
-      {/* Simplified Map Section */}
+      {/* Custom Order Form */}
+      <section id="custom-order-form" className="bg-crochet-50 py-16">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-display text-3xl font-medium text-crochet-900 mb-4">Request a Custom Order</h2>
+              <p className="text-crochet-600">
+                Tell us about your dream crochet item and we'll bring it to life for you.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-crochet-100 p-8">
+              <form onSubmit={handleCustomOrderSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="itemType" className="text-sm font-medium text-crochet-700">
+                    Type of Item *
+                  </label>
+                  <input
+                    id="itemType"
+                    name="itemType"
+                    type="text"
+                    required
+                    value={customOrderData.itemType}
+                    onChange={handleCustomChange}
+                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                    placeholder="e.g. Blanket, Amigurumi, Garment"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="description" className="text-sm font-medium text-crochet-700">
+                    Description *
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    required
+                    rows={4}
+                    value={customOrderData.description}
+                    onChange={handleCustomChange}
+                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors resize-none"
+                    placeholder="Please describe your custom item in detail (size, design, etc)"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="preferredColors" className="text-sm font-medium text-crochet-700">
+                    Preferred Colors
+                  </label>
+                  <input
+                    id="preferredColors"
+                    name="preferredColors"
+                    type="text"
+                    value={customOrderData.preferredColors}
+                    onChange={handleCustomChange}
+                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                    placeholder="e.g. Blue, Green, Yellow"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="budget" className="text-sm font-medium text-crochet-700">
+                      Budget Range (Rs)
+                    </label>
+                    <input
+                      id="budget"
+                      name="budget"
+                      type="text"
+                      value={customOrderData.budget}
+                      onChange={handleCustomChange}
+                      className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                      placeholder="e.g. 1000-3000"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="timeline" className="text-sm font-medium text-crochet-700">
+                      Desired Timeline
+                    </label>
+                    <input
+                      id="timeline"
+                      name="timeline"
+                      type="text"
+                      value={customOrderData.timeline}
+                      onChange={handleCustomChange}
+                      className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                      placeholder="e.g. 2 weeks, 1 month"
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  type="submit"
+                  disabled={isCustomSubmitting}
+                  className="w-full bg-crochet-800 hover:bg-crochet-900"
+                >
+                  {isCustomSubmitting ? "Submitting Request..." : "Submit Custom Order Request"}
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Map Section - Removed image */}
       <section className="bg-crochet-50 py-16">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="section-title">Visit Our Store</h2>
-            <p className="section-subtitle mx-auto">
+            <h2 className="font-display text-3xl font-medium text-crochet-900 mb-4">Visit Our Store</h2>
+            <p className="text-crochet-600 max-w-2xl mx-auto">
               Come see our products in person at our physical location
             </p>
           </div>
           
-          <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-crochet-100 animate-scale-in">
-            <div className="aspect-video bg-crochet-100 w-full">
-              <div className="w-full h-full flex items-center justify-center">
-                <p className="text-crochet-600 text-center px-4">
-                  Kimdol, Kathmandu, Nepal
-                </p>
-              </div>
-            </div>
+          <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-crochet-100 p-8 text-center">
+            <h3 className="font-medium text-xl mb-4">Store Address</h3>
+            <p className="text-crochet-600 mb-4">
+              Kimdol, Kathmandu, Nepal
+            </p>
+            <p className="text-crochet-600">
+              <span className="font-medium">Business Hours:</span><br />
+              Sunday - Friday: 10am - 8pm<br />
+              Saturday: Closed
+            </p>
           </div>
         </div>
       </section>

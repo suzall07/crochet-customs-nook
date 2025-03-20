@@ -17,6 +17,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Search = lazy(() => import("./pages/Search"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminSignup = lazy(() => import("./pages/AdminSignup"));
+const Cart = lazy(() => import("./pages/Cart"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/search" element={<Search />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/signup" element={<AdminSignup />} />
+              <Route path="/cart" element={<Cart />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

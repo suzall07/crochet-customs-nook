@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Updated hero slides with more reliable wool/yarn crochet images
+// Updated hero slides with more reliable wool/yarn crochet images and removed the third slide
 const heroSlides = [
   {
     id: 1,
@@ -21,14 +20,6 @@ const heroSlides = [
     image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Customize Now",
     link: "/customize"
-  },
-  {
-    id: 3,
-    title: "The Art of Crochet",
-    subtitle: "Each stitch tells a story of craftsmanship",
-    image: "https://images.pexels.com/photos/6851381/pexels-photo-6851381.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    cta: "Explore Techniques",
-    link: "/about"
   }
 ];
 
