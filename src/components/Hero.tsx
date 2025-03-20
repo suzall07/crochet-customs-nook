@@ -4,13 +4,13 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Updated hero slides with yarn crochet images
+// Updated hero slides with yarn crochet images - using more reliable image URLs
 const heroSlides = [
   {
     id: 1,
     title: "Handcrafted with Love",
     subtitle: "Unique crochet creations made with passion",
-    image: "https://images.unsplash.com/photo-1615310748170-99ffc9448db3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6192108/pexels-photo-6192108.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Shop Collection",
     link: "/shop"
   },
@@ -18,7 +18,7 @@ const heroSlides = [
     id: 2,
     title: "Custom Crochet Designs",
     subtitle: "Personalize your crochet items with colors and designs",
-    image: "https://images.unsplash.com/photo-1598867183829-ded54ce2d3a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6933754/pexels-photo-6933754.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Customize Now",
     link: "/customize"
   },
@@ -26,7 +26,7 @@ const heroSlides = [
     id: 3,
     title: "The Art of Crochet",
     subtitle: "Each stitch tells a story of craftsmanship",
-    image: "https://images.unsplash.com/photo-1626642246917-4de0761afe8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6858600/pexels-photo-6858600.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Explore Techniques",
     link: "/about"
   }
@@ -37,6 +37,7 @@ const Hero = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   const nextSlide = () => {
     if (isAnimating) return;
@@ -44,6 +45,7 @@ const Hero = () => {
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     setImageLoaded(false);
+    setLoadAttempt(0);
   };
 
   const prevSlide = () => {
@@ -52,6 +54,17 @@ const Hero = () => {
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
     setImageLoaded(false);
+    setLoadAttempt(0);
+  };
+
+  // Handle image loading error by incrementing load attempt
+  const handleImageError = () => {
+    console.error('Failed to load hero image, attempting fallback');
+    setLoadAttempt(prev => prev + 1);
+    // If we've tried too many times, just show the slide anyway
+    if (loadAttempt > 2) {
+      setImageLoaded(true);
+    }
   };
 
   useEffect(() => {
@@ -73,6 +86,9 @@ const Hero = () => {
 
   const slide = heroSlides[currentSlide];
 
+  // Fallback image if primary image fails to load
+  const fallbackImage = "https://images.pexels.com/photos/6851381/pexels-photo-6851381.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+
   return (
     <div className="hero-section">
       {/* Simple Background */}
@@ -81,7 +97,7 @@ const Hero = () => {
           <div className="absolute inset-0 bg-gray-200 animate-pulse" />
         )}
         <img
-          src={slide.image}
+          src={loadAttempt > 0 ? fallbackImage : slide.image}
           alt={slide.title}
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-300", 
@@ -89,6 +105,7 @@ const Hero = () => {
           )}
           loading="lazy"
           onLoad={() => setImageLoaded(true)}
+          onError={handleImageError}
         />
         
         {/* Simple Overlay */}

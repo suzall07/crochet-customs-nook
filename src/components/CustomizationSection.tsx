@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ColorOption {
   name: string;
@@ -42,26 +43,27 @@ const sizeOptions: SizeOption[] = [
   { name: "X-Large", value: "xl" },
 ];
 
+// Updated pattern options with reliable yarn/wool images
 const patternOptions: PatternOption[] = [
   { 
     name: "Classic", 
     value: "classic",
-    image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=250&h=250&fit=crop" 
+    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=400" 
   },
   { 
     name: "Chevron", 
     value: "chevron",
-    image: "https://images.unsplash.com/photo-1543248246-4f97eb137232?w=250&h=250&fit=crop" 
+    image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=400" 
   },
   { 
     name: "Basket Weave", 
     value: "basket",
-    image: "https://images.unsplash.com/photo-1546761232-81b42d495975?w=250&h=250&fit=crop" 
+    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=400" 
   },
   { 
     name: "Shell Stitch", 
     value: "shell",
-    image: "https://images.unsplash.com/photo-1575414319353-a5a3dc4272f0?w=250&h=250&fit=crop" 
+    image: "https://images.pexels.com/photos/6858600/pexels-photo-6858600.jpeg?auto=compress&cs=tinysrgb&w=400" 
   },
 ];
 
@@ -69,6 +71,37 @@ const CustomizationSection = () => {
   const [selectedColor, setSelectedColor] = useState<ColorOption>(colorOptions[0]);
   const [selectedSize, setSelectedSize] = useState<SizeOption>(sizeOptions[1]);
   const [selectedPattern, setSelectedPattern] = useState<PatternOption>(patternOptions[0]);
+  const { toast } = useToast();
+
+  const handleAddToCart = () => {
+    // Create a custom product
+    const customProduct = {
+      id: Date.now(), // Generate a unique ID
+      name: `Custom ${selectedPattern.name} (${selectedColor.name}, ${selectedSize.name})`,
+      price: 4999, // Example price
+      image: selectedPattern.image,
+      category: "Custom",
+      isNew: true
+    };
+    
+    // Get existing cart from localStorage or initialize empty array
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    // Add custom product to cart
+    const updatedCart = [...existingCart, customProduct];
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    
+    toast({
+      title: "Custom item added to cart",
+      description: "Your custom item has been added to the cart.",
+    });
+  };
+
+  // Handle image loading error
+  const handlePatternImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error('Failed to load pattern image, using fallback');
+    e.currentTarget.src = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=400";
+  };
 
   return (
     <section className="bg-crochet-50 py-20">
@@ -84,6 +117,8 @@ const CustomizationSection = () => {
                 src={selectedPattern.image} 
                 alt="Customized crochet product" 
                 className="w-full h-full object-cover mix-blend-multiply"
+                onError={handlePatternImageError}
+                loading="lazy"
               />
             </div>
             
@@ -175,6 +210,8 @@ const CustomizationSection = () => {
                               src={pattern.image} 
                               alt={pattern.name} 
                               className="w-full h-full object-cover"
+                              onError={handlePatternImageError}
+                              loading="lazy"
                             />
                           </div>
                           <span>{pattern.name}</span>
@@ -187,6 +224,7 @@ const CustomizationSection = () => {
               
               <Button 
                 className="w-full mt-6 bg-crochet-800 hover:bg-crochet-900 button-effect"
+                onClick={handleAddToCart}
               >
                 Add Custom Item to Cart
               </Button>

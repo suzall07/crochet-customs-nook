@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
@@ -50,28 +50,13 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     }
   };
   
-  const handleAddToWishlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Get existing wishlist from localStorage or initialize empty array
-    const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    
-    // Add product to wishlist if not already present
-    if (!existingWishlist.some((item: Product) => item.id === product.id)) {
-      const updatedWishlist = [...existingWishlist, product];
-      localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
-      
-      toast({
-        title: "Added to wishlist",
-        description: `${product.name} has been added to your wishlist.`,
-      });
-    } else {
-      toast({
-        title: "Already in wishlist",
-        description: `${product.name} is already in your wishlist.`,
-      });
-    }
+  // Fallback image
+  const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+  
+  // Handle image loading error
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error('Failed to load product image, using fallback');
+    e.currentTarget.src = fallbackImage;
   };
 
   return (
@@ -93,6 +78,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             alt={product.name}
             loading="lazy"
             onLoad={() => setImageLoaded(true)}
+            onError={handleImageError}
             className={cn(
               "w-full h-full object-cover transition-transform duration-500",
               isHovered ? "scale-105" : "scale-100",
@@ -128,17 +114,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           </div>
           
           {/* Quick actions */}
-          <div className="mt-3 flex justify-between">
-            <Button 
-              variant="outline"
-              size="sm"
-              className="text-xs"
-              onClick={handleAddToWishlist}
-            >
-              <Heart className="h-3 w-3 mr-1" />
-              Wishlist
-            </Button>
-            
+          <div className="mt-3 flex justify-end">
             <Button 
               size="sm"
               className="bg-crochet-800 hover:bg-crochet-900 text-white text-xs"

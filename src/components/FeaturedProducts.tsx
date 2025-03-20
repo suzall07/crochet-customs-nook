@@ -4,13 +4,13 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard, { Product } from './ProductCard';
 
-// Mock data with yarn crochet images
+// Mock data with reliable yarn crochet images
 const featuredProducts: Product[] = [
   {
     id: 1,
     name: "Hand-knit Wool Sweater",
     price: 8999,
-    image: "https://images.unsplash.com/photo-1626847152055-9bb0635fa1ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     category: "Sweaters",
     isFeatured: true
   },
@@ -18,7 +18,7 @@ const featuredProducts: Product[] = [
     id: 2,
     name: "Crochet Baby Blanket",
     price: 4500,
-    image: "https://images.unsplash.com/photo-1532774788000-afc4d8ce089f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     category: "Baby",
     isNew: true
   },
@@ -26,7 +26,7 @@ const featuredProducts: Product[] = [
     id: 3,
     name: "Handmade Beanie Hat",
     price: 2999,
-    image: "https://images.unsplash.com/photo-1594750852562-203fb71f0b91?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     category: "Accessories",
     isFeatured: true
   },
@@ -34,7 +34,7 @@ const featuredProducts: Product[] = [
     id: 4,
     name: "Crochet Wall Hanging",
     price: 1999,
-    image: "https://images.unsplash.com/photo-1601379327928-bedfaf9da2e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    image: "https://images.pexels.com/photos/6858602/pexels-photo-6858602.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     category: "Home Decor",
     isNew: true
   }
