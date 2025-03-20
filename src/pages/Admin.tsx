@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Admin = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,19 +21,39 @@ const Admin = () => {
     e.preventDefault();
     setError('');
     
-    // Simple demo login - any email with admin@example.com and password
+    // Check if admin exists in sessionStorage
+    const storedAdmin = sessionStorage.getItem('admin');
+    if (storedAdmin) {
+      const admin = JSON.parse(storedAdmin);
+      if (admin.email === email && password === 'password') {
+        setIsLoggedIn(true);
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        toast({
+          title: "Login successful",
+          description: "Welcome back to the admin panel",
+        });
+        return;
+      }
+    }
+    
+    // Demo login fallback
     if (email === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
-      localStorage.setItem('adminLoggedIn', 'true');
+      sessionStorage.setItem('adminLoggedIn', 'true');
+      sessionStorage.setItem('admin', JSON.stringify({
+        name: 'Admin User',
+        email: 'admin@example.com',
+        isLoggedIn: true
+      }));
       toast({
         title: "Login successful",
         description: "Welcome to the admin panel",
       });
     } else {
-      setError('Invalid email or password. Try admin@example.com / password');
+      setError('Invalid email or password. Try admin@example.com / password or use your registered email');
       toast({
         title: "Login failed",
-        description: "Invalid email or password. Try admin@example.com / password",
+        description: "Invalid credentials. Please try again.",
         variant: "destructive",
       });
     }
@@ -39,7 +61,7 @@ const Admin = () => {
 
   // Check if admin is already logged in
   useEffect(() => {
-    const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+    const adminLoggedIn = sessionStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
       setIsLoggedIn(true);
     }
@@ -49,11 +71,15 @@ const Admin = () => {
     setIsLoggedIn(false);
     setEmail('');
     setPassword('');
-    localStorage.removeItem('adminLoggedIn');
+    sessionStorage.removeItem('adminLoggedIn');
     toast({
       title: "Logged out",
       description: "You have been logged out successfully",
     });
+  };
+
+  const handleSignUp = () => {
+    navigate('/admin/signup');
   };
 
   if (!isLoggedIn) {
@@ -95,8 +121,18 @@ const Admin = () => {
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col space-y-2">
               <Button type="submit" className="w-full bg-crochet-800">Login</Button>
+              <div className="text-center w-full">
+                <Button 
+                  type="button" 
+                  variant="link" 
+                  onClick={handleSignUp}
+                  className="text-crochet-800"
+                >
+                  Don't have an account? Sign up
+                </Button>
+              </div>
             </CardFooter>
           </form>
         </Card>
