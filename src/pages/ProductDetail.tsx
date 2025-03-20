@@ -8,7 +8,7 @@ import ProductCard, { Product } from '@/components/ProductCard';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 
-const allProducts: Product[] = [
+const fallbackProducts: Product[] = [
   {
     id: 1,
     name: "Hand-knit Wool Sweater",
@@ -62,6 +62,7 @@ const ProductDetail = () => {
   const [reviewName, setReviewName] = useState('');
   const [reviewComment, setReviewComment] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
@@ -70,7 +71,49 @@ const ProductDetail = () => {
     e.currentTarget.src = fallbackImage;
   };
 
+  // Load all products first
   useEffect(() => {
+    try {
+      const storedProducts = localStorage.getItem('products');
+      if (storedProducts) {
+        setAllProducts(JSON.parse(storedProducts));
+      } else {
+        setAllProducts(fallbackProducts);
+        localStorage.setItem('products', JSON.stringify(fallbackProducts));
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+      setAllProducts(fallbackProducts);
+    }
+  }, []);
+
+  // Listen for product changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const storedProducts = localStorage.getItem('products');
+        if (storedProducts) {
+          setAllProducts(JSON.parse(storedProducts));
+        }
+      } catch (error) {
+        console.error('Error handling storage change:', error);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Custom event for product updates
+    window.addEventListener('productsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('productsUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Find the current product and related products
+  useEffect(() => {
+    if (allProducts.length === 0 || !id) return;
+
     const foundProduct = allProducts.find(p => p.id === Number(id)) || null;
     setProduct(foundProduct);
     
@@ -86,7 +129,7 @@ const ProductDetail = () => {
     
     window.scrollTo(0, 0);
     setImageLoaded(false);
-  }, [id]);
+  }, [id, allProducts]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -100,6 +143,9 @@ const ProductDetail = () => {
           title: "Added to cart",
           description: `${product.name} has been added to your cart.`,
         });
+        
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new Event('cartUpdated'));
       } else {
         toast({
           title: "Already in cart",
@@ -143,6 +189,27 @@ const ProductDetail = () => {
       description: "Thank you for your feedback!"
     });
   };
+
+  const getCurrentCustomer = () => {
+    try {
+      const customerData = localStorage.getItem('currentCustomer');
+      if (customerData) {
+        return JSON.parse(customerData);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting customer data:', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    // Prefill review name if customer is logged in
+    const customer = getCurrentCustomer();
+    if (customer && customer.name) {
+      setReviewName(customer.name);
+    }
+  }, []);
 
   if (!product) {
     return (

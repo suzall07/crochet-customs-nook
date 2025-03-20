@@ -1,14 +1,14 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Product } from '@/components/ProductCard';
-import { PlusCircle, Edit, Trash } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Image } from 'lucide-react';
 
 const defaultProducts: Product[] = [
   {
@@ -59,6 +59,8 @@ const AdminProductList = () => {
     isNew: false,
     isFeatured: false
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -89,8 +91,33 @@ const AdminProductList = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a JPEG, JPG, PNG, GIF, or WEBP image",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Convert to base64 for storage
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setImagePreview(base64String);
+      setFormData(prev => ({ ...prev, image: base64String }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleAddEdit = () => {
-    if (!formData.name || !formData.price || !formData.image || !formData.category) {
+    if (!formData.name || !formData.price || (!formData.image && !imagePreview) || !formData.category) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields.",
@@ -104,7 +131,8 @@ const AdminProductList = () => {
       // Add new product
       const newProduct = {
         ...formData,
-        id: Math.max(0, ...products.map(p => p.id)) + 1
+        id: Math.max(0, ...products.map(p => p.id)) + 1,
+        image: formData.image || imagePreview || ''
       };
       updatedProducts = [...products, newProduct];
       toast({
@@ -114,7 +142,10 @@ const AdminProductList = () => {
     } else {
       // Update existing product
       updatedProducts = products.map(product => 
-        product.id === formData.id ? formData : product
+        product.id === formData.id ? {
+          ...formData,
+          image: formData.image || imagePreview || product.image
+        } : product
       );
       toast({
         title: "Product Updated",
@@ -159,6 +190,7 @@ const AdminProductList = () => {
       isNew: product.isNew || false,
       isFeatured: product.isFeatured || false
     });
+    setImagePreview(product.image);
     setIsDialogOpen(true);
   };
 
@@ -177,6 +209,10 @@ const AdminProductList = () => {
       isNew: false,
       isFeatured: false
     });
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -264,6 +300,9 @@ const AdminProductList = () => {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{formData.id === 0 ? 'Add New Product' : 'Edit Product'}</DialogTitle>
+            <DialogDescription>
+              Fill in the product details below. Fields marked with * are required.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -303,23 +342,69 @@ const AdminProductList = () => {
                   <option value="">Select category</option>
                   <option value="Home Decor">Home Decor</option>
                   <option value="Apparel">Apparel</option>
+                  <option value="Shop">Shop</option>
+                  <option value="Popular Crochet">Popular Crochet</option>
                   <option value="Toys">Toys</option>
                   <option value="Baby">Baby</option>
                   <option value="Accessories">Accessories</option>
                 </select>
               </div>
             </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="image">Image URL *</Label>
-              <Input
-                id="image"
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="Enter image URL"
-                required
-              />
+              <Label>Product Image *</Label>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => fileInputRef.current?.click()}>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef}
+                    className="hidden" 
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                    onChange={handleFileChange}
+                  />
+                  <Image className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm text-gray-500 mb-1">Click to upload image</p>
+                  <p className="text-xs text-gray-400">JPG, JPEG, PNG, GIF, or WEBP</p>
+                </div>
+                
+                {(imagePreview || formData.image) && (
+                  <div className="relative mt-2">
+                    <img 
+                      src={imagePreview || formData.image} 
+                      alt="Product preview" 
+                      className="w-full h-40 object-cover rounded-md" 
+                    />
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setImagePreview(null);
+                        setFormData(prev => ({ ...prev, image: '' }));
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = '';
+                        }
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+                
+                <div className="text-sm mt-2">
+                  <Label htmlFor="image-url">Or enter image URL</Label>
+                  <Input
+                    id="image-url"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleChange}
+                    placeholder="https://example.com/image.jpg"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
             </div>
+            
             <div className="flex space-x-4">
               <div className="flex items-center space-x-2">
                 <input

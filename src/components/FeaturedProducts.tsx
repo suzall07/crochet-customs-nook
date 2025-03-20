@@ -1,11 +1,12 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard, { Product } from './ProductCard';
+import { Link } from 'react-router-dom';
 
-// Mock data with reliable yarn crochet images
-const featuredProducts: Product[] = [
+// Fallback products if none are in localStorage
+const fallbackProducts: Product[] = [
   {
     id: 1,
     name: "Hand-knit Wool Sweater",
@@ -41,7 +42,58 @@ const featuredProducts: Product[] = [
 ];
 
 const FeaturedProducts = () => {
-  const [products] = useState<Product[]>(featuredProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    // Load products from localStorage
+    try {
+      const storedProducts = localStorage.getItem('products');
+      if (storedProducts) {
+        const allProducts = JSON.parse(storedProducts);
+        // Filter for featured or new products
+        const featuredProducts = allProducts.filter((p: Product) => p.isFeatured || p.isNew);
+        
+        if (featuredProducts.length > 0) {
+          setProducts(featuredProducts.slice(0, 4)); // Show up to 4 products
+        } else {
+          setProducts(fallbackProducts);
+        }
+      } else {
+        setProducts(fallbackProducts);
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+      setProducts(fallbackProducts);
+    }
+  }, []);
+
+  // Listen for product changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const storedProducts = localStorage.getItem('products');
+        if (storedProducts) {
+          const allProducts = JSON.parse(storedProducts);
+          const featuredProducts = allProducts.filter((p: Product) => p.isFeatured || p.isNew);
+          
+          if (featuredProducts.length > 0) {
+            setProducts(featuredProducts.slice(0, 4));
+          }
+        }
+      } catch (error) {
+        console.error('Error handling storage change:', error);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Custom event for product updates
+    window.addEventListener('productsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('productsUpdated', handleStorageChange);
+    };
+  }, []);
 
   return (
     <section className="page-container">
@@ -63,10 +115,10 @@ const FeaturedProducts = () => {
           asChild
           className="px-6 bg-crochet-800 hover:bg-crochet-900"
         >
-          <a href="/shop">
+          <Link to="/shop">
             View All Products
             <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       </div>
     </section>
