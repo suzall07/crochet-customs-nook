@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -7,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { loginCustomer, isCustomerLoggedIn } from '@/utils/authUtils';
 
 interface Customer {
   id: string;
@@ -30,13 +30,9 @@ const CustomerLogin = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
   useEffect(() => {
     // Check if customer is already logged in
-    const customerLoggedIn = localStorage.getItem('customerLoggedIn');
-    if (customerLoggedIn === 'true') {
-      setIsLoggedIn(true);
+    if (isCustomerLoggedIn()) {
       navigate('/shop');
     }
   }, [navigate]);
@@ -58,21 +54,13 @@ const CustomerLogin = () => {
     const customer = customers.find((c: Customer) => c.email === loginEmail);
     
     if (customer && customer.password === loginPassword) {
-      localStorage.setItem('customerLoggedIn', 'true');
-      localStorage.setItem('currentCustomer', JSON.stringify({
+      // Use the auth utility to handle login
+      loginCustomer({
         id: customer.id,
         name: customer.name,
-        email: customer.email
-      }));
-      
-      // Save login timestamp for session persistence
-      localStorage.setItem('customerLoginTime', Date.now().toString());
-      
-      // Save cart if there's one in localStorage
-      const cart = localStorage.getItem('cart');
-      if (cart) {
-        localStorage.setItem(`cart_${customer.id}`, cart);
-      }
+        email: customer.email,
+        password: customer.password
+      });
       
       toast({
         title: "Login Successful",
@@ -133,20 +121,8 @@ const CustomerLogin = () => {
     customers.push(newCustomer);
     localStorage.setItem('customers', JSON.stringify(customers));
     
-    // Auto-login after registration
-    localStorage.setItem('customerLoggedIn', 'true');
-    localStorage.setItem('customerLoginTime', Date.now().toString());
-    localStorage.setItem('currentCustomer', JSON.stringify({
-      id: newCustomer.id,
-      name: newCustomer.name,
-      email: newCustomer.email
-    }));
-    
-    // Save cart if there's one in localStorage
-    const cart = localStorage.getItem('cart');
-    if (cart) {
-      localStorage.setItem(`cart_${newCustomer.id}`, cart);
-    }
+    // Use the auth utility to handle login
+    loginCustomer(newCustomer);
     
     toast({
       title: "Registration Successful",

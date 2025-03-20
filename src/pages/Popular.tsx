@@ -65,23 +65,6 @@ const Popular = () => {
             <p className="text-amber-600">Products added to the "Popular Crochet" category will appear here.</p>
           </div>
         )}
-
-        {/* Business Hours */}
-        <div className="business-hours-card">
-          <h2 className="text-xl font-medium mb-4 text-amber-800">Business Hours</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="mb-2"><span className="font-medium">Monday - Friday:</span> 9:00 AM - 6:00 PM</p>
-              <p className="mb-2"><span className="font-medium">Saturday:</span> 10:00 AM - 4:00 PM</p>
-              <p><span className="font-medium">Sunday:</span> Closed</p>
-            </div>
-            <div>
-              <p className="mb-2"><span className="font-medium">Phone:</span> +1 (555) 123-4567</p>
-              <p className="mb-2"><span className="font-medium">Email:</span> contact@crochetstudio.com</p>
-              <p><span className="font-medium">Address:</span> 123 Yarn Street, Crafty City</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

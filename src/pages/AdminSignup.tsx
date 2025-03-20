@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { loginAdmin } from '@/utils/authUtils';
 
 const AdminSignup = () => {
   const navigate = useNavigate();
@@ -64,14 +64,19 @@ const AdminSignup = () => {
     
     setIsLoading(true);
     
-    // Save admin credentials to localStorage instead of sessionStorage
+    // Use our auth utility to handle admin login
     setTimeout(() => {
-      localStorage.setItem('admin', JSON.stringify({
+      const adminData = {
         name: formData.name,
         email: formData.email,
-        password: formData.password,
-        isLoggedIn: true
-      }));
+        password: formData.password
+      };
+      
+      // Save admin data
+      localStorage.setItem('admin', JSON.stringify(adminData));
+      
+      // Login the admin
+      loginAdmin(adminData);
       
       setIsLoading(false);
       
@@ -189,7 +194,7 @@ const AdminSignup = () => {
           <div>
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-amber-600 hover:bg-amber-700"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -209,7 +214,7 @@ const AdminSignup = () => {
           <div className="text-center">
             <p className="text-sm">
               Already have an account?{' '}
-              <a href="/admin" className="font-medium text-blue-600 hover:text-blue-500">
+              <a href="/admin" className="font-medium text-amber-600 hover:text-amber-500">
                 Log in
               </a>
             </p>

@@ -7,10 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Edit, Trash } from 'lucide-react';
 import AdminProductList from '@/components/admin/AdminProductList';
 import AdminOrderList from '@/components/admin/AdminOrderList';
 import AdminCustomerList from '@/components/admin/AdminCustomerList';
+import { loginAdmin, logoutAdmin, isAdminLoggedIn } from '@/utils/authUtils';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -33,9 +33,7 @@ const Admin = () => {
         // Case insensitive email comparison
         if (admin.email.toLowerCase() === email.toLowerCase() && admin.password === password) {
           setIsLoggedIn(true);
-          localStorage.setItem('adminLoggedIn', 'true');
-          // Save current timestamp to ensure session persistence
-          localStorage.setItem('adminLoginTime', Date.now().toString());
+          loginAdmin(admin);
           toast({
             title: "Login successful",
             description: "Welcome back to the admin panel",
@@ -48,15 +46,11 @@ const Admin = () => {
     // Demo login fallback
     if (email.toLowerCase() === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
-      localStorage.setItem('adminLoggedIn', 'true');
-      // Save current timestamp to ensure session persistence
-      localStorage.setItem('adminLoginTime', Date.now().toString());
-      localStorage.setItem('admin', JSON.stringify({
+      loginAdmin({
         name: 'Admin User',
         email: 'admin@example.com',
-        password: 'password',
-        isLoggedIn: true
-      }));
+        password: 'password'
+      });
       toast({
         title: "Login successful",
         description: "Welcome to the admin panel",
@@ -73,8 +67,7 @@ const Admin = () => {
 
   // Check if admin is already logged in
   useEffect(() => {
-    const adminLoggedIn = localStorage.getItem('adminLoggedIn');
-    if (adminLoggedIn === 'true') {
+    if (isAdminLoggedIn()) {
       setIsLoggedIn(true);
     }
   }, []);
@@ -83,8 +76,7 @@ const Admin = () => {
     setIsLoggedIn(false);
     setEmail('');
     setPassword('');
-    localStorage.removeItem('adminLoggedIn');
-    localStorage.removeItem('adminLoginTime');
+    logoutAdmin();
     toast({
       title: "Logged out",
       description: "You have been logged out successfully",
