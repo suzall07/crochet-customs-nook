@@ -78,7 +78,6 @@ const Shop = () => {
             <div>
               <p className="mb-2"><span className="font-medium">Phone:</span> +1 (555) 123-4567</p>
               <p className="mb-2"><span className="font-medium">Email:</span> contact@crochetstudio.com</p>
-              <p><span className="font-medium">Address:</span> 123 Yarn Street, Crafty City</p>
             </div>
           </div>
         </div>

@@ -65,6 +65,15 @@ const CustomerLogin = () => {
         email: customer.email
       }));
       
+      // Save login timestamp for session persistence
+      localStorage.setItem('customerLoginTime', Date.now().toString());
+      
+      // Save cart if there's one in localStorage
+      const cart = localStorage.getItem('cart');
+      if (cart) {
+        localStorage.setItem(`cart_${customer.id}`, cart);
+      }
+      
       toast({
         title: "Login Successful",
         description: `Welcome back, ${customer.name}!`
@@ -126,11 +135,18 @@ const CustomerLogin = () => {
     
     // Auto-login after registration
     localStorage.setItem('customerLoggedIn', 'true');
+    localStorage.setItem('customerLoginTime', Date.now().toString());
     localStorage.setItem('currentCustomer', JSON.stringify({
       id: newCustomer.id,
       name: newCustomer.name,
       email: newCustomer.email
     }));
+    
+    // Save cart if there's one in localStorage
+    const cart = localStorage.getItem('cart');
+    if (cart) {
+      localStorage.setItem(`cart_${newCustomer.id}`, cart);
+    }
     
     toast({
       title: "Registration Successful",

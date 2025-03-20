@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -35,6 +34,8 @@ const Admin = () => {
         if (admin.email.toLowerCase() === email.toLowerCase() && admin.password === password) {
           setIsLoggedIn(true);
           localStorage.setItem('adminLoggedIn', 'true');
+          // Save current timestamp to ensure session persistence
+          localStorage.setItem('adminLoginTime', Date.now().toString());
           toast({
             title: "Login successful",
             description: "Welcome back to the admin panel",
@@ -48,6 +49,8 @@ const Admin = () => {
     if (email.toLowerCase() === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
       localStorage.setItem('adminLoggedIn', 'true');
+      // Save current timestamp to ensure session persistence
+      localStorage.setItem('adminLoginTime', Date.now().toString());
       localStorage.setItem('admin', JSON.stringify({
         name: 'Admin User',
         email: 'admin@example.com',
@@ -81,6 +84,7 @@ const Admin = () => {
     setEmail('');
     setPassword('');
     localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminLoginTime');
     toast({
       title: "Logged out",
       description: "You have been logged out successfully",
@@ -131,13 +135,13 @@ const Admin = () => {
               {error && <p className="text-sm text-red-600">{error}</p>}
             </CardContent>
             <CardFooter className="flex flex-col space-y-2">
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Login</Button>
+              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">Login</Button>
               <div className="text-center w-full">
                 <Button 
                   type="button" 
                   variant="link" 
                   onClick={handleSignUp}
-                  className="text-blue-600"
+                  className="text-amber-600"
                 >
                   Don't have an account? Sign up
                 </Button>
@@ -163,11 +167,11 @@ const Admin = () => {
         </div>
         
         <Tabs defaultValue="products">
-          <TabsList className="mb-6 bg-blue-100">
-            <TabsTrigger value="products" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Products</TabsTrigger>
-            <TabsTrigger value="orders" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Orders</TabsTrigger>
-            <TabsTrigger value="customers" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Customers</TabsTrigger>
-            <TabsTrigger value="custom-orders" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Custom Orders</TabsTrigger>
+          <TabsList className="mb-6 bg-orange-100">
+            <TabsTrigger value="products" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Products</TabsTrigger>
+            <TabsTrigger value="orders" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Orders</TabsTrigger>
+            <TabsTrigger value="customers" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Customers</TabsTrigger>
+            <TabsTrigger value="custom-orders" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Custom Orders</TabsTrigger>
           </TabsList>
           
           <TabsContent value="products">
@@ -190,7 +194,7 @@ const Admin = () => {
               </CardHeader>
               <CardContent>
                 <div className="border rounded-md">
-                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-blue-50">
+                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-orange-50">
                     <div className="col-span-1">ID</div>
                     <div className="col-span-2">Item Type</div>
                     <div className="col-span-3">Description</div>
@@ -224,7 +228,7 @@ const Admin = () => {
                           <div className="col-span-2">
                             <span className={`inline-block px-2 py-1 rounded-full text-xs ${
                               order.status === 'Completed' ? 'bg-green-100 text-green-800' : 
-                              order.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 
+                              order.status === 'In Progress' ? 'bg-orange-100 text-orange-800' : 
                               'bg-yellow-100 text-yellow-800'
                             }`}>
                               {order.status}
@@ -234,7 +238,7 @@ const Admin = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="bg-blue-50 hover:bg-blue-100"
+                              className="bg-orange-50 hover:bg-orange-100"
                               onClick={() => {
                                 // Update status logic
                                 const updatedOrders = customOrders.map((o: any) => 
