@@ -102,22 +102,22 @@ const Header = () => {
           {/* Logo */}
           <Link 
             to="/" 
-            className="relative z-10 font-medium text-xl text-crochet-900"
+            className="relative z-10 font-display text-xl text-blue-800 font-medium"
           >
             Crochet with Limboo
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-5">
+          <nav className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "text-sm transition-colors hover:text-crochet-700",
+                  "text-sm transition-colors hover:text-blue-700",
                   location.pathname === item.path 
-                    ? "text-crochet-900 font-medium" 
-                    : "text-crochet-800"
+                    ? "text-blue-800 font-medium" 
+                    : "text-blue-600"
                 )}
               >
                 {item.name}
@@ -132,6 +132,7 @@ const Header = () => {
               size="icon" 
               aria-label="Search"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="text-blue-700 hover:text-blue-900 hover:bg-blue-50"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -139,19 +140,19 @@ const Header = () => {
               variant="ghost" 
               size="icon" 
               aria-label="Cart" 
-              className="relative"
+              className="relative text-blue-700 hover:text-blue-900 hover:bg-blue-50"
               onClick={() => navigate("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-crochet-700 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
               )}
             </Button>
             <Button 
               variant="outline"
-              className="ml-2"
+              className="ml-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-900"
               onClick={() => navigate("/admin")}
             >
               <LogIn className="h-4 w-4 mr-2" />
@@ -163,7 +164,7 @@ const Header = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="md:hidden"
+            className="md:hidden text-blue-700 hover:text-blue-900 hover:bg-blue-50"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -178,12 +179,12 @@ const Header = () => {
               <Input
                 type="search"
                 placeholder="Search for crochet items..."
-                className="w-full"
+                className="w-full border-blue-200 focus-visible:ring-blue-400"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
               />
-              <Button type="submit" className="ml-2 bg-crochet-800">
+              <Button type="submit" className="ml-2 bg-blue-700 hover:bg-blue-800">
                 <Search className="h-4 w-4" />
               </Button>
               <Button 
@@ -191,7 +192,7 @@ const Header = () => {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setIsSearchOpen(false)}
-                className="ml-2"
+                className="ml-2 text-blue-700"
               >
                 Cancel
               </Button>
@@ -209,11 +210,11 @@ const Header = () => {
                 <Input
                   type="search"
                   placeholder="Search for crochet items..."
-                  className="w-full"
+                  className="w-full border-blue-200"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Button type="submit" className="ml-2 bg-crochet-800">
+                <Button type="submit" className="ml-2 bg-blue-700 hover:bg-blue-800">
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -227,8 +228,8 @@ const Header = () => {
                   className={cn(
                     "text-lg py-2 border-b border-gray-100",
                     location.pathname === item.path 
-                      ? "text-crochet-700 font-medium" 
-                      : "text-crochet-900"
+                      ? "text-blue-700 font-medium" 
+                      : "text-blue-600"
                   )}
                 >
                   {item.name}
@@ -236,7 +237,7 @@ const Header = () => {
               ))}
               <Link 
                 to="/admin" 
-                className="text-lg py-2 border-b border-gray-100 flex items-center text-crochet-900"
+                className="text-lg py-2 border-b border-gray-100 flex items-center text-blue-600"
               >
                 <LogIn className="h-4 w-4 mr-2" />
                 Admin Login
@@ -246,13 +247,17 @@ const Header = () => {
             <div className="mt-6 flex justify-around">
               <Button 
                 variant="ghost" 
-                className="flex items-center"
+                className="flex items-center text-blue-700"
                 onClick={() => navigate("/cart")}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 <span>Cart ({cartItemCount})</span>
               </Button>
-              <Button variant="ghost" className="flex items-center">
+              <Button 
+                variant="ghost" 
+                className="flex items-center text-blue-700"
+                onClick={() => navigate("/customer/login")}
+              >
                 <User className="h-5 w-5 mr-2" />
                 <span>Account</span>
               </Button>

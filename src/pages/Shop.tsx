@@ -48,26 +48,26 @@ const Shop = () => {
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-medium mb-2 text-blue-800">Shop</h1>
-        <p className="text-muted-foreground mb-8">Browse our collection of handmade crochet items</p>
+        <h1 className="text-3xl font-display font-medium mb-2 text-blue-800">Shop</h1>
+        <p className="text-blue-600 mb-8">Browse our collection of handmade crochet items</p>
         
-        <Separator className="mb-8" />
+        <Separator className="mb-8 bg-blue-200" />
         
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="product-grid">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-lg text-gray-500 mb-4">No products in this category yet.</p>
-            <p className="text-gray-400">Products added to the "Shop" category will appear here.</p>
+          <div className="text-center py-12 bg-blue-50 rounded-lg">
+            <p className="text-lg text-blue-700 mb-4">No products in this category yet.</p>
+            <p className="text-blue-500">Products added to the "Shop" category will appear here.</p>
           </div>
         )}
 
         {/* Business Hours */}
-        <div className="mt-16 p-6 bg-blue-50 rounded-lg border border-blue-100">
+        <div className="business-hours-card">
           <h2 className="text-xl font-medium mb-4 text-blue-800">Business Hours</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

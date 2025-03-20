@@ -66,24 +66,24 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section className="page-container">
+    <section className="page-container bg-blue-50 py-16 rounded-lg">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-medium text-blue-800">Featured Creations</h2>
-        <p className="text-muted-foreground mt-2">
+        <h2 className="text-3xl font-display font-medium text-blue-800">Featured Creations</h2>
+        <p className="text-blue-700 mt-2 max-w-xl mx-auto">
           Discover our handpicked collection of unique crochet items
         </p>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="product-grid">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} className="animate-scale-in" />
         ))}
       </div>
       
-      <div className="mt-8 text-center">
+      <div className="mt-12 text-center">
         <Button 
           asChild
-          className="px-6 bg-blue-600 hover:bg-blue-700"
+          className="primary-button px-8 py-2"
         >
           <Link to="/shop">
             View All Products

@@ -76,15 +76,15 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
 
   return (
     <div 
-      className={cn("relative rounded-lg shadow-sm", className)}
+      className={cn("relative rounded-lg shadow-sm bg-white", className)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link to={`/product/${product.id}`} className="block">
-        <div className="relative overflow-hidden rounded-lg aspect-[4/5]">
+        <div className="relative overflow-hidden rounded-t-lg aspect-[4/5]">
           {/* Skeleton loader */}
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+            <div className="absolute inset-0 bg-blue-100 animate-pulse" />
           )}
           
           {/* Product image with lazy loading */}
@@ -104,12 +104,12 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.isNew && (
-              <span className="bg-crochet-600 text-white text-xs font-medium px-2 py-1 rounded">
+              <span className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded">
                 New
               </span>
             )}
             {product.isFeatured && (
-              <span className="bg-black text-white text-xs font-medium px-2 py-1 rounded">
+              <span className="bg-accent text-accent-foreground text-xs font-medium px-2 py-1 rounded">
                 Featured
               </span>
             )}
@@ -117,14 +117,14 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         </div>
         
         {/* Product info */}
-        <div className="p-3">
-          <div className="text-xs text-muted-foreground">
+        <div className="p-4">
+          <div className="text-xs text-blue-500 font-medium">
             {product.category}
           </div>
-          <h3 className="font-medium text-base text-crochet-900 mb-1 truncate">
+          <h3 className="font-medium text-base text-blue-900 mb-1 truncate">
             {product.name}
           </h3>
-          <div className="font-medium text-crochet-800">
+          <div className="font-medium text-blue-800">
             Rs {product.price.toLocaleString()}
           </div>
           
@@ -132,7 +132,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           <div className="mt-3 flex justify-end">
             <Button 
               size="sm"
-              className="bg-crochet-800 hover:bg-crochet-900 text-white text-xs"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="h-3 w-3 mr-1" />

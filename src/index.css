@@ -102,4 +102,25 @@
   .button-effect:hover::after {
     @apply scale-x-100;
   }
+
+  /* Business hours card for reuse */
+  .business-hours-card {
+    @apply mt-16 p-6 bg-blue-50 rounded-lg border border-blue-100;
+  }
+  
+  /* Enhanced buttons */
+  .primary-button {
+    @apply bg-primary hover:bg-primary/90 text-white font-medium rounded-md 
+           transition-all duration-300 flex items-center justify-center;
+  }
+  
+  .secondary-button {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium 
+           rounded-md transition-all duration-300 flex items-center justify-center;
+  }
+  
+  /* Product grid for consistency */
+  .product-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+  }
 }
