@@ -29,11 +29,11 @@ interface PatternOption {
 
 const colorOptions: ColorOption[] = [
   { name: "Cream", value: "#F5F5DC" },
-  { name: "Dusty Rose", value: "#DCABAB" },
-  { name: "Sage Green", value: "#B2BDA0" },
-  { name: "Sky Blue", value: "#A6C0D4" },
-  { name: "Lavender", value: "#CAB8D9" },
-  { name: "Mustard", value: "#E1AD01" },
+  { name: "Peach", value: "#FFDAB9" },
+  { name: "Soft Orange", value: "#FFCC99" },
+  { name: "Light Brown", value: "#D2B48C" },
+  { name: "Beige", value: "#F5F5DC" },
+  { name: "Sand", value: "#E6D2B5" },
 ];
 
 const sizeOptions: SizeOption[] = [
@@ -104,7 +104,7 @@ const CustomizationSection = () => {
   };
 
   return (
-    <section className="bg-crochet-50 py-20">
+    <section className="bg-orange-50 py-20">
       <div className="page-container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Preview */}
@@ -122,9 +122,9 @@ const CustomizationSection = () => {
               />
             </div>
             
-            <div className="absolute -bottom-6 -right-6 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-crochet-100 animate-fade-in">
-              <p className="text-sm font-medium text-crochet-900">Your custom creation</p>
-              <p className="text-xs text-crochet-600">Rendered in real-time</p>
+            <div className="absolute -bottom-6 -right-6 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-orange-100 animate-fade-in">
+              <p className="text-sm font-medium text-amber-900">Your custom creation</p>
+              <p className="text-xs text-amber-600">Rendered in real-time</p>
             </div>
           </div>
           
@@ -138,7 +138,7 @@ const CustomizationSection = () => {
             <div className="space-y-8">
               {/* Color selection */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-crochet-900">Select Color</label>
+                <label className="text-sm font-medium text-amber-900">Select Color</label>
                 <div className="flex flex-wrap gap-3">
                   {colorOptions.map((color) => (
                     <button
@@ -147,7 +147,7 @@ const CustomizationSection = () => {
                       className={cn(
                         "w-8 h-8 rounded-full transition-all duration-200",
                         selectedColor.value === color.value 
-                          ? "ring-2 ring-offset-2 ring-crochet-600 scale-110" 
+                          ? "ring-2 ring-offset-2 ring-amber-600 scale-110" 
                           : "hover:scale-110"
                       )}
                       style={{ backgroundColor: color.value }}
@@ -155,7 +155,7 @@ const CustomizationSection = () => {
                       aria-label={`Select ${color.name} color`}
                     >
                       {selectedColor.value === color.value && (
-                        <Check className="h-4 w-4 mx-auto text-crochet-900/50" />
+                        <Check className="h-4 w-4 mx-auto text-amber-900/50" />
                       )}
                     </button>
                   ))}
@@ -165,7 +165,7 @@ const CustomizationSection = () => {
               
               {/* Size selection */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-crochet-900">Select Size</label>
+                <label className="text-sm font-medium text-amber-900">Select Size</label>
                 <div className="flex flex-wrap gap-3">
                   {sizeOptions.map((size) => (
                     <button
@@ -174,8 +174,8 @@ const CustomizationSection = () => {
                       className={cn(
                         "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
                         selectedSize.value === size.value 
-                          ? "bg-crochet-700 text-white" 
-                          : "bg-white border border-crochet-200 text-crochet-800 hover:bg-crochet-50"
+                          ? "bg-amber-700 text-white" 
+                          : "bg-white border border-amber-200 text-amber-800 hover:bg-orange-50"
                       )}
                     >
                       {size.name}
@@ -186,12 +186,12 @@ const CustomizationSection = () => {
               
               {/* Pattern selection */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-crochet-900">Select Pattern</label>
+                <label className="text-sm font-medium text-amber-900">Select Pattern</label>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="outline" 
-                      className="w-full justify-between border-crochet-200"
+                      className="w-full justify-between border-amber-200"
                     >
                       {selectedPattern.name}
                       <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
@@ -223,7 +223,7 @@ const CustomizationSection = () => {
               </div>
               
               <Button 
-                className="w-full mt-6 bg-crochet-800 hover:bg-crochet-900 button-effect"
+                className="w-full mt-6 bg-amber-800 hover:bg-amber-900 button-effect"
                 onClick={handleAddToCart}
               >
                 Add Custom Item to Cart
