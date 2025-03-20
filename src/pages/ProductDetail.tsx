@@ -8,41 +8,6 @@ import ProductCard, { Product } from '@/components/ProductCard';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 
-const fallbackProducts: Product[] = [
-  {
-    id: 1,
-    name: "Hand-knit Wool Sweater",
-    price: 8999,
-    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Sweaters",
-    isFeatured: true
-  },
-  {
-    id: 2,
-    name: "Crochet Baby Blanket",
-    price: 4500,
-    image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Blankets",
-    isNew: true
-  },
-  {
-    id: 3,
-    name: "Handmade Beanie Hat",
-    price: 2999,
-    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Hats",
-    isFeatured: true
-  },
-  {
-    id: 4,
-    name: "Crochet Wall Hanging",
-    price: 1999,
-    image: "https://images.pexels.com/photos/6858602/pexels-photo-6858602.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Home Decor",
-    isNew: true
-  }
-];
-
 interface Review {
   id: string;
   name: string;
@@ -63,6 +28,7 @@ const ProductDetail = () => {
   const [reviewComment, setReviewComment] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
@@ -71,6 +37,14 @@ const ProductDetail = () => {
     e.currentTarget.src = fallbackImage;
   };
 
+  // Check if customer is logged in
+  useEffect(() => {
+    const customerLoggedIn = localStorage.getItem('customerLoggedIn');
+    if (customerLoggedIn === 'true') {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   // Load all products first
   useEffect(() => {
     try {
@@ -78,12 +52,11 @@ const ProductDetail = () => {
       if (storedProducts) {
         setAllProducts(JSON.parse(storedProducts));
       } else {
-        setAllProducts(fallbackProducts);
-        localStorage.setItem('products', JSON.stringify(fallbackProducts));
+        setAllProducts([]);
       }
     } catch (error) {
       console.error('Error loading products:', error);
-      setAllProducts(fallbackProducts);
+      setAllProducts([]);
     }
   }, []);
 
@@ -132,6 +105,16 @@ const ProductDetail = () => {
   }, [id, allProducts]);
 
   const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Login Required",
+        description: "Please login to add items to your cart.",
+        variant: "destructive"
+      });
+      navigate('/customer/login');
+      return;
+    }
+
     if (product) {
       const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
       
@@ -157,6 +140,16 @@ const ProductDetail = () => {
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isLoggedIn) {
+      toast({
+        title: "Login Required",
+        description: "Please login to leave a review.",
+        variant: "destructive"
+      });
+      navigate('/customer/login');
+      return;
+    }
     
     if (!reviewName.trim() || !reviewComment.trim()) {
       toast({
@@ -216,7 +209,7 @@ const ProductDetail = () => {
       <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-medium mb-2">Product not found</h2>
-          <Button onClick={() => navigate("/shop")}>Back to Shop</Button>
+          <Button onClick={() => navigate("/shop")} className="bg-blue-600 hover:bg-blue-700">Back to Shop</Button>
         </div>
       </div>
     );
@@ -227,7 +220,7 @@ const ProductDetail = () => {
       <div className="container mx-auto px-4">
         <Button 
           variant="ghost" 
-          className="mb-6"
+          className="mb-6 text-blue-600 hover:bg-blue-50"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -252,7 +245,7 @@ const ProductDetail = () => {
           
           <div>
             <span className="text-sm text-muted-foreground">{product.category}</span>
-            <h1 className="text-3xl font-medium mt-1 mb-2">{product.name}</h1>
+            <h1 className="text-3xl font-medium mt-1 mb-2 text-blue-800">{product.name}</h1>
             <p className="text-2xl font-medium mb-6">Rs {product.price.toLocaleString()}</p>
             
             <div className="mb-8">
@@ -263,10 +256,32 @@ const ProductDetail = () => {
               </p>
             </div>
             
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-2">Crochet Patterns</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="border rounded-md p-4 text-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1615589184136-9b8813cd9af9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJhc2tldCUyMHdlYXZlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" 
+                    alt="Basket Weave" 
+                    className="w-full h-32 object-cover rounded mb-2"
+                  />
+                  <p className="font-medium">Basket Weave</p>
+                </div>
+                <div className="border rounded-md p-4 text-center">
+                  <img 
+                    src="https://images.unsplash.com/photo-1542565727-414a507af391?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c2hlbGwlMjBzdGl0Y2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" 
+                    alt="Shell Stitch" 
+                    className="w-full h-32 object-cover rounded mb-2"
+                  />
+                  <p className="font-medium">Shell Stitch</p>
+                </div>
+              </div>
+            </div>
+            
             <div className="flex space-x-4">
               <Button 
                 size="lg"
-                className="flex-1 bg-crochet-800 hover:bg-crochet-900"
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
@@ -277,9 +292,9 @@ const ProductDetail = () => {
         </div>
         
         <div className="mb-16">
-          <h2 className="text-2xl font-medium mb-6">Customer Reviews</h2>
+          <h2 className="text-2xl font-medium mb-6 text-blue-800">Customer Reviews</h2>
           
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
+          <div className="bg-blue-50 p-6 rounded-lg mb-8">
             <h3 className="text-lg font-medium mb-4">Leave a Review</h3>
             <form onSubmit={handleSubmitReview}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -322,10 +337,13 @@ const ProductDetail = () => {
               </div>
               <Button 
                 type="submit"
-                className="bg-crochet-800 hover:bg-crochet-900"
+                className="bg-blue-600 hover:bg-blue-700"
               >
                 Submit Review
               </Button>
+              {!isLoggedIn && (
+                <p className="mt-2 text-sm text-red-500">Please login to leave a review.</p>
+              )}
             </form>
           </div>
           
@@ -361,7 +379,7 @@ const ProductDetail = () => {
         
         {relatedProducts.length > 0 && (
           <div>
-            <h2 className="text-2xl font-medium mb-6">You might also like</h2>
+            <h2 className="text-2xl font-medium mb-6 text-blue-800">You might also like</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {relatedProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
@@ -369,6 +387,23 @@ const ProductDetail = () => {
             </div>
           </div>
         )}
+
+        {/* Business Hours */}
+        <div className="mt-16 p-6 bg-blue-50 rounded-lg border border-blue-100">
+          <h2 className="text-xl font-medium mb-4 text-blue-800">Business Hours</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="mb-2"><span className="font-medium">Monday - Friday:</span> 9:00 AM - 6:00 PM</p>
+              <p className="mb-2"><span className="font-medium">Saturday:</span> 10:00 AM - 4:00 PM</p>
+              <p><span className="font-medium">Sunday:</span> Closed</p>
+            </div>
+            <div>
+              <p className="mb-2"><span className="font-medium">Phone:</span> +1 (555) 123-4567</p>
+              <p className="mb-2"><span className="font-medium">Email:</span> contact@crochetstudio.com</p>
+              <p><span className="font-medium">Address:</span> 123 Yarn Street, Crafty City</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

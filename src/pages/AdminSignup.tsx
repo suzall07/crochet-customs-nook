@@ -64,12 +64,12 @@ const AdminSignup = () => {
     
     setIsLoading(true);
     
-    // Simulate API call for registration
+    // Save admin credentials to localStorage instead of sessionStorage
     setTimeout(() => {
-      // Store admin credentials in sessionStorage
-      sessionStorage.setItem('admin', JSON.stringify({
+      localStorage.setItem('admin', JSON.stringify({
         name: formData.name,
         email: formData.email,
+        password: formData.password,
         isLoggedIn: true
       }));
       
@@ -109,7 +109,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.name ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-crochet-500 focus:border-crochet-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Full Name"
                 value={formData.name}
                 onChange={handleChange}
@@ -131,7 +131,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-crochet-500 focus:border-crochet-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -153,7 +153,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-crochet-500 focus:border-crochet-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -175,7 +175,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-crochet-500 focus:border-crochet-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -189,7 +189,7 @@ const AdminSignup = () => {
           <div>
             <Button
               type="submit"
-              className="w-full bg-crochet-800 hover:bg-crochet-900"
+              className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -209,7 +209,7 @@ const AdminSignup = () => {
           <div className="text-center">
             <p className="text-sm">
               Already have an account?{' '}
-              <a href="/admin" className="font-medium text-crochet-600 hover:text-crochet-500">
+              <a href="/admin" className="font-medium text-blue-600 hover:text-blue-500">
                 Log in
               </a>
             </p>

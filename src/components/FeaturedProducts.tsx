@@ -5,42 +5,6 @@ import { Button } from '@/components/ui/button';
 import ProductCard, { Product } from './ProductCard';
 import { Link } from 'react-router-dom';
 
-// Fallback products if none are in localStorage
-const fallbackProducts: Product[] = [
-  {
-    id: 1,
-    name: "Hand-knit Wool Sweater",
-    price: 8999,
-    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Sweaters",
-    isFeatured: true
-  },
-  {
-    id: 2,
-    name: "Crochet Baby Blanket",
-    price: 4500,
-    image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Baby",
-    isNew: true
-  },
-  {
-    id: 3,
-    name: "Handmade Beanie Hat",
-    price: 2999,
-    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Accessories",
-    isFeatured: true
-  },
-  {
-    id: 4,
-    name: "Crochet Wall Hanging",
-    price: 1999,
-    image: "https://images.pexels.com/photos/6858602/pexels-photo-6858602.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Home Decor",
-    isNew: true
-  }
-];
-
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -50,20 +14,20 @@ const FeaturedProducts = () => {
       const storedProducts = localStorage.getItem('products');
       if (storedProducts) {
         const allProducts = JSON.parse(storedProducts);
-        // Filter for featured or new products
+        // Filter for featured or new products - limit to 4
         const featuredProducts = allProducts.filter((p: Product) => p.isFeatured || p.isNew);
         
         if (featuredProducts.length > 0) {
-          setProducts(featuredProducts.slice(0, 4)); // Show up to 4 products
+          setProducts(featuredProducts.slice(0, 4));
         } else {
-          setProducts(fallbackProducts);
+          setProducts([]);
         }
       } else {
-        setProducts(fallbackProducts);
+        setProducts([]);
       }
     } catch (error) {
       console.error('Error loading products:', error);
-      setProducts(fallbackProducts);
+      setProducts([]);
     }
   }, []);
 
@@ -78,6 +42,8 @@ const FeaturedProducts = () => {
           
           if (featuredProducts.length > 0) {
             setProducts(featuredProducts.slice(0, 4));
+          } else {
+            setProducts([]);
           }
         }
       } catch (error) {
@@ -95,10 +61,14 @@ const FeaturedProducts = () => {
     };
   }, []);
 
+  if (products.length === 0) {
+    return null; // Don't show the section if there are no products
+  }
+
   return (
     <section className="page-container">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-medium">Featured Creations</h2>
+        <h2 className="text-2xl font-medium text-blue-800">Featured Creations</h2>
         <p className="text-muted-foreground mt-2">
           Discover our handpicked collection of unique crochet items
         </p>
@@ -113,7 +83,7 @@ const FeaturedProducts = () => {
       <div className="mt-8 text-center">
         <Button 
           asChild
-          className="px-6 bg-crochet-800 hover:bg-crochet-900"
+          className="px-6 bg-blue-600 hover:bg-blue-700"
         >
           <Link to="/shop">
             View All Products

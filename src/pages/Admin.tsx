@@ -25,23 +25,27 @@ const Admin = () => {
     e.preventDefault();
     setError('');
     
-    // Check if admin exists in localStorage (changed from sessionStorage)
+    // Check if admin exists in localStorage
     const storedAdmin = localStorage.getItem('admin');
     if (storedAdmin) {
       const admin = JSON.parse(storedAdmin);
-      if (admin.email === email && admin.password === password) {
-        setIsLoggedIn(true);
-        localStorage.setItem('adminLoggedIn', 'true');
-        toast({
-          title: "Login successful",
-          description: "Welcome back to the admin panel",
-        });
-        return;
+      // Check if the admin object has an email and password
+      if (admin.email && admin.password) {
+        // Case insensitive email comparison
+        if (admin.email.toLowerCase() === email.toLowerCase() && admin.password === password) {
+          setIsLoggedIn(true);
+          localStorage.setItem('adminLoggedIn', 'true');
+          toast({
+            title: "Login successful",
+            description: "Welcome back to the admin panel",
+          });
+          return;
+        }
       }
     }
     
     // Demo login fallback
-    if (email === 'admin@example.com' && password === 'password') {
+    if (email.toLowerCase() === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
       localStorage.setItem('adminLoggedIn', 'true');
       localStorage.setItem('admin', JSON.stringify({
@@ -127,13 +131,13 @@ const Admin = () => {
               {error && <p className="text-sm text-red-600">{error}</p>}
             </CardContent>
             <CardFooter className="flex flex-col space-y-2">
-              <Button type="submit" className="w-full bg-crochet-800">Login</Button>
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Login</Button>
               <div className="text-center w-full">
                 <Button 
                   type="button" 
                   variant="link" 
                   onClick={handleSignUp}
-                  className="text-crochet-800"
+                  className="text-blue-600"
                 >
                   Don't have an account? Sign up
                 </Button>
@@ -159,11 +163,11 @@ const Admin = () => {
         </div>
         
         <Tabs defaultValue="products">
-          <TabsList className="mb-6">
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="orders">Orders</TabsTrigger>
-            <TabsTrigger value="customers">Customers</TabsTrigger>
-            <TabsTrigger value="custom-orders">Custom Orders</TabsTrigger>
+          <TabsList className="mb-6 bg-blue-100">
+            <TabsTrigger value="products" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Products</TabsTrigger>
+            <TabsTrigger value="orders" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Orders</TabsTrigger>
+            <TabsTrigger value="customers" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Customers</TabsTrigger>
+            <TabsTrigger value="custom-orders" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Custom Orders</TabsTrigger>
           </TabsList>
           
           <TabsContent value="products">
@@ -186,7 +190,7 @@ const Admin = () => {
               </CardHeader>
               <CardContent>
                 <div className="border rounded-md">
-                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-muted">
+                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-blue-50">
                     <div className="col-span-1">ID</div>
                     <div className="col-span-2">Item Type</div>
                     <div className="col-span-3">Description</div>
@@ -230,6 +234,7 @@ const Admin = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
+                              className="bg-blue-50 hover:bg-blue-100"
                               onClick={() => {
                                 // Update status logic
                                 const updatedOrders = customOrders.map((o: any) => 

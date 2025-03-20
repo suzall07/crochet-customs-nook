@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Product } from '@/components/ProductCard';
-import { PlusCircle, Edit, Trash, Image } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Image, AlertTriangle } from 'lucide-react';
 
 const defaultProducts: Product[] = [
   {
@@ -16,7 +16,7 @@ const defaultProducts: Product[] = [
     name: "Cozy Winter Blanket",
     price: 3500,
     image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg",
-    category: "Home Decor",
+    category: "Shop",
     isNew: true,
   },
   {
@@ -24,24 +24,9 @@ const defaultProducts: Product[] = [
     name: "Amigurumi Elephant",
     price: 1200,
     image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg",
-    category: "Toys",
+    category: "Popular Crochet",
     isFeatured: true,
-  },
-  {
-    id: 3,
-    name: "Summer Hat",
-    price: 900,
-    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg",
-    category: "Apparel",
-  },
-  {
-    id: 4,
-    name: "Baby Booties",
-    price: 600,
-    image: "https://images.pexels.com/photos/6851381/pexels-photo-6851381.jpeg",
-    category: "Baby",
-    isNew: true,
-  },
+  }
 ];
 
 const AdminProductList = () => {
@@ -49,6 +34,7 @@ const AdminProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
     id: 0,
@@ -155,6 +141,8 @@ const AdminProductList = () => {
 
     setProducts(updatedProducts);
     localStorage.setItem('products', JSON.stringify(updatedProducts));
+    // Trigger custom event to notify other components about the product update
+    window.dispatchEvent(new Event('productsUpdated'));
     setIsDialogOpen(false);
     resetForm();
   };
@@ -165,6 +153,7 @@ const AdminProductList = () => {
     const updatedProducts = products.filter(product => product.id !== currentProduct.id);
     setProducts(updatedProducts);
     localStorage.setItem('products', JSON.stringify(updatedProducts));
+    window.dispatchEvent(new Event('productsUpdated'));
     
     toast({
       title: "Product Deleted",
@@ -173,6 +162,19 @@ const AdminProductList = () => {
     
     setIsDeleteDialogOpen(false);
     setCurrentProduct(null);
+  };
+
+  const handleDeleteAll = () => {
+    setProducts([]);
+    localStorage.setItem('products', JSON.stringify([]));
+    window.dispatchEvent(new Event('productsUpdated'));
+    
+    toast({
+      title: "All Products Deleted",
+      description: "All products have been removed from the catalog."
+    });
+    
+    setIsDeleteAllDialogOpen(false);
   };
 
   const openAddDialog = () => {
@@ -199,6 +201,10 @@ const AdminProductList = () => {
     setIsDeleteDialogOpen(true);
   };
 
+  const openDeleteAllDialog = () => {
+    setIsDeleteAllDialogOpen(true);
+  };
+
   const resetForm = () => {
     setFormData({
       id: 0,
@@ -222,9 +228,16 @@ const AdminProductList = () => {
         <CardDescription>Manage your product catalog</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
           <Button 
-            className="bg-crochet-800"
+            className="bg-red-600 hover:bg-red-700 text-white"
+            onClick={openDeleteAllDialog}
+          >
+            <Trash className="mr-2 h-4 w-4" />
+            Delete All Products
+          </Button>
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700"
             onClick={openAddDialog}
           >
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -232,7 +245,7 @@ const AdminProductList = () => {
           </Button>
         </div>
         <div className="border rounded-md">
-          <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-muted">
+          <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-blue-50">
             <div className="col-span-1">ID</div>
             <div className="col-span-3">Name</div>
             <div className="col-span-2">Category</div>
@@ -273,6 +286,7 @@ const AdminProductList = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
+                    className="bg-blue-50 hover:bg-blue-100"
                     onClick={() => openEditDialog(product)}
                   >
                     <Edit className="h-3.5 w-3.5 mr-1" />
@@ -340,13 +354,8 @@ const AdminProductList = () => {
                   required
                 >
                   <option value="">Select category</option>
-                  <option value="Home Decor">Home Decor</option>
-                  <option value="Apparel">Apparel</option>
                   <option value="Shop">Shop</option>
                   <option value="Popular Crochet">Popular Crochet</option>
-                  <option value="Toys">Toys</option>
-                  <option value="Baby">Baby</option>
-                  <option value="Accessories">Accessories</option>
                 </select>
               </div>
             </div>
@@ -354,7 +363,7 @@ const AdminProductList = () => {
             <div className="space-y-2">
               <Label>Product Image *</Label>
               <div className="grid grid-cols-1 gap-4">
-                <div className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => fileInputRef.current?.click()}>
+                <div className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-blue-50 transition-colors" onClick={() => fileInputRef.current?.click()}>
                   <input 
                     type="file" 
                     ref={fileInputRef}
@@ -432,7 +441,7 @@ const AdminProductList = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button className="bg-crochet-800" onClick={handleAddEdit}>
+            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEdit}>
               {formData.id === 0 ? 'Add Product' : 'Update Product'}
             </Button>
           </DialogFooter>
@@ -451,6 +460,26 @@ const AdminProductList = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete All Confirmation Dialog */}
+      <Dialog open={isDeleteAllDialogOpen} onOpenChange={setIsDeleteAllDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+              Delete All Products
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="font-medium text-red-600 mb-2">Warning: This is a destructive action!</p>
+            <p>Are you sure you want to delete ALL products? This action cannot be undone and will remove all products from your catalog.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteAllDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeleteAll}>Delete All</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
