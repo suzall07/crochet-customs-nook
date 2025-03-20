@@ -84,7 +84,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         <div className="relative overflow-hidden rounded-t-lg aspect-[4/5]">
           {/* Skeleton loader */}
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-blue-100 animate-pulse" />
+            <div className="absolute inset-0 bg-orange-50 animate-pulse" />
           )}
           
           {/* Product image with lazy loading */}
@@ -104,7 +104,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.isNew && (
-              <span className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded">
+              <span className="bg-orange-200 text-orange-800 text-xs font-medium px-2 py-1 rounded">
                 New
               </span>
             )}
@@ -118,13 +118,13 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         
         {/* Product info */}
         <div className="p-4">
-          <div className="text-xs text-blue-500 font-medium">
+          <div className="text-xs text-orange-500 font-medium">
             {product.category}
           </div>
-          <h3 className="font-medium text-base text-blue-900 mb-1 truncate">
+          <h3 className="font-medium text-base text-amber-900 mb-1 truncate">
             {product.name}
           </h3>
-          <div className="font-medium text-blue-800">
+          <div className="font-medium text-amber-800">
             Rs {product.price.toLocaleString()}
           </div>
           
@@ -132,7 +132,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           <div className="mt-3 flex justify-end">
             <Button 
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
+              className="bg-amber-800 hover:bg-amber-900 text-white text-xs"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="h-3 w-3 mr-1" />

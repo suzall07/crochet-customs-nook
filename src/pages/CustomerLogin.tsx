@@ -152,9 +152,9 @@ const CustomerLogin = () => {
           </CardHeader>
           
           <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 mx-4 bg-blue-50">
-              <TabsTrigger value="login" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Login</TabsTrigger>
-              <TabsTrigger value="register" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Register</TabsTrigger>
+            <TabsList className="grid grid-cols-2 mx-4 bg-orange-50">
+              <TabsTrigger value="login" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Login</TabsTrigger>
+              <TabsTrigger value="register" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Register</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
@@ -184,7 +184,7 @@ const CustomerLogin = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">
                     Login
                   </Button>
                 </CardFooter>
@@ -239,7 +239,7 @@ const CustomerLogin = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">
                     Create Account
                   </Button>
                 </CardFooter>

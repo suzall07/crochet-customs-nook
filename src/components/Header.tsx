@@ -102,7 +102,7 @@ const Header = () => {
           {/* Logo */}
           <Link 
             to="/" 
-            className="relative z-10 font-display text-xl text-blue-800 font-medium"
+            className="relative z-10 font-display text-xl text-amber-800 font-medium"
           >
             Crochet with Limboo
           </Link>
@@ -114,10 +114,10 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "text-sm transition-colors hover:text-blue-700",
+                  "text-sm transition-colors hover:text-amber-700",
                   location.pathname === item.path 
-                    ? "text-blue-800 font-medium" 
-                    : "text-blue-600"
+                    ? "text-amber-800 font-medium" 
+                    : "text-amber-600"
                 )}
               >
                 {item.name}
@@ -132,7 +132,7 @@ const Header = () => {
               size="icon" 
               aria-label="Search"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="text-blue-700 hover:text-blue-900 hover:bg-blue-50"
+              className="text-amber-700 hover:text-amber-900 hover:bg-orange-50"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -140,7 +140,7 @@ const Header = () => {
               variant="ghost" 
               size="icon" 
               aria-label="Cart" 
-              className="relative text-blue-700 hover:text-blue-900 hover:bg-blue-50"
+              className="relative text-amber-700 hover:text-amber-900 hover:bg-orange-50"
               onClick={() => navigate("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
@@ -152,7 +152,7 @@ const Header = () => {
             </Button>
             <Button 
               variant="outline"
-              className="ml-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-900"
+              className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
               onClick={() => navigate("/admin")}
             >
               <LogIn className="h-4 w-4 mr-2" />
@@ -164,7 +164,7 @@ const Header = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="md:hidden text-blue-700 hover:text-blue-900 hover:bg-blue-50"
+            className="md:hidden text-amber-700 hover:text-amber-900 hover:bg-orange-50"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -179,12 +179,12 @@ const Header = () => {
               <Input
                 type="search"
                 placeholder="Search for crochet items..."
-                className="w-full border-blue-200 focus-visible:ring-blue-400"
+                className="w-full border-orange-200 focus-visible:ring-amber-400"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
               />
-              <Button type="submit" className="ml-2 bg-blue-700 hover:bg-blue-800">
+              <Button type="submit" className="ml-2 bg-amber-700 hover:bg-amber-800">
                 <Search className="h-4 w-4" />
               </Button>
               <Button 
@@ -192,7 +192,7 @@ const Header = () => {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setIsSearchOpen(false)}
-                className="ml-2 text-blue-700"
+                className="ml-2 text-amber-700"
               >
                 Cancel
               </Button>
@@ -210,11 +210,11 @@ const Header = () => {
                 <Input
                   type="search"
                   placeholder="Search for crochet items..."
-                  className="w-full border-blue-200"
+                  className="w-full border-orange-200"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Button type="submit" className="ml-2 bg-blue-700 hover:bg-blue-800">
+                <Button type="submit" className="ml-2 bg-amber-700 hover:bg-amber-800">
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -228,8 +228,8 @@ const Header = () => {
                   className={cn(
                     "text-lg py-2 border-b border-gray-100",
                     location.pathname === item.path 
-                      ? "text-blue-700 font-medium" 
-                      : "text-blue-600"
+                      ? "text-amber-700 font-medium" 
+                      : "text-amber-600"
                   )}
                 >
                   {item.name}
@@ -237,7 +237,7 @@ const Header = () => {
               ))}
               <Link 
                 to="/admin" 
-                className="text-lg py-2 border-b border-gray-100 flex items-center text-blue-600"
+                className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
               >
                 <LogIn className="h-4 w-4 mr-2" />
                 Admin Login
@@ -247,7 +247,7 @@ const Header = () => {
             <div className="mt-6 flex justify-around">
               <Button 
                 variant="ghost" 
-                className="flex items-center text-blue-700"
+                className="flex items-center text-amber-700"
                 onClick={() => navigate("/cart")}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
@@ -255,7 +255,7 @@ const Header = () => {
               </Button>
               <Button 
                 variant="ghost" 
-                className="flex items-center text-blue-700"
+                className="flex items-center text-amber-700"
                 onClick={() => navigate("/customer/login")}
               >
                 <User className="h-5 w-5 mr-2" />

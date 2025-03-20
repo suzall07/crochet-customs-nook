@@ -130,7 +130,7 @@ const Search = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1"
             />
-            <Button type="submit" className="bg-crochet-800">
+            <Button type="submit" className="bg-amber-800">
               <SearchIcon className="h-4 w-4 mr-2" />
               Search
             </Button>

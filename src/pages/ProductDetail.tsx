@@ -209,7 +209,7 @@ const ProductDetail = () => {
       <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-medium mb-2">Product not found</h2>
-          <Button onClick={() => navigate("/shop")} className="bg-blue-600 hover:bg-blue-700">Back to Shop</Button>
+          <Button onClick={() => navigate("/shop")} className="bg-amber-600 hover:bg-amber-700">Back to Shop</Button>
         </div>
       </div>
     );
@@ -220,7 +220,7 @@ const ProductDetail = () => {
       <div className="container mx-auto px-4">
         <Button 
           variant="ghost" 
-          className="mb-6 text-blue-600 hover:bg-blue-50"
+          className="mb-6 text-amber-600 hover:bg-orange-50"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -230,7 +230,7 @@ const ProductDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <div className="rounded-lg overflow-hidden">
             {!imageLoaded && (
-              <div className="w-full aspect-square bg-gray-200 animate-pulse" />
+              <div className="w-full aspect-square bg-orange-100 animate-pulse" />
             )}
             <img 
               src={product.image} 
@@ -245,7 +245,7 @@ const ProductDetail = () => {
           
           <div>
             <span className="text-sm text-muted-foreground">{product.category}</span>
-            <h1 className="text-3xl font-medium mt-1 mb-2 text-blue-800">{product.name}</h1>
+            <h1 className="text-3xl font-medium mt-1 mb-2 text-amber-800">{product.name}</h1>
             <p className="text-2xl font-medium mb-6">Rs {product.price.toLocaleString()}</p>
             
             <div className="mb-8">
@@ -281,7 +281,7 @@ const ProductDetail = () => {
             <div className="flex space-x-4">
               <Button 
                 size="lg"
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                className="flex-1 bg-amber-800 hover:bg-amber-900"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
@@ -292,9 +292,9 @@ const ProductDetail = () => {
         </div>
         
         <div className="mb-16">
-          <h2 className="text-2xl font-medium mb-6 text-blue-800">Customer Reviews</h2>
+          <h2 className="text-2xl font-medium mb-6 text-amber-800">Customer Reviews</h2>
           
-          <div className="bg-blue-50 p-6 rounded-lg mb-8">
+          <div className="bg-orange-50 p-6 rounded-lg mb-8">
             <h3 className="text-lg font-medium mb-4">Leave a Review</h3>
             <form onSubmit={handleSubmitReview}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -312,7 +312,7 @@ const ProductDetail = () => {
                   <label htmlFor="rating" className="block text-sm font-medium mb-1">Rating</label>
                   <select 
                     id="rating"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                    className="w-full border border-orange-300 rounded-md px-3 py-2"
                     value={reviewRating}
                     onChange={(e) => setReviewRating(Number(e.target.value))}
                   >
@@ -337,7 +337,7 @@ const ProductDetail = () => {
               </div>
               <Button 
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-amber-600 hover:bg-amber-700"
               >
                 Submit Review
               </Button>
@@ -368,7 +368,7 @@ const ProductDetail = () => {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-gray-700">{review.comment}</p>
+                  <p className="text-black">{review.comment}</p>
                 </div>
               ))}
             </div>
@@ -379,7 +379,7 @@ const ProductDetail = () => {
         
         {relatedProducts.length > 0 && (
           <div>
-            <h2 className="text-2xl font-medium mb-6 text-blue-800">You might also like</h2>
+            <h2 className="text-2xl font-medium mb-6 text-amber-800">You might also like</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {relatedProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
@@ -389,8 +389,8 @@ const ProductDetail = () => {
         )}
 
         {/* Business Hours */}
-        <div className="mt-16 p-6 bg-blue-50 rounded-lg border border-blue-100">
-          <h2 className="text-xl font-medium mb-4 text-blue-800">Business Hours</h2>
+        <div className="mt-16 p-6 bg-orange-50 rounded-lg border border-orange-100">
+          <h2 className="text-xl font-medium mb-4 text-amber-800">Business Hours</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="mb-2"><span className="font-medium">Monday - Friday:</span> 9:00 AM - 6:00 PM</p>
