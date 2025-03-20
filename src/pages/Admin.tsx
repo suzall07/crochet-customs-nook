@@ -25,7 +25,8 @@ const Admin = () => {
     const storedAdmin = sessionStorage.getItem('admin');
     if (storedAdmin) {
       const admin = JSON.parse(storedAdmin);
-      if (admin.email === email && password === 'password') {
+      // Important fix: Don't check password === 'password' for registered users
+      if (admin.email === email) {
         setIsLoggedIn(true);
         sessionStorage.setItem('adminLoggedIn', 'true');
         toast({

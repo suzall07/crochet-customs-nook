@@ -7,7 +7,6 @@ import {
   Search, 
   Menu, 
   X, 
-  Heart,
   LogIn
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,7 +44,7 @@ const Header = () => {
     }
   };
 
-  // Simplified nav items - removed Latest Crochet
+  // Simplified nav items
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
@@ -91,7 +90,7 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Removed Heart/Wishlist */}
           <div className="hidden md:flex items-center space-x-2">
             <Button 
               variant="ghost" 
@@ -100,9 +99,6 @@ const Header = () => {
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
               <Search className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" aria-label="Wishlist">
-              <Heart className="h-5 w-5" />
             </Button>
             <Button variant="ghost" size="icon" aria-label="Cart">
               <ShoppingCart className="h-5 w-5" />
@@ -158,7 +154,7 @@ const Header = () => {
         )}
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Removed Wishlist */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white pt-16 animate-fade-in">
           <div className="container px-4 py-4">
@@ -202,10 +198,6 @@ const Header = () => {
             </nav>
             
             <div className="mt-6 flex justify-around">
-              <Button variant="ghost" size="icon" aria-label="Wishlist">
-                <Heart className="h-5 w-5" />
-                <span className="ml-2">Wishlist</span>
-              </Button>
               <Button variant="ghost" size="icon" aria-label="Cart">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="ml-2">Cart</span>

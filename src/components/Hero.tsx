@@ -4,13 +4,13 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Updated hero slides with yarn crochet images - using more reliable image URLs
+// Updated hero slides with more reliable wool/yarn crochet images
 const heroSlides = [
   {
     id: 1,
     title: "Handcrafted with Love",
     subtitle: "Unique crochet creations made with passion",
-    image: "https://images.pexels.com/photos/6192108/pexels-photo-6192108.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Shop Collection",
     link: "/shop"
   },
@@ -18,7 +18,7 @@ const heroSlides = [
     id: 2,
     title: "Custom Crochet Designs",
     subtitle: "Personalize your crochet items with colors and designs",
-    image: "https://images.pexels.com/photos/6933754/pexels-photo-6933754.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Customize Now",
     link: "/customize"
   },
@@ -26,7 +26,7 @@ const heroSlides = [
     id: 3,
     title: "The Art of Crochet",
     subtitle: "Each stitch tells a story of craftsmanship",
-    image: "https://images.pexels.com/photos/6858600/pexels-photo-6858600.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image: "https://images.pexels.com/photos/6851381/pexels-photo-6851381.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     cta: "Explore Techniques",
     link: "/about"
   }
@@ -86,8 +86,8 @@ const Hero = () => {
 
   const slide = heroSlides[currentSlide];
 
-  // Fallback image if primary image fails to load
-  const fallbackImage = "https://images.pexels.com/photos/6851381/pexels-photo-6851381.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+  // New fallback image - wool/yarn themed
+  const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
   return (
     <div className="hero-section">

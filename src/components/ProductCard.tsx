@@ -30,27 +30,39 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Get existing cart from localStorage or initialize empty array
-    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    // Add product to cart if not already present
-    if (!existingCart.some((item: Product) => item.id === product.id)) {
-      const updatedCart = [...existingCart, product];
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    try {
+      // Get existing cart from localStorage or initialize empty array
+      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
       
+      // Check if product is already in cart
+      const isInCart = existingCart.some((item: {id: number}) => item.id === product.id);
+      
+      if (!isInCart) {
+        // Add product to cart
+        const updatedCart = [...existingCart, product];
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        
+        toast({
+          title: "Added to cart",
+          description: `${product.name} has been added to your cart.`,
+        });
+      } else {
+        toast({
+          title: "Already in cart",
+          description: `${product.name} is already in your cart.`,
+        });
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
       toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your cart.`,
-      });
-    } else {
-      toast({
-        title: "Already in cart",
-        description: `${product.name} is already in your cart.`,
+        title: "Error",
+        description: "Could not add item to cart. Please try again.",
+        variant: "destructive"
       });
     }
   };
   
-  // Fallback image
+  // Fallback image - wool/yarn themed
   const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
   
   // Handle image loading error
