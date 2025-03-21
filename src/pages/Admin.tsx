@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import AdminProductList from '@/components/admin/AdminProductList';
 import AdminOrderList from '@/components/admin/AdminOrderList'; 
 import AdminCustomerList from '@/components/admin/AdminCustomerList';
 import AdminHeroSlides from '@/components/admin/AdminHeroSlides';
-import { checkAdminLogin } from '@/utils/authUtils';
+import { checkAdminLogin, loginAdmin, logoutAdmin } from '@/utils/authUtils';
 
 const Admin = () => {
   const { toast } = useToast();

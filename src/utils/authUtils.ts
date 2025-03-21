@@ -1,3 +1,4 @@
+
 // Authentication utility functions
 
 // Admin authentication
@@ -29,6 +30,11 @@ export const logoutAdmin = () => {
 };
 
 export const isAdminLoggedIn = () => {
+  return localStorage.getItem('adminLoggedIn') === 'true';
+};
+
+// Function to check admin login (adding the missing function)
+export const checkAdminLogin = () => {
   return localStorage.getItem('adminLoggedIn') === 'true';
 };
 
