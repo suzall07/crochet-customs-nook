@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { LogIn } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AdminProductList from '@/components/admin/AdminProductList';
 import AdminOrderList from '@/components/admin/AdminOrderList'; 
 import AdminCustomerList from '@/components/admin/AdminCustomerList';
@@ -24,7 +23,6 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('products');
 
   useEffect(() => {
-    // Check if admin is already logged in
     const isAuth = checkAdminLogin();
     if (isAuth) {
       setIsLoggedIn(true);
@@ -40,7 +38,6 @@ const Admin = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simple validation
     if (!loginForm.email || !loginForm.password) {
       toast({
         title: "Error",
@@ -51,16 +48,13 @@ const Admin = () => {
       return;
     }
 
-    // Retrieve stored admin data
     const storedAdminData = localStorage.getItem('admin');
     
     if (storedAdminData) {
       try {
         const adminData = JSON.parse(storedAdminData);
         
-        // Check if credentials match
         if (adminData.email === loginForm.email && adminData.password === loginForm.password) {
-          // Login the admin using our utility
           loginAdmin({
             name: adminData.name || 'Admin',
             email: adminData.email,
@@ -184,9 +178,9 @@ const Admin = () => {
               <div className="mt-4 text-center">
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
-                  <a href="/admin-signup" className="font-medium text-amber-600 hover:text-amber-500">
+                  <Link to="/admin-signup" className="font-medium text-amber-600 hover:text-amber-500">
                     Sign up
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>

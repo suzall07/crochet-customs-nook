@@ -1,55 +1,53 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { lazy, Suspense } from "react";
-import Layout from "./components/Layout";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Suspense } from 'react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import Layout from './components/Layout';
+import Index from './pages/Index';
+import Shop from './pages/Shop';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import ProductDetail from './pages/ProductDetail';
+import Search from './pages/Search';
+import Cart from './pages/Cart';
+import Popular from './pages/Popular';
+import NotFound from './pages/NotFound';
+import Admin from './pages/Admin';
+import AdminSignup from './pages/AdminSignup';
+import CustomerLogin from './pages/CustomerLogin';
+import './App.css';
 
-// Lazy load pages for better performance
-const Index = lazy(() => import("./pages/Index"));
-const About = lazy(() => import("./pages/About"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Shop = lazy(() => import("./pages/Shop"));
-const Popular = lazy(() => import("./pages/Popular"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const Search = lazy(() => import("./pages/Search"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminSignup = lazy(() => import("./pages/AdminSignup"));
-const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
-const Cart = lazy(() => import("./pages/Cart"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-
+// Create a client
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/popular" element={<Popular />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/signup" element={<AdminSignup />} />
-              <Route path="/customer/login" element={<CustomerLogin />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </Suspense>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <BrowserRouter>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/products/:id" element={<ProductDetail />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/popular" element={<Popular />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin-signup" element={<AdminSignup />} />
+                <Route path="/login" element={<CustomerLogin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </Suspense>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
