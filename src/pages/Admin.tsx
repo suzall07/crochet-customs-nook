@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -50,35 +51,55 @@ const Admin = () => {
       return;
     }
 
-    // Simulate authentication process
-    setTimeout(() => {
-      // Simple check - in a real app, this would validate against a backend
-      if (loginForm.email === 'admin@example.com' && loginForm.password === 'password') {
-        // Store admin auth in localStorage
-        localStorage.setItem('adminAuth', JSON.stringify({
-          email: loginForm.email,
-          isAdmin: true,
-          loginTime: new Date().toISOString()
-        }));
-
-        setIsLoggedIn(true);
+    // Retrieve stored admin data
+    const storedAdminData = localStorage.getItem('admin');
+    
+    if (storedAdminData) {
+      try {
+        const adminData = JSON.parse(storedAdminData);
+        
+        // Check if credentials match
+        if (adminData.email === loginForm.email && adminData.password === loginForm.password) {
+          // Login the admin using our utility
+          loginAdmin({
+            name: adminData.name || 'Admin',
+            email: adminData.email,
+            password: adminData.password
+          });
+          
+          setIsLoggedIn(true);
+          toast({
+            title: "Success",
+            description: "You have successfully logged in"
+          });
+        } else {
+          toast({
+            title: "Authentication failed",
+            description: "Invalid email or password",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
         toast({
-          title: "Success",
-          description: "You have successfully logged in"
-        });
-      } else {
-        toast({
-          title: "Authentication failed",
-          description: "Invalid email or password",
+          title: "Error",
+          description: "Something went wrong during authentication",
           variant: "destructive"
         });
+        console.error("Login error:", error);
       }
-      setIsLoading(false);
-    }, 1000);
+    } else {
+      toast({
+        title: "No admin account found",
+        description: "Please sign up first",
+        variant: "destructive"
+      });
+    }
+    
+    setIsLoading(false);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
+    logoutAdmin();
     setIsLoggedIn(false);
     toast({
       title: "Logged out",
@@ -117,7 +138,6 @@ const Admin = () => {
                     value={loginForm.email}
                     onChange={handleLoginChange}
                     className="mt-1"
-                    placeholder="admin@example.com"
                   />
                 </div>
 
@@ -134,7 +154,6 @@ const Admin = () => {
                     value={loginForm.password}
                     onChange={handleLoginChange}
                     className="mt-1"
-                    placeholder="password"
                   />
                 </div>
 
@@ -164,7 +183,10 @@ const Admin = () => {
 
               <div className="mt-4 text-center">
                 <p className="text-sm text-gray-600">
-                  Demo credentials: admin@example.com / password
+                  Don't have an account?{' '}
+                  <a href="/admin-signup" className="font-medium text-amber-600 hover:text-amber-500">
+                    Sign up
+                  </a>
                 </p>
               </div>
             </div>
