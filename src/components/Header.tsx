@@ -153,6 +153,14 @@ const Header = () => {
             <Button 
               variant="outline"
               className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
+              onClick={() => navigate("/customer/login")}
+            >
+              <User className="h-4 w-4 mr-2" />
+              Customer
+            </Button>
+            <Button 
+              variant="outline"
+              className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
               onClick={() => navigate("/admin")}
             >
               <LogIn className="h-4 w-4 mr-2" />
@@ -236,6 +244,13 @@ const Header = () => {
                 </Link>
               ))}
               <Link 
+                to="/customer/login" 
+                className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Customer Login
+              </Link>
+              <Link 
                 to="/admin" 
                 className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
               >
@@ -252,14 +267,6 @@ const Header = () => {
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 <span>Cart ({cartItemCount})</span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="flex items-center text-amber-700"
-                onClick={() => navigate("/customer/login")}
-              >
-                <User className="h-5 w-5 mr-2" />
-                <span>Account</span>
               </Button>
             </div>
           </div>

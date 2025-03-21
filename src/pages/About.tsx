@@ -51,7 +51,7 @@ const About = () => {
               <div className="bg-white p-6 rounded-lg shadow-sm border border-orange-100">
                 <h3 className="font-medium text-xl mb-2 text-amber-800">Do you ship internationally?</h3>
                 <p className="text-amber-700">
-                  Yes, we ship worldwide! International shipping usually takes 10-14 business days, and shipping costs vary depending on the destination country.
+                  No, since it's a small business we are not able to. We currently only ship within our local area.
                 </p>
               </div>
             </div>

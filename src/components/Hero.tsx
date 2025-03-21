@@ -1,34 +1,34 @@
+
 import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
-// Updated hero slides with more reliable wool/yarn crochet images and removed the third slide
-const heroSlides = [
-  {
-    id: 1,
-    title: "Handcrafted with Love",
-    subtitle: "Unique crochet creations made with passion",
-    image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    cta: "Shop Collection",
-    link: "/shop"
-  },
-  {
-    id: 2,
-    title: "Custom Crochet Designs",
-    subtitle: "Personalize your crochet items with colors and designs",
-    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    cta: "Customize Now",
-    link: "/customize"
-  }
-];
+import { getHeroSlides, HeroSlide } from '@/utils/heroSlideUtils';
 
 const Hero = () => {
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(getHeroSlides());
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const [imageLoaded, setImageLoaded] = useState(false);
   const [loadAttempt, setLoadAttempt] = useState(0);
+
+  // Load slides from localStorage on mount and when they change
+  useEffect(() => {
+    const updateSlides = () => {
+      setHeroSlides(getHeroSlides());
+    };
+
+    // Initial load
+    updateSlides();
+
+    // Listen for changes
+    window.addEventListener('heroSlidesUpdated', updateSlides);
+    
+    return () => {
+      window.removeEventListener('heroSlidesUpdated', updateSlides);
+    };
+  }, []);
 
   const nextSlide = () => {
     if (isAnimating) return;
@@ -75,7 +75,7 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [currentSlide, isAnimating]);
 
-  const slide = heroSlides[currentSlide];
+  const slide = heroSlides[currentSlide] || heroSlides[0];
 
   // New fallback image - wool/yarn themed
   const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";

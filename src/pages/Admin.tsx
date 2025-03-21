@@ -1,290 +1,236 @@
+
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
+import { LogIn } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import AdminProductList from '@/components/admin/AdminProductList';
-import AdminOrderList from '@/components/admin/AdminOrderList';
+import AdminOrderList from '@/components/admin/AdminOrderList'; 
 import AdminCustomerList from '@/components/admin/AdminCustomerList';
-import { loginAdmin, logoutAdmin, isAdminLoggedIn } from '@/utils/authUtils';
+import AdminHeroSlides from '@/components/admin/AdminHeroSlides';
+import { checkAdminLogin } from '@/utils/authUtils';
 
 const Admin = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [error, setError] = useState('');
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activeTab, setActiveTab] = useState('products');
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    // Check if admin exists in localStorage
-    const storedAdmin = localStorage.getItem('admin');
-    if (storedAdmin) {
-      const admin = JSON.parse(storedAdmin);
-      // Check if the admin object has an email and password
-      if (admin.email && admin.password) {
-        // Case insensitive email comparison
-        if (admin.email.toLowerCase() === email.toLowerCase() && admin.password === password) {
-          setIsLoggedIn(true);
-          loginAdmin(admin);
-          toast({
-            title: "Login successful",
-            description: "Welcome back to the admin panel",
-          });
-          return;
-        }
-      }
-    }
-    
-    // Demo login fallback
-    if (email.toLowerCase() === 'admin@example.com' && password === 'password') {
-      setIsLoggedIn(true);
-      loginAdmin({
-        name: 'Admin User',
-        email: 'admin@example.com',
-        password: 'password'
-      });
-      toast({
-        title: "Login successful",
-        description: "Welcome to the admin panel",
-      });
-    } else {
-      setError('Invalid email or password. Try admin@example.com / password or use your registered email & password');
-      toast({
-        title: "Login failed",
-        description: "Invalid credentials. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Check if admin is already logged in
   useEffect(() => {
-    if (isAdminLoggedIn()) {
+    // Check if admin is already logged in
+    const isAuth = checkAdminLogin();
+    if (isAuth) {
       setIsLoggedIn(true);
     }
   }, []);
 
+  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Simple validation
+    if (!loginForm.email || !loginForm.password) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Simulate authentication process
+    setTimeout(() => {
+      // Simple check - in a real app, this would validate against a backend
+      if (loginForm.email === 'admin@example.com' && loginForm.password === 'password') {
+        // Store admin auth in localStorage
+        localStorage.setItem('adminAuth', JSON.stringify({
+          email: loginForm.email,
+          isAdmin: true,
+          loginTime: new Date().toISOString()
+        }));
+
+        setIsLoggedIn(true);
+        toast({
+          title: "Success",
+          description: "You have successfully logged in"
+        });
+      } else {
+        toast({
+          title: "Authentication failed",
+          description: "Invalid email or password",
+          variant: "destructive"
+        });
+      }
+      setIsLoading(false);
+    }, 1000);
+  };
+
   const handleLogout = () => {
+    localStorage.removeItem('adminAuth');
     setIsLoggedIn(false);
-    setEmail('');
-    setPassword('');
-    logoutAdmin();
     toast({
       title: "Logged out",
-      description: "You have been logged out successfully",
+      description: "You have been logged out successfully"
     });
   };
 
-  const handleSignUp = () => {
-    navigate('/admin/signup');
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
   };
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Admin Login</CardTitle>
-            <CardDescription>
-              Sign in to access the admin dashboard
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleLogin}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="admin@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <p className="text-xs text-muted-foreground">
-                  For demo: use admin@example.com / password
+      <div className="min-h-screen bg-gray-50 pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
+                <p className="text-sm text-gray-600 mt-1">
+                  Please sign in to access the admin dashboard
                 </p>
               </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
-            </CardContent>
-            <CardFooter className="flex flex-col space-y-2">
-              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">Login</Button>
-              <div className="text-center w-full">
-                <Button 
-                  type="button" 
-                  variant="link" 
-                  onClick={handleSignUp}
-                  className="text-amber-600"
-                >
-                  Don't have an account? Sign up
-                </Button>
+
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email Address
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={loginForm.email}
+                    onChange={handleLoginChange}
+                    className="mt-1"
+                    placeholder="admin@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={loginForm.password}
+                    onChange={handleLoginChange}
+                    className="mt-1"
+                    placeholder="password"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    className="w-full bg-amber-700 hover:bg-amber-800"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Signing in...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Sign in
+                      </span>
+                    )}
+                  </Button>
+                </div>
+              </form>
+
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-600">
+                  Demo credentials: admin@example.com / password
+                </p>
               </div>
-            </CardFooter>
-          </form>
-        </Card>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-16">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-medium">Admin Dashboard</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-medium text-gray-900">Admin Dashboard</h1>
           <Button 
-            variant="outline"
+            variant="outline" 
             onClick={handleLogout}
+            className="border-amber-200 text-amber-800 hover:bg-amber-50"
           >
-            Logout
+            Log out
           </Button>
         </div>
-        
-        <Tabs defaultValue="products">
-          <TabsList className="mb-6 bg-orange-100">
-            <TabsTrigger value="products" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Products</TabsTrigger>
-            <TabsTrigger value="orders" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Orders</TabsTrigger>
-            <TabsTrigger value="customers" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Customers</TabsTrigger>
-            <TabsTrigger value="custom-orders" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Custom Orders</TabsTrigger>
+
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-8">
+          <TabsList className="bg-orange-50 border border-orange-200">
+            <TabsTrigger 
+              value="products" 
+              className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
+            >
+              Products
+            </TabsTrigger>
+            <TabsTrigger 
+              value="orders" 
+              className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
+            >
+              Orders
+            </TabsTrigger>
+            <TabsTrigger 
+              value="customers" 
+              className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
+            >
+              Customers
+            </TabsTrigger>
+            <TabsTrigger 
+              value="heroslides" 
+              className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
+            >
+              Hero Slides
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="products">
+
+          <TabsContent value="products" className="pt-6">
             <AdminProductList />
           </TabsContent>
           
-          <TabsContent value="orders">
+          <TabsContent value="orders" className="pt-6">
             <AdminOrderList />
           </TabsContent>
           
-          <TabsContent value="customers">
+          <TabsContent value="customers" className="pt-6">
             <AdminCustomerList />
           </TabsContent>
           
-          <TabsContent value="custom-orders">
-            <Card>
-              <CardHeader>
-                <CardTitle>Custom Order Requests</CardTitle>
-                <CardDescription>Manage custom order requests from customers</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="border rounded-md">
-                  <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-orange-50">
-                    <div className="col-span-1">ID</div>
-                    <div className="col-span-2">Item Type</div>
-                    <div className="col-span-3">Description</div>
-                    <div className="col-span-2">Date</div>
-                    <div className="col-span-2">Status</div>
-                    <div className="col-span-2">Actions</div>
-                  </div>
-                  <Separator />
-                  {(() => {
-                    try {
-                      const customOrders = JSON.parse(localStorage.getItem('customOrders') || '[]');
-                      
-                      if (customOrders.length === 0) {
-                        return (
-                          <div className="p-8 text-center text-muted-foreground">
-                            No custom order requests yet.
-                          </div>
-                        );
-                      }
-                      
-                      return customOrders.map((order: any, index: number) => (
-                        <div key={order.id || index} className="grid grid-cols-12 gap-2 p-4 items-center">
-                          <div className="col-span-1">#{(index + 1).toString().padStart(3, '0')}</div>
-                          <div className="col-span-2">{order.itemType}</div>
-                          <div className="col-span-3" title={order.description}>
-                            {order.description.length > 50 ? `${order.description.substring(0, 50)}...` : order.description}
-                          </div>
-                          <div className="col-span-2">
-                            {new Date(order.date).toLocaleDateString()}
-                          </div>
-                          <div className="col-span-2">
-                            <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-                              order.status === 'Completed' ? 'bg-green-100 text-green-800' : 
-                              order.status === 'In Progress' ? 'bg-orange-100 text-orange-800' : 
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {order.status}
-                            </span>
-                          </div>
-                          <div className="col-span-2 flex space-x-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="bg-orange-50 hover:bg-orange-100"
-                              onClick={() => {
-                                // Update status logic
-                                const updatedOrders = customOrders.map((o: any) => 
-                                  o.id === order.id ? 
-                                  {...o, status: o.status === 'Pending' ? 'In Progress' : 
-                                             o.status === 'In Progress' ? 'Completed' : 'Pending'} : o
-                                );
-                                localStorage.setItem('customOrders', JSON.stringify(updatedOrders));
-                                toast({
-                                  title: "Status Updated",
-                                  description: `Order status changed to ${
-                                    order.status === 'Pending' ? 'In Progress' : 
-                                    order.status === 'In Progress' ? 'Completed' : 'Pending'
-                                  }`,
-                                });
-                                // Force re-render
-                                window.dispatchEvent(new Event('storage'));
-                              }}
-                            >
-                              Update Status
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="text-red-500"
-                              onClick={() => {
-                                const updatedOrders = customOrders.filter((o: any) => o.id !== order.id);
-                                localStorage.setItem('customOrders', JSON.stringify(updatedOrders));
-                                toast({
-                                  title: "Custom Order Deleted",
-                                  description: "The custom order request has been deleted",
-                                });
-                                // Force re-render
-                                window.dispatchEvent(new Event('storage'));
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          </div>
-                          <Separator className="col-span-12 mt-2" />
-                        </div>
-                      ));
-                    } catch (error) {
-                      console.error('Error rendering custom orders:', error);
-                      return (
-                        <div className="p-8 text-center text-red-600">
-                          Error loading custom orders.
-                        </div>
-                      );
-                    }
-                  })()}
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="heroslides" className="pt-6">
+            <AdminHeroSlides />
           </TabsContent>
         </Tabs>
       </div>
