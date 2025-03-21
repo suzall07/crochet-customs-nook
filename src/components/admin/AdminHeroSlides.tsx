@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getHeroSlides, saveHeroSlides, resetHeroSlidesToDefault, HeroSlide } from '@/utils/heroSlideUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,12 +7,13 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, ImageIcon, RefreshCw } from 'lucide-react';
+import { ArrowRight, ImageIcon, RefreshCw, Upload } from 'lucide-react';
 
 const AdminHeroSlides = () => {
   const [slides, setSlides] = useState<HeroSlide[]>(getHeroSlides());
   const [activeTab, setActiveTab] = useState<string>("1");
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load slides from localStorage
   useEffect(() => {
@@ -41,6 +42,38 @@ const AdminHeroSlides = () => {
       title: "Hero slides reset",
       description: "Hero slides have been reset to default.",
     });
+  };
+
+  const handleImageUpload = (slideId: number) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.setAttribute('data-slide-id', slideId.toString());
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const slideId = parseInt(e.target.getAttribute('data-slide-id') || '1');
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageDataUrl = event.target?.result as string;
+      
+      const updatedSlides = slides.map(slide => 
+        slide.id === slideId ? { ...slide, image: imageDataUrl } : slide
+      );
+      
+      setSlides(updatedSlides);
+      
+      toast({
+        title: "Image uploaded",
+        description: `Image for slide ${slideId} has been updated.`,
+      });
+    };
+    
+    reader.readAsDataURL(file);
   };
 
   const previewSlide = (slide: HeroSlide) => {
@@ -72,6 +105,15 @@ const AdminHeroSlides = () => {
 
   return (
     <div className="space-y-6">
+      {/* Hidden file input for image uploads */}
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }} 
+        accept="image/*"
+        onChange={handleFileChange}
+      />
+      
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-medium">Manage Hero Slides</h2>
         <div className="space-x-2">
@@ -127,15 +169,26 @@ const AdminHeroSlides = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium mb-1">Image URL</label>
-                      <Input 
-                        value={slide.image}
-                        onChange={(e) => handleSlideChange(slide.id, 'image', e.target.value)}
-                        className="w-full"
-                        placeholder="https://example.com/image.jpg"
-                      />
+                      <label className="block text-sm font-medium mb-1">Image</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Input 
+                          value={slide.image}
+                          onChange={(e) => handleSlideChange(slide.id, 'image', e.target.value)}
+                          className="w-full"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                        <Button 
+                          type="button" 
+                          variant="outline"
+                          onClick={() => handleImageUpload(slide.id)}
+                          className="flex items-center justify-center"
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload Image
+                        </Button>
+                      </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Enter a valid image URL. Recommended size: 1200×600 pixels.
+                        Enter an image URL or upload from your computer. Recommended size: 1200×600 pixels.
                       </p>
                     </div>
                   </div>

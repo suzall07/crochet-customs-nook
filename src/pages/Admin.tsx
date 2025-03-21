@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -6,8 +7,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { LogIn } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import AdminProductList from '@/components/admin/AdminProductList';
-import AdminOrderList from '@/components/admin/AdminOrderList'; 
-import AdminCustomerList from '@/components/admin/AdminCustomerList';
 import AdminHeroSlides from '@/components/admin/AdminHeroSlides';
 import { checkAdminLogin, loginAdmin, logoutAdmin } from '@/utils/authUtils';
 
@@ -213,18 +212,6 @@ const Admin = () => {
               Products
             </TabsTrigger>
             <TabsTrigger 
-              value="orders" 
-              className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
-            >
-              Orders
-            </TabsTrigger>
-            <TabsTrigger 
-              value="customers" 
-              className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
-            >
-              Customers
-            </TabsTrigger>
-            <TabsTrigger 
               value="heroslides" 
               className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900"
             >
@@ -234,14 +221,6 @@ const Admin = () => {
 
           <TabsContent value="products" className="pt-6">
             <AdminProductList />
-          </TabsContent>
-          
-          <TabsContent value="orders" className="pt-6">
-            <AdminOrderList />
-          </TabsContent>
-          
-          <TabsContent value="customers" className="pt-6">
-            <AdminCustomerList />
           </TabsContent>
           
           <TabsContent value="heroslides" className="pt-6">
