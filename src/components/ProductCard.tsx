@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
@@ -11,6 +12,7 @@ export interface Product {
   price: number;
   image: string;
   category: string;
+  description?: string;
   isNew?: boolean;
   isFeatured?: boolean;
 }

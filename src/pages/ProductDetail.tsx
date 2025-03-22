@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
@@ -251,31 +250,8 @@ const ProductDetail = () => {
             <div className="mb-8">
               <h3 className="text-lg font-medium mb-2">Description</h3>
               <p className="text-muted-foreground">
-                This beautiful handmade crochet item is crafted with care and attention to detail.
-                Made from high-quality materials, it's designed to last for years to come.
+                {product.description || "This beautiful handmade crochet item is crafted with care and attention to detail. Made from high-quality materials, it's designed to last for years to come."}
               </p>
-            </div>
-            
-            <div className="mb-8">
-              <h3 className="text-lg font-medium mb-2">Crochet Patterns</h3>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="border rounded-md p-4 text-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1615589184136-9b8813cd9af9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJhc2tldCUyMHdlYXZlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" 
-                    alt="Basket Weave" 
-                    className="w-full h-32 object-cover rounded mb-2"
-                  />
-                  <p className="font-medium">Basket Weave</p>
-                </div>
-                <div className="border rounded-md p-4 text-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1542565727-414a507af391?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c2hlbGwlMjBzdGl0Y2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" 
-                    alt="Shell Stitch" 
-                    className="w-full h-32 object-cover rounded mb-2"
-                  />
-                  <p className="font-medium">Shell Stitch</p>
-                </div>
-              </div>
             </div>
             
             <div className="flex space-x-4">
@@ -410,3 +386,4 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
+

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,8 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Product } from '@/components/ProductCard';
-import { PlusCircle, Edit, Trash, Image, AlertTriangle } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Image, AlertTriangle, FileText } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 const defaultProducts: Product[] = [
   {
@@ -18,6 +18,7 @@ const defaultProducts: Product[] = [
     image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg",
     category: "Shop",
     isNew: true,
+    description: "This beautiful handmade crochet blanket is crafted with care and attention to detail. Made from high-quality materials, it's designed to last for years to come."
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ const defaultProducts: Product[] = [
     image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg",
     category: "Popular Crochet",
     isFeatured: true,
+    description: "Adorable handcrafted elephant amigurumi. Perfect gift for children or as a decorative piece for your home."
   }
 ];
 
@@ -42,6 +44,7 @@ const AdminProductList = () => {
     price: 0,
     image: '',
     category: '',
+    description: '',
     isNew: false,
     isFeatured: false
   });
@@ -54,7 +57,6 @@ const AdminProductList = () => {
       if (storedProducts) {
         setProducts(JSON.parse(storedProducts));
       } else {
-        // Initialize with default products if none exist
         setProducts(defaultProducts);
         localStorage.setItem('products', JSON.stringify(defaultProducts));
       }
@@ -64,7 +66,7 @@ const AdminProductList = () => {
     }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
     
     if (type === 'checkbox') {
@@ -81,7 +83,6 @@ const AdminProductList = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!validTypes.includes(file.type)) {
       toast({
@@ -92,7 +93,6 @@ const AdminProductList = () => {
       return;
     }
 
-    // Convert to base64 for storage
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
@@ -103,7 +103,7 @@ const AdminProductList = () => {
   };
 
   const handleAddEdit = () => {
-    if (!formData.name || !formData.price || (!formData.image && !imagePreview) || !formData.category) {
+    if (!formData.name || !formData.price || (!formData.image && !imagePreview) || !formData.category || !formData.description) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields.",
@@ -114,7 +114,6 @@ const AdminProductList = () => {
 
     let updatedProducts: Product[];
     if (formData.id === 0) {
-      // Add new product
       const newProduct = {
         ...formData,
         id: Math.max(0, ...products.map(p => p.id)) + 1,
@@ -126,7 +125,6 @@ const AdminProductList = () => {
         description: `${formData.name} has been added to products.`
       });
     } else {
-      // Update existing product
       updatedProducts = products.map(product => 
         product.id === formData.id ? {
           ...formData,
@@ -141,7 +139,6 @@ const AdminProductList = () => {
 
     setProducts(updatedProducts);
     localStorage.setItem('products', JSON.stringify(updatedProducts));
-    // Trigger custom event to notify other components about the product update
     window.dispatchEvent(new Event('productsUpdated'));
     setIsDialogOpen(false);
     resetForm();
@@ -189,6 +186,7 @@ const AdminProductList = () => {
       price: product.price,
       image: product.image,
       category: product.category,
+      description: product.description || '',
       isNew: product.isNew || false,
       isFeatured: product.isFeatured || false
     });
@@ -212,6 +210,7 @@ const AdminProductList = () => {
       price: 0,
       image: '',
       category: '',
+      description: '',
       isNew: false,
       isFeatured: false
     });
@@ -309,7 +308,6 @@ const AdminProductList = () => {
         </div>
       </CardContent>
 
-      {/* Add/Edit Product Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -358,6 +356,18 @@ const AdminProductList = () => {
                   <option value="Popular Crochet">Popular Crochet</option>
                 </select>
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Product Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter product description"
+                rows={4}
+              />
             </div>
             
             <div className="space-y-2">
@@ -448,7 +458,6 @@ const AdminProductList = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
@@ -464,7 +473,6 @@ const AdminProductList = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete All Confirmation Dialog */}
       <Dialog open={isDeleteAllDialogOpen} onOpenChange={setIsDeleteAllDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
@@ -488,3 +496,4 @@ const AdminProductList = () => {
 };
 
 export default AdminProductList;
+
