@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 import Hero from '@/components/Hero';
 import FeaturedProducts from '@/components/FeaturedProducts';
-import CustomizationSection from '@/components/CustomizationSection';
 
 const Index = () => {
   // Scroll to top on page load
@@ -17,9 +16,6 @@ const Index = () => {
       
       {/* Featured Products Section */}
       <FeaturedProducts />
-      
-      {/* Customization Section */}
-      <CustomizationSection />
       
       {/* Testimonials */}
       <section className="container mx-auto px-4 py-12">
