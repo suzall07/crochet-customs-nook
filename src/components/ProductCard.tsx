@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
@@ -31,14 +30,11 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     e.stopPropagation();
     
     try {
-      // Get existing cart from localStorage or initialize empty array
       const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
       
-      // Check if product is already in cart
       const isInCart = existingCart.some((item: {id: number}) => item.id === product.id);
       
       if (!isInCart) {
-        // Add product to cart
         const updatedCart = [...existingCart, product];
         localStorage.setItem('cart', JSON.stringify(updatedCart));
         
@@ -47,7 +43,6 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           description: `${product.name} has been added to your cart.`,
         });
         
-        // Dispatch custom event to notify other components
         window.dispatchEvent(new Event('cartUpdated'));
       } else {
         toast({
@@ -65,10 +60,8 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     }
   };
   
-  // Fallback image - wool/yarn themed
   const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
   
-  // Handle image loading error
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error('Failed to load product image, using fallback');
     e.currentTarget.src = fallbackImage;
@@ -80,14 +73,12 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link to={`/product/${product.id}`} className="block">
+      <Link to={`/products/${product.id}`} className="block">
         <div className="relative overflow-hidden rounded-t-lg aspect-[4/5]">
-          {/* Skeleton loader */}
           {!imageLoaded && (
             <div className="absolute inset-0 bg-orange-50 animate-pulse" />
           )}
           
-          {/* Product image with lazy loading */}
           <img 
             src={product.image} 
             alt={product.name}
@@ -101,7 +92,6 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             )}
           />
           
-          {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.isNew && (
               <span className="bg-orange-200 text-orange-800 text-xs font-medium px-2 py-1 rounded">
@@ -116,7 +106,6 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           </div>
         </div>
         
-        {/* Product info */}
         <div className="p-4">
           <div className="text-xs text-orange-500 font-medium">
             {product.category}
@@ -128,7 +117,6 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             Rs {product.price.toLocaleString()}
           </div>
           
-          {/* Quick actions */}
           <div className="mt-3 flex justify-end">
             <Button 
               size="sm"
