@@ -78,7 +78,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       <Link to={`/products/${product.id}`} className="block">
         <div className="relative overflow-hidden rounded-t-lg aspect-[4/5]">
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-orange-50 animate-pulse" />
+            <div className="absolute inset-0 bg-neutral-50 animate-pulse" />
           )}
           
           <img 
@@ -96,7 +96,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.isNew && (
-              <span className="bg-orange-200 text-orange-800 text-xs font-medium px-2 py-1 rounded">
+              <span className="bg-neutral-200 text-neutral-800 text-xs font-medium px-2 py-1 rounded">
                 New
               </span>
             )}
@@ -109,20 +109,20 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         </div>
         
         <div className="p-4">
-          <div className="text-xs text-orange-500 font-medium">
+          <div className="text-xs text-neutral-500 font-medium">
             {product.category}
           </div>
-          <h3 className="font-medium text-base text-amber-900 mb-1 truncate">
+          <h3 className="font-medium text-base text-neutral-900 mb-1 truncate">
             {product.name}
           </h3>
-          <div className="font-medium text-amber-800">
+          <div className="font-medium text-neutral-800">
             Rs {product.price.toLocaleString()}
           </div>
           
           <div className="mt-3 flex justify-end">
             <Button 
               size="sm"
-              className="bg-amber-800 hover:bg-amber-900 text-white text-xs"
+              className="bg-neutral-700 hover:bg-neutral-800 text-white text-xs"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="h-3 w-3 mr-1" />
