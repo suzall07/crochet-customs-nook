@@ -7,33 +7,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 10%;
+    --background: 30 30% 96%;
+    --foreground: 20 10% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 20 10% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 20 10% 10%;
 
-    --primary: 210 10% 40%;
+    --primary: 25 70% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 10% 90%;
-    --secondary-foreground: 210 10% 20%;
+    --secondary: 40 60% 85%;
+    --secondary-foreground: 20 10% 10%;
 
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 30 20% 90%;
+    --muted-foreground: 20 10% 40%;
 
-    --accent: 210 10% 85%;
-    --accent-foreground: 210 10% 25%;
+    --accent: 20 70% 80%;
+    --accent-foreground: 20 10% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 210 10% 40%;
+    --border: 30 15% 80%;
+    --input: 30 15% 80%;
+    --ring: 25 70% 60%;
 
     --radius: 0.5rem;
   }
@@ -105,7 +105,7 @@
 
   /* Business hours card for reuse */
   .business-hours-card {
-    @apply mt-16 p-6 bg-neutral-50 rounded-lg border border-neutral-200;
+    @apply mt-16 p-6 bg-orange-50 rounded-lg border border-orange-100;
   }
   
   /* Enhanced buttons */
