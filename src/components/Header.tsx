@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -31,7 +30,6 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Update cart count whenever the cart changes
   useEffect(() => {
     const updateCartCount = () => {
       try {
@@ -43,10 +41,8 @@ const Header = () => {
       }
     };
     
-    // Initial count
     updateCartCount();
     
-    // Set up storage event listener
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'cart') {
         updateCartCount();
@@ -55,7 +51,6 @@ const Header = () => {
     
     window.addEventListener('storage', handleStorageChange);
     
-    // Custom event for cart updates
     const handleCustomEvent = () => updateCartCount();
     window.addEventListener('cartUpdated', handleCustomEvent);
     
@@ -65,7 +60,6 @@ const Header = () => {
     };
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
@@ -79,7 +73,6 @@ const Header = () => {
     }
   };
 
-  // Simplified nav items
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
@@ -99,7 +92,6 @@ const Header = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
           <Link 
             to="/" 
             className="relative z-10 font-display text-xl text-amber-800 font-medium"
@@ -107,7 +99,6 @@ const Header = () => {
             Crochet with Limboo
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
@@ -125,7 +116,6 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-2">
             <Button 
               variant="ghost" 
@@ -153,7 +143,7 @@ const Header = () => {
             <Button 
               variant="outline"
               className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
-              onClick={() => navigate("/customer/login")}
+              onClick={() => navigate("/login")}
             >
               <User className="h-4 w-4 mr-2" />
               Customer
@@ -168,7 +158,6 @@ const Header = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
           <Button 
             variant="ghost" 
             size="icon"
@@ -180,7 +169,6 @@ const Header = () => {
           </Button>
         </div>
 
-        {/* Search Bar */}
         {isSearchOpen && (
           <div className="absolute left-0 right-0 top-full bg-white shadow-md p-4 animate-fade-in">
             <form onSubmit={handleSearch} className="flex items-center">
@@ -209,7 +197,6 @@ const Header = () => {
         )}
       </div>
 
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white pt-16 animate-fade-in">
           <div className="container px-4 py-4">
@@ -244,7 +231,7 @@ const Header = () => {
                 </Link>
               ))}
               <Link 
-                to="/customer/login" 
+                to="/login" 
                 className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
               >
                 <User className="h-4 w-4 mr-2" />

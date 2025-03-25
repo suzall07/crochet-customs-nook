@@ -33,10 +33,11 @@ export const isAdminLoggedIn = () => {
   return localStorage.getItem('adminLoggedIn') === 'true';
 };
 
+// Removing duplicate function
 // Function to check admin login (adding the missing function)
-export const checkAdminLogin = () => {
-  return localStorage.getItem('adminLoggedIn') === 'true';
-};
+// export const checkAdminLogin = () => {
+//   return localStorage.getItem('adminLoggedIn') === 'true';
+// };
 
 // Customer authentication
 export interface CustomerData {

@@ -8,7 +8,7 @@ import { LogIn } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import AdminProductList from '@/components/admin/AdminProductList';
 import AdminHeroSlides from '@/components/admin/AdminHeroSlides';
-import { checkAdminLogin, loginAdmin, logoutAdmin } from '@/utils/authUtils';
+import { isAdminLoggedIn, loginAdmin, logoutAdmin } from '@/utils/authUtils';
 
 const Admin = () => {
   const { toast } = useToast();
@@ -22,7 +22,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('products');
 
   useEffect(() => {
-    const isAuth = checkAdminLogin();
+    const isAuth = isAdminLoggedIn();
     if (isAuth) {
       setIsLoggedIn(true);
     }
