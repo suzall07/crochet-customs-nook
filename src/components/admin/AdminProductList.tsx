@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Product } from '@/components/ProductCard';
 import { PlusCircle, Edit, Trash, Image, AlertTriangle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Carousel,
   CarouselContent,
@@ -325,160 +327,162 @@ const AdminProductList = () => {
       </CardContent>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
           <DialogHeader>
             <DialogTitle>{formData.id === 0 ? 'Add New Product' : 'Edit Product'}</DialogTitle>
             <DialogDescription>
               Fill in the product details below. Fields marked with * are required.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Product Name *</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter product name"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+          <ScrollArea className="flex-grow pr-4" style={{ maxHeight: 'calc(90vh - 180px)' }}>
+            <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="price">Price (Rs) *</Label>
+                <Label htmlFor="name">Product Name *</Label>
                 <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  value={formData.price}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter price"
+                  placeholder="Enter product name"
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-md border border-input bg-transparent"
-                  required
-                >
-                  <option value="">Select category</option>
-                  <option value="Shop">Shop</option>
-                  <option value="Popular Crochet">Popular Crochet</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description">Product Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Enter product description"
-                rows={4}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Product Image *</Label>
-              <div className="grid grid-cols-1 gap-4">
-                <div 
-                  className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-blue-50 transition-colors" 
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <input 
-                    type="file" 
-                    ref={fileInputRef}
-                    className="hidden" 
-                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                    onChange={handleFileChange}
-                  />
-                  <Image className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-500 mb-1">Click to upload image</p>
-                  <p className="text-xs text-gray-400">JPG, JPEG, PNG, GIF, or WEBP</p>
-                </div>
-                
-                {(imagePreview || formData.image) && (
-                  <div className="relative">
-                    <Carousel className="w-full">
-                      <CarouselContent>
-                        <CarouselItem>
-                          <div className="relative aspect-square">
-                            <img 
-                              src={imagePreview || formData.image} 
-                              alt="Product preview" 
-                              className="w-full h-full object-cover rounded-md" 
-                            />
-                            <Button 
-                              variant="destructive" 
-                              size="sm" 
-                              className="absolute top-2 right-2"
-                              onClick={() => {
-                                setImagePreview(null);
-                                setFormData(prev => ({ ...prev, image: '' }));
-                                if (fileInputRef.current) {
-                                  fileInputRef.current.value = '';
-                                }
-                              }}
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        </CarouselItem>
-                      </CarouselContent>
-                      <CarouselPrevious className="left-2" />
-                      <CarouselNext className="right-2" />
-                    </Carousel>
-                  </div>
-                )}
-                
-                <div className="text-sm mt-2">
-                  <Label htmlFor="image-url">Or enter image URL</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price (Rs) *</Label>
                   <Input
-                    id="image-url"
-                    name="image"
-                    value={formData.image}
+                    id="price"
+                    name="price"
+                    type="number"
+                    value={formData.price}
                     onChange={handleChange}
-                    placeholder="https://example.com/image.jpg"
-                    className="mt-1"
+                    placeholder="Enter price"
+                    required
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 rounded-md border border-input bg-transparent"
+                    required
+                  >
+                    <option value="">Select category</option>
+                    <option value="Shop">Shop</option>
+                    <option value="Popular Crochet">Popular Crochet</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="description">Product Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Enter product description"
+                  rows={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Product Image *</Label>
+                <div className="grid grid-cols-1 gap-4">
+                  <div 
+                    className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-blue-50 transition-colors" 
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef}
+                      className="hidden" 
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                      onChange={handleFileChange}
+                    />
+                    <Image className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm text-gray-500 mb-1">Click to upload image</p>
+                    <p className="text-xs text-gray-400">JPG, JPEG, PNG, GIF, or WEBP</p>
+                  </div>
+                  
+                  {(imagePreview || formData.image) && (
+                    <div className="relative">
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          <CarouselItem>
+                            <div className="relative aspect-square">
+                              <img 
+                                src={imagePreview || formData.image} 
+                                alt="Product preview" 
+                                className="w-full h-full object-cover rounded-md" 
+                              />
+                              <Button 
+                                variant="destructive" 
+                                size="sm" 
+                                className="absolute top-2 right-2"
+                                onClick={() => {
+                                  setImagePreview(null);
+                                  setFormData(prev => ({ ...prev, image: '' }));
+                                  if (fileInputRef.current) {
+                                    fileInputRef.current.value = '';
+                                  }
+                                }}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          </CarouselItem>
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2" />
+                        <CarouselNext className="right-2" />
+                      </Carousel>
+                    </div>
+                  )}
+                  
+                  <div className="text-sm mt-2">
+                    <Label htmlFor="image-url">Or enter image URL</Label>
+                    <Input
+                      id="image-url"
+                      name="image"
+                      value={formData.image}
+                      onChange={handleChange}
+                      placeholder="https://example.com/image.jpg"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex space-x-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    id="isNew"
+                    name="isNew"
+                    type="checkbox"
+                    checked={formData.isNew}
+                    onChange={handleChange}
+                    className="rounded border-input"
+                  />
+                  <Label htmlFor="isNew">Mark as New</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    id="isFeatured"
+                    name="isFeatured"
+                    type="checkbox"
+                    checked={formData.isFeatured}
+                    onChange={handleChange}
+                    className="rounded border-input"
+                  />
+                  <Label htmlFor="isFeatured">Mark as Featured</Label>
                 </div>
               </div>
             </div>
-            
-            <div className="flex space-x-4">
-              <div className="flex items-center space-x-2">
-                <input
-                  id="isNew"
-                  name="isNew"
-                  type="checkbox"
-                  checked={formData.isNew}
-                  onChange={handleChange}
-                  className="rounded border-input"
-                />
-                <Label htmlFor="isNew">Mark as New</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  id="isFeatured"
-                  name="isFeatured"
-                  type="checkbox"
-                  checked={formData.isFeatured}
-                  onChange={handleChange}
-                  className="rounded border-input"
-                />
-                <Label htmlFor="isFeatured">Mark as Featured</Label>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
+          </ScrollArea>
+          <DialogFooter className="sticky bottom-0 pt-4 bg-background">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
             <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEdit}>
               {formData.id === 0 ? 'Add Product' : 'Update Product'}
