@@ -16,12 +16,13 @@ import NotFound from './pages/NotFound';
 import Admin from './pages/Admin';
 import AdminSignup from './pages/AdminSignup';
 import CustomerLogin from './pages/CustomerLogin';
+import { Toaster } from '@/components/ui/toaster';
 import './App.css';
 
-// Create a client
-const queryClient = new QueryClient();
-
 function App() {
+  // Create a client inside the component
+  const queryClient = new QueryClient();
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -45,6 +46,7 @@ function App() {
             </Layout>
           </Suspense>
         </BrowserRouter>
+        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );
