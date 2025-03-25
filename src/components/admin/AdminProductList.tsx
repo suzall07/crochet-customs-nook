@@ -7,8 +7,15 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Product } from '@/components/ProductCard';
-import { PlusCircle, Edit, Trash, Image, AlertTriangle, FileText } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Image, AlertTriangle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const defaultProducts: Product[] = [
   {
@@ -137,11 +144,20 @@ const AdminProductList = () => {
       });
     }
 
-    setProducts(updatedProducts);
-    localStorage.setItem('products', JSON.stringify(updatedProducts));
-    window.dispatchEvent(new Event('productsUpdated'));
-    setIsDialogOpen(false);
-    resetForm();
+    try {
+      localStorage.setItem('products', JSON.stringify(updatedProducts));
+      setProducts(updatedProducts);
+      window.dispatchEvent(new Event('productsUpdated'));
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      console.error('Error saving products:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save product. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDelete = () => {
@@ -309,7 +325,7 @@ const AdminProductList = () => {
       </CardContent>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>{formData.id === 0 ? 'Add New Product' : 'Edit Product'}</DialogTitle>
             <DialogDescription>
@@ -373,7 +389,10 @@ const AdminProductList = () => {
             <div className="space-y-2">
               <Label>Product Image *</Label>
               <div className="grid grid-cols-1 gap-4">
-                <div className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-blue-50 transition-colors" onClick={() => fileInputRef.current?.click()}>
+                <div 
+                  className="border border-dashed rounded-md p-4 text-center cursor-pointer hover:bg-blue-50 transition-colors" 
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   <input 
                     type="file" 
                     ref={fileInputRef}
@@ -387,26 +406,36 @@ const AdminProductList = () => {
                 </div>
                 
                 {(imagePreview || formData.image) && (
-                  <div className="relative mt-2">
-                    <img 
-                      src={imagePreview || formData.image} 
-                      alt="Product preview" 
-                      className="w-full h-40 object-cover rounded-md" 
-                    />
-                    <Button 
-                      variant="destructive" 
-                      size="sm" 
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setImagePreview(null);
-                        setFormData(prev => ({ ...prev, image: '' }));
-                        if (fileInputRef.current) {
-                          fileInputRef.current.value = '';
-                        }
-                      }}
-                    >
-                      Remove
-                    </Button>
+                  <div className="relative">
+                    <Carousel className="w-full">
+                      <CarouselContent>
+                        <CarouselItem>
+                          <div className="relative aspect-square">
+                            <img 
+                              src={imagePreview || formData.image} 
+                              alt="Product preview" 
+                              className="w-full h-full object-cover rounded-md" 
+                            />
+                            <Button 
+                              variant="destructive" 
+                              size="sm" 
+                              className="absolute top-2 right-2"
+                              onClick={() => {
+                                setImagePreview(null);
+                                setFormData(prev => ({ ...prev, image: '' }));
+                                if (fileInputRef.current) {
+                                  fileInputRef.current.value = '';
+                                }
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </CarouselItem>
+                      </CarouselContent>
+                      <CarouselPrevious className="left-2" />
+                      <CarouselNext className="right-2" />
+                    </Carousel>
                   </div>
                 )}
                 
@@ -496,4 +525,3 @@ const AdminProductList = () => {
 };
 
 export default AdminProductList;
-
