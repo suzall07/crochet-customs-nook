@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,6 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [loadAttempt, setLoadAttempt] = useState(0);
 
   // Load slides from localStorage on mount and when they change
   useEffect(() => {
@@ -35,8 +32,6 @@ const Hero = () => {
     setDirection('next');
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    setImageLoaded(false);
-    setLoadAttempt(0);
   };
 
   const prevSlide = () => {
@@ -44,18 +39,6 @@ const Hero = () => {
     setDirection('prev');
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-    setImageLoaded(false);
-    setLoadAttempt(0);
-  };
-
-  // Handle image loading error by incrementing load attempt
-  const handleImageError = () => {
-    console.error('Failed to load hero image, attempting fallback');
-    setLoadAttempt(prev => prev + 1);
-    // If we've tried too many times, just show the slide anyway
-    if (loadAttempt > 2) {
-      setImageLoaded(true);
-    }
   };
 
   useEffect(() => {
@@ -77,59 +60,30 @@ const Hero = () => {
 
   const slide = heroSlides[currentSlide] || heroSlides[0];
 
-  // New fallback image - wool/yarn themed
-  const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-
   return (
-    <div className="hero-section">
-      {/* Simple Background */}
-      <div className="relative h-full w-full overflow-hidden">
-        {!imageLoaded && (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-        )}
-        <img
-          src={loadAttempt > 0 ? fallbackImage : slide.image}
-          alt={slide.title}
-          className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-300", 
-            imageLoaded ? "opacity-100" : "opacity-0"
-          )}
-          loading="lazy"
-          onLoad={() => setImageLoaded(true)}
-          onError={handleImageError}
-        />
-        
-        {/* Simple Overlay */}
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-      
-      {/* Content */}
-      <div className="relative z-10 h-full flex items-center">
-        <div className="container mx-auto px-4">
-          <div className={cn(
-            "max-w-lg text-white transition-all duration-700",
-            isAnimating ? 
-              (direction === 'next' ? "translate-x-10 opacity-0" : "-translate-x-10 opacity-0") : 
-              "translate-x-0 opacity-100"
-          )}>
-            <h1 className="text-3xl md:text-4xl font-medium mb-3">
-              {slide.title}
-            </h1>
-            <p className="text-lg opacity-90 mb-6">
-              {slide.subtitle}
-            </p>
-            <Button 
-              asChild
-              size="lg" 
-              className="bg-white text-crochet-900 hover:bg-white/90"
-            >
-              <a href={slide.link}>
-                {slide.cta} 
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
-            </Button>
-          </div>
-        </div>
+    <div className="hero-section bg-gradient-to-r from-crochet-50 to-crochet-100 relative h-[500px] flex items-center justify-center text-center overflow-hidden">
+      <div className={cn(
+        "max-w-4xl px-6 transition-all duration-700",
+        isAnimating ? 
+          (direction === 'next' ? "translate-x-10 opacity-0" : "-translate-x-10 opacity-0") : 
+          "translate-x-0 opacity-100"
+      )}>
+        <h1 className="text-5xl font-display font-bold text-crochet-900 mb-4">
+          {slide.title}
+        </h1>
+        <p className="text-2xl text-crochet-700 mb-8">
+          {slide.subtitle}
+        </p>
+        <Button 
+          asChild
+          size="lg" 
+          className="bg-crochet-600 text-white hover:bg-crochet-700"
+        >
+          <a href={slide.link}>
+            {slide.cta} 
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </a>
+        </Button>
       </div>
       
       {/* Simple Navigation */}
@@ -138,17 +92,17 @@ const Hero = () => {
           variant="outline" 
           size="icon" 
           onClick={prevSlide}
-          className="bg-white/20 hover:bg-white/30 border-white/30"
+          className="bg-white/20 hover:bg-white/30 border-crochet-200"
         >
-          <ArrowLeft className="h-5 w-5 text-white" />
+          <ArrowLeft className="h-5 w-5 text-crochet-900" />
         </Button>
         <Button 
           variant="outline" 
           size="icon" 
           onClick={nextSlide}
-          className="bg-white/20 hover:bg-white/30 border-white/30"
+          className="bg-white/20 hover:bg-white/30 border-crochet-200"
         >
-          <ArrowRight className="h-5 w-5 text-white" />
+          <ArrowRight className="h-5 w-5 text-crochet-900" />
         </Button>
       </div>
     </div>
