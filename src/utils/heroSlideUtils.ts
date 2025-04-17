@@ -1,4 +1,3 @@
-
 // Define the type for a hero slide
 export interface HeroSlide {
   id: number;
@@ -13,19 +12,11 @@ export interface HeroSlide {
 const defaultHeroSlides: HeroSlide[] = [
   {
     id: 1,
-    title: "Handcrafted with Love",
-    subtitle: "Unique crochet creations made with passion",
+    title: "Crochet with Limboo",
+    subtitle: "Handcrafted Creations from Passion",
     image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    cta: "Shop Collection",
+    cta: "Explore Collection",
     link: "/shop"
-  },
-  {
-    id: 2,
-    title: "Custom Crochet Designs",
-    subtitle: "Personalize your crochet items with colors and designs",
-    image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    cta: "Customize Now",
-    link: "/customize"
   }
 ];
 
