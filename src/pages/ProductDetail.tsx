@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
@@ -110,7 +111,8 @@ const ProductDetail = () => {
         description: "Please login to add items to your cart.",
         variant: "destructive"
       });
-      navigate('/customer/login');
+      // Fix: Change the redirect URL to the correct path
+      navigate('/login');
       return;
     }
 
@@ -146,7 +148,8 @@ const ProductDetail = () => {
         description: "Please login to leave a review.",
         variant: "destructive"
       });
-      navigate('/customer/login');
+      // Fix: Change the redirect URL to the correct path
+      navigate('/login');
       return;
     }
     

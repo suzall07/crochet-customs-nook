@@ -33,12 +33,6 @@ export const isAdminLoggedIn = () => {
   return localStorage.getItem('adminLoggedIn') === 'true';
 };
 
-// Removing duplicate function
-// Function to check admin login (adding the missing function)
-// export const checkAdminLogin = () => {
-//   return localStorage.getItem('adminLoggedIn') === 'true';
-// };
-
 // Customer authentication
 export interface CustomerData {
   id: string;
@@ -139,5 +133,58 @@ export const saveProductToCart = (productId: number | string, quantity: number =
   } catch (e) {
     console.error("Error saving product to cart:", e);
     return false;
+  }
+};
+
+// Initialize default products if none exist
+export const initializeDefaultProducts = () => {
+  if (!localStorage.getItem('products')) {
+    const defaultProducts = [
+      {
+        id: 1,
+        name: "Handcrafted Crochet Blanket",
+        price: 3500,
+        category: "Blankets",
+        image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg",
+        description: "A beautiful handmade crochet blanket made with high-quality yarn. Perfect for adding warmth and style to your home.",
+        isFeatured: true
+      },
+      {
+        id: 2,
+        name: "Crochet Baby Hat",
+        price: 850,
+        category: "Baby Items",
+        image: "https://images.pexels.com/photos/8458560/pexels-photo-8458560.jpeg",
+        description: "Adorable and soft crochet hat perfect for newborns and infants. Made with baby-friendly yarn.",
+        isNew: true
+      },
+      {
+        id: 3,
+        name: "Decorative Crochet Pillow Cover",
+        price: 1200,
+        category: "Home Decor",
+        image: "https://images.pexels.com/photos/4993247/pexels-photo-4993247.jpeg",
+        description: "Add a touch of handmade charm to your living space with this unique crochet pillow cover.",
+        isFeatured: true
+      }
+    ];
+    
+    localStorage.setItem('products', JSON.stringify(defaultProducts));
+  }
+};
+
+// Initialize default customers if none exist
+export const initializeDefaultCustomers = () => {
+  if (!localStorage.getItem('customers')) {
+    const defaultCustomers = [
+      {
+        id: "1",
+        name: "Demo User",
+        email: "demo@example.com",
+        password: "password123"
+      }
+    ];
+    
+    localStorage.setItem('customers', JSON.stringify(defaultCustomers));
   }
 };

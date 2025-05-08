@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -6,11 +7,14 @@ import {
   Search, 
   Menu, 
   X, 
-  LogIn
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { isCustomerLoggedIn, getCurrentCustomer, logoutCustomer } from '@/utils/authUtils';
+import { useToast } from '@/components/ui/use-toast';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -18,8 +22,35 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [customerName, setCustomerName] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Check login status
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const loggedIn = isCustomerLoggedIn();
+      setIsLoggedIn(loggedIn);
+      
+      if (loggedIn) {
+        const customer = getCurrentCustomer();
+        if (customer) {
+          setCustomerName(customer.name);
+        }
+      }
+    };
+    
+    checkLoginStatus();
+    
+    // Listen for login/logout events
+    window.addEventListener('customerAuthChanged', checkLoginStatus);
+    
+    return () => {
+      window.removeEventListener('customerAuthChanged', checkLoginStatus);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,7 +64,10 @@ const Header = () => {
   useEffect(() => {
     const updateCartCount = () => {
       try {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        // Use customer specific cart if logged in
+        const customer = getCurrentCustomer();
+        const cartKey = customer ? `cart_${customer.id}` : 'cart';
+        const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
         setCartItemCount(cart.length);
       } catch (error) {
         console.error('Error reading cart data:', error);
@@ -44,7 +78,7 @@ const Header = () => {
     updateCartCount();
     
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'cart') {
+      if (e.key === 'cart' || e.key?.startsWith('cart_')) {
         updateCartCount();
       }
     };
@@ -58,7 +92,7 @@ const Header = () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('cartUpdated', handleCustomEvent);
     };
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -71,6 +105,22 @@ const Header = () => {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
     }
+  };
+  
+  const handleLogout = () => {
+    logoutCustomer();
+    setIsLoggedIn(false);
+    setCustomerName('');
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('customerAuthChanged'));
+    
+    // Redirect to home page
+    navigate('/');
   };
 
   const navItems = [
@@ -140,14 +190,30 @@ const Header = () => {
                 </span>
               )}
             </Button>
-            <Button 
-              variant="outline"
-              className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
-              onClick={() => navigate("/login")}
-            >
-              <User className="h-4 w-4 mr-2" />
-              Customer
-            </Button>
+            
+            {isLoggedIn ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-amber-700">Hello, {customerName}</span>
+                <Button 
+                  variant="outline"
+                  className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                variant="outline"
+                className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
+                onClick={() => navigate("/login")}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Customer Login
+              </Button>
+            )}
+            
             <Button 
               variant="outline"
               className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
@@ -230,13 +296,31 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <Link 
-                to="/login" 
-                className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
-              >
-                <User className="h-4 w-4 mr-2" />
-                Customer Login
-              </Link>
+              
+              {isLoggedIn ? (
+                <>
+                  <div className="text-lg py-2 border-b border-gray-100 flex items-center justify-between text-amber-600">
+                    <span>Hello, {customerName}</span>
+                    <Button 
+                      variant="ghost" 
+                      className="text-amber-700"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <Link 
+                  to="/login" 
+                  className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Customer Login
+                </Link>
+              )}
+              
               <Link 
                 to="/admin" 
                 className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"

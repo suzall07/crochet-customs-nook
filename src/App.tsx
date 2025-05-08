@@ -1,6 +1,6 @@
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import Layout from './components/Layout';
@@ -17,11 +17,25 @@ import Admin from './pages/Admin';
 import AdminSignup from './pages/AdminSignup';
 import CustomerLogin from './pages/CustomerLogin';
 import { Toaster } from '@/components/ui/toaster';
+import { initializeDefaultProducts, initializeDefaultCustomers } from '@/utils/authUtils';
 import './App.css';
 
 function App() {
   // Create a client inside the component
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+  
+  // Initialize default data if not exists
+  useEffect(() => {
+    initializeDefaultProducts();
+    initializeDefaultCustomers();
+  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
