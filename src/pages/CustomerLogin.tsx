@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -6,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { loginCustomer, isCustomerLoggedIn } from '@/utils/authUtils';
 
 interface Customer {
@@ -23,19 +25,41 @@ const CustomerLogin = () => {
   // Login states
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   
   // Register states
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   
   useEffect(() => {
     // Check if customer is already logged in
     if (isCustomerLoggedIn()) {
       navigate('/shop');
     }
+    
+    // Check if there's a remembered email
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      setLoginEmail(rememberedEmail);
+      setRememberMe(true);
+    }
   }, [navigate]);
+  
+  // Password validation
+  const validatePassword = (password: string): boolean => {
+    // Minimum 8 characters, at least one uppercase, one lowercase, one number, and one special character
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+  
+  // Email validation
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,11 +73,27 @@ const CustomerLogin = () => {
       return;
     }
     
+    if (!validateEmail(loginEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // Check if customer exists in localStorage
     const customers = JSON.parse(localStorage.getItem('customers') || '[]');
     const customer = customers.find((c: Customer) => c.email === loginEmail);
     
     if (customer && customer.password === loginPassword) {
+      // Save email if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', loginEmail);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
+      
       // Use the auth utility to handle login
       loginCustomer({
         id: customer.id,
@@ -87,6 +127,20 @@ const CustomerLogin = () => {
         description: "Please fill in all fields",
         variant: "destructive"
       });
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!validatePassword(password)) {
+      setPasswordError('Password must be at least 8 characters and include uppercase, lowercase, number, and special character');
       return;
     }
     
@@ -132,6 +186,17 @@ const CustomerLogin = () => {
     navigate('/shop');
   };
   
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    
+    if (newPassword && !validatePassword(newPassword)) {
+      setPasswordError('Password must be at least 8 characters and include uppercase, lowercase, number, and special character');
+    } else {
+      setPasswordError('');
+    }
+  };
+  
   return (
     <div className="min-h-screen pt-24 pb-16 flex items-center justify-center">
       <div className="container max-w-md">
@@ -144,9 +209,9 @@ const CustomerLogin = () => {
           </CardHeader>
           
           <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 mx-4 bg-orange-50">
-              <TabsTrigger value="login" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Login</TabsTrigger>
-              <TabsTrigger value="register" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white">Register</TabsTrigger>
+            <TabsList className="grid grid-cols-2 mx-4 bg-red-50">
+              <TabsTrigger value="login" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">Login</TabsTrigger>
+              <TabsTrigger value="register" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">Register</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
@@ -174,9 +239,22 @@ const CustomerLogin = () => {
                       required
                     />
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="remember-me" 
+                      checked={rememberMe} 
+                      onCheckedChange={(checked) => setRememberMe(checked === true)}
+                    />
+                    <label
+                      htmlFor="remember-me"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Remember me
+                    </label>
+                  </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">
+                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
                     Login
                   </Button>
                 </CardFooter>
@@ -214,9 +292,15 @@ const CustomerLogin = () => {
                       type="password"
                       placeholder="••••••••"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={handlePasswordChange}
                       required
                     />
+                    {passwordError && (
+                      <p className="text-red-600 text-xs">{passwordError}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Password must be at least 8 characters and include uppercase, lowercase, number, and special character
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -231,7 +315,7 @@ const CustomerLogin = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">
+                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
                     Create Account
                   </Button>
                 </CardFooter>

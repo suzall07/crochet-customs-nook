@@ -17,7 +17,7 @@ import Admin from './pages/Admin';
 import AdminSignup from './pages/AdminSignup';
 import CustomerLogin from './pages/CustomerLogin';
 import { Toaster } from '@/components/ui/toaster';
-import { initializeDefaultProducts, initializeDefaultCustomers } from '@/utils/authUtils';
+import { initializeDefaultProducts, initializeDefaultCustomers, checkSessionStatus } from '@/utils/authUtils';
 import './App.css';
 
 function App() {
@@ -31,10 +31,11 @@ function App() {
     },
   });
   
-  // Initialize default data if not exists
+  // Initialize default data if not exists and check session status
   useEffect(() => {
     initializeDefaultProducts();
     initializeDefaultCustomers();
+    checkSessionStatus();
   }, []);
   
   return (

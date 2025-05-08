@@ -9,7 +9,7 @@ export interface HeroSlide {
   link: string;
 }
 
-// Default hero slides
+// Default hero slides with no image references
 const defaultHeroSlides: HeroSlide[] = [
   {
     id: 1,

@@ -66,10 +66,10 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section className="page-container bg-orange-50 py-16 rounded-lg">
+    <section className="page-container bg-red-50 py-16 rounded-lg">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-display font-medium text-amber-800">Featured Creations</h2>
-        <p className="text-amber-700 mt-2 max-w-xl mx-auto">
+        <h2 className="text-3xl font-display font-medium text-red-800">Featured Creations</h2>
+        <p className="text-red-700 mt-2 max-w-xl mx-auto">
           Discover our handpicked collection of unique crochet items
         </p>
       </div>

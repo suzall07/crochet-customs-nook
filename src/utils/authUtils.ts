@@ -14,6 +14,10 @@ export const loginAdmin = (adminData: { name: string, email: string, password: s
   
   // Save current timestamp for session persistence
   localStorage.setItem('adminLoginTime', Date.now().toString());
+  
+  // Set session expiration (24 hours)
+  const expirationTime = Date.now() + (24 * 60 * 60 * 1000);
+  localStorage.setItem('adminSessionExpires', expirationTime.toString());
 };
 
 export const logoutAdmin = () => {
@@ -27,10 +31,21 @@ export const logoutAdmin = () => {
   // Remove admin logged in flag
   localStorage.removeItem('adminLoggedIn');
   localStorage.removeItem('adminLoginTime');
+  localStorage.removeItem('adminSessionExpires');
 };
 
 export const isAdminLoggedIn = () => {
-  return localStorage.getItem('adminLoggedIn') === 'true';
+  const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+  if (!loggedIn) return false;
+  
+  // Check if session expired
+  const sessionExpires = localStorage.getItem('adminSessionExpires');
+  if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
+    logoutAdmin();
+    return false;
+  }
+  
+  return true;
 };
 
 // Customer authentication
@@ -54,11 +69,18 @@ export const loginCustomer = (customerData: CustomerData) => {
   // Save login timestamp for session persistence
   localStorage.setItem('customerLoginTime', Date.now().toString());
   
+  // Set session expiration (24 hours)
+  const expirationTime = Date.now() + (24 * 60 * 60 * 1000);
+  localStorage.setItem('customerSessionExpires', expirationTime.toString());
+  
   // Save cart if there's one in localStorage
   const cart = localStorage.getItem('cart');
   if (cart && customerData.id) {
     localStorage.setItem(`cart_${customerData.id}`, cart);
   }
+  
+  // Dispatch event to notify components of login
+  window.dispatchEvent(new Event('customerAuthChanged'));
 };
 
 export const logoutCustomer = () => {
@@ -75,13 +97,29 @@ export const logoutCustomer = () => {
   localStorage.removeItem('customerLoggedIn');
   localStorage.removeItem('currentCustomer');
   localStorage.removeItem('customerLoginTime');
+  localStorage.removeItem('customerSessionExpires');
+  
+  // Dispatch event to notify components of logout
+  window.dispatchEvent(new Event('customerAuthChanged'));
 };
 
 export const isCustomerLoggedIn = () => {
-  return localStorage.getItem('customerLoggedIn') === 'true';
+  const loggedIn = localStorage.getItem('customerLoggedIn') === 'true';
+  if (!loggedIn) return false;
+  
+  // Check if session expired
+  const sessionExpires = localStorage.getItem('customerSessionExpires');
+  if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
+    logoutCustomer();
+    return false;
+  }
+  
+  return true;
 };
 
 export const getCurrentCustomer = (): CustomerData | null => {
+  if (!isCustomerLoggedIn()) return null;
+  
   const customerStr = localStorage.getItem('currentCustomer');
   if (!customerStr) return null;
   
@@ -136,6 +174,25 @@ export const saveProductToCart = (productId: number | string, quantity: number =
   }
 };
 
+// Search functionality
+export const searchProducts = (query: string) => {
+  try {
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    if (!query.trim()) return products;
+    
+    const lowerQuery = query.toLowerCase().trim();
+    
+    return products.filter((product: any) => 
+      product.name.toLowerCase().includes(lowerQuery) ||
+      product.description.toLowerCase().includes(lowerQuery) ||
+      product.category.toLowerCase().includes(lowerQuery)
+    );
+  } catch (e) {
+    console.error('Error searching products:', e);
+    return [];
+  }
+};
+
 // Initialize default products if none exist
 export const initializeDefaultProducts = () => {
   if (!localStorage.getItem('products')) {
@@ -176,15 +233,35 @@ export const initializeDefaultProducts = () => {
 // Initialize default customers if none exist
 export const initializeDefaultCustomers = () => {
   if (!localStorage.getItem('customers')) {
+    // Create a strong password for the demo account
     const defaultCustomers = [
       {
         id: "1",
         name: "Demo User",
         email: "demo@example.com",
-        password: "password123"
+        password: "Password1@"
       }
     ];
     
     localStorage.setItem('customers', JSON.stringify(defaultCustomers));
+  }
+};
+
+// Check session on app load
+export const checkSessionStatus = () => {
+  // Check admin session
+  if (localStorage.getItem('adminLoggedIn') === 'true') {
+    const sessionExpires = localStorage.getItem('adminSessionExpires');
+    if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
+      logoutAdmin();
+    }
+  }
+  
+  // Check customer session
+  if (localStorage.getItem('customerLoggedIn') === 'true') {
+    const sessionExpires = localStorage.getItem('customerSessionExpires');
+    if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
+      logoutCustomer();
+    }
   }
 };

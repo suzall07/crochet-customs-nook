@@ -94,9 +94,9 @@ const Contact = () => {
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}
-      <div className="relative bg-crochet-800 text-white py-16 sm:py-24">
+      <div className="relative bg-red-800 text-white py-16 sm:py-24">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-crochet-900 to-crochet-800 opacity-90"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-red-900 to-red-800 opacity-90"></div>
         </div>
         
         <div className="relative container max-w-7xl mx-auto px-4 sm:px-6 text-center">
@@ -116,19 +116,19 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div className="space-y-8 animate-slide-up">
-            <h2 className="font-display text-3xl font-medium text-crochet-900">Contact Information</h2>
+            <h2 className="font-display text-3xl font-medium text-red-900">Contact Information</h2>
             
             <div className="space-y-6">
               <div className="flex items-start">
-                <div className="bg-crochet-100 p-3 rounded-lg mr-4">
-                  <Mail className="h-6 w-6 text-crochet-700" />
+                <div className="bg-red-100 p-3 rounded-lg mr-4">
+                  <Mail className="h-6 w-6 text-red-700" />
                 </div>
                 <div>
                   <h3 className="font-medium text-lg mb-1">Email</h3>
-                  <p className="text-crochet-600 mb-1">For general inquiries:</p>
+                  <p className="text-gray-600 mb-1">For general inquiries:</p>
                   <a 
                     href="mailto:info@crochetwithlimboo.com" 
-                    className="text-crochet-700 hover:text-crochet-900 hover:underline"
+                    className="text-red-700 hover:text-red-900 hover:underline"
                   >
                     info@crochetwithlimboo.com
                   </a>
@@ -136,15 +136,15 @@ const Contact = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="bg-crochet-100 p-3 rounded-lg mr-4">
-                  <Phone className="h-6 w-6 text-crochet-700" />
+                <div className="bg-red-100 p-3 rounded-lg mr-4">
+                  <Phone className="h-6 w-6 text-red-700" />
                 </div>
                 <div>
                   <h3 className="font-medium text-lg mb-1">Phone</h3>
-                  <p className="text-crochet-600 mb-1">Customer support:</p>
+                  <p className="text-gray-600 mb-1">Customer support:</p>
                   <a 
                     href="tel:+977980101097" 
-                    className="text-crochet-700 hover:text-crochet-900 hover:underline"
+                    className="text-red-700 hover:text-red-900 hover:underline"
                   >
                     980101097
                   </a>
@@ -152,12 +152,12 @@ const Contact = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="bg-crochet-100 p-3 rounded-lg mr-4">
-                  <MapPin className="h-6 w-6 text-crochet-700" />
+                <div className="bg-red-100 p-3 rounded-lg mr-4">
+                  <MapPin className="h-6 w-6 text-red-700" />
                 </div>
                 <div>
                   <h3 className="font-medium text-lg mb-1">Address</h3>
-                  <p className="text-crochet-600">
+                  <p className="text-gray-600">
                     Kimdol, KTM<br />
                     Nepal
                   </p>
@@ -165,12 +165,12 @@ const Contact = () => {
               </div>
               
               <div className="flex items-start">
-                <div className="bg-crochet-100 p-3 rounded-lg mr-4">
-                  <Clock className="h-6 w-6 text-crochet-700" />
+                <div className="bg-red-100 p-3 rounded-lg mr-4">
+                  <Clock className="h-6 w-6 text-red-700" />
                 </div>
                 <div>
                   <h3 className="font-medium text-lg mb-1">Business Hours</h3>
-                  <p className="text-crochet-600">
+                  <p className="text-gray-600">
                     Sunday - Friday: 10am - 8pm<br />
                     Saturday: Closed
                   </p>
@@ -178,14 +178,14 @@ const Contact = () => {
               </div>
             </div>
             
-            <div className="bg-crochet-50 p-6 rounded-xl border border-crochet-100">
+            <div className="bg-red-50 p-6 rounded-xl border border-red-100">
               <h3 className="font-medium text-lg mb-2">Custom Orders</h3>
-              <p className="text-crochet-600 mb-4">
+              <p className="text-gray-600 mb-4">
                 Interested in a custom crochet item not listed in our store? 
                 We'd be happy to discuss your ideas and create something unique for you.
               </p>
               <Button 
-                className="bg-crochet-700 hover:bg-crochet-800"
+                className="bg-red-700 hover:bg-red-800"
                 onClick={() => document.getElementById('custom-order-form')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Request Custom Order
@@ -195,12 +195,12 @@ const Contact = () => {
           
           {/* Contact Form */}
           <div className="animate-slide-up">
-            <h2 className="font-display text-3xl font-medium text-crochet-900 mb-6">Send a Message</h2>
+            <h2 className="font-display text-3xl font-medium text-red-900 mb-6">Send a Message</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-crochet-700">
+                  <label htmlFor="name" className="text-sm font-medium text-gray-700">
                     Your Name *
                   </label>
                   <input
@@ -210,13 +210,13 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                     placeholder="Enter your name"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-crochet-700">
+                  <label htmlFor="email" className="text-sm font-medium text-gray-700">
                     Email Address *
                   </label>
                   <input
@@ -226,14 +226,14 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                     placeholder="Enter your email"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-medium text-crochet-700">
+                <label htmlFor="subject" className="text-sm font-medium text-gray-700">
                   Subject *
                 </label>
                 <select
@@ -242,7 +242,7 @@ const Contact = () => {
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                 >
                   <option value="">Select a subject</option>
                   <option value="General Inquiry">General Inquiry</option>
@@ -255,7 +255,7 @@ const Contact = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium text-crochet-700">
+                <label htmlFor="message" className="text-sm font-medium text-gray-700">
                   Message *
                 </label>
                 <textarea
@@ -265,7 +265,7 @@ const Contact = () => {
                   rows={6}
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors resize-none"
                   placeholder="How can we help you?"
                 />
               </div>
@@ -273,7 +273,7 @@ const Contact = () => {
               <Button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full sm:w-auto bg-crochet-800 hover:bg-crochet-900 button-effect"
+                className="w-full sm:w-auto bg-red-800 hover:bg-red-900 button-effect"
               >
                 {isSubmitting ? (
                   <span className="flex items-center">
@@ -296,20 +296,20 @@ const Contact = () => {
       </section>
       
       {/* Custom Order Form */}
-      <section id="custom-order-form" className="bg-crochet-50 py-16">
+      <section id="custom-order-form" className="bg-red-50 py-16">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="font-display text-3xl font-medium text-crochet-900 mb-4">Request a Custom Order</h2>
-              <p className="text-crochet-600">
+              <h2 className="font-display text-3xl font-medium text-red-900 mb-4">Request a Custom Order</h2>
+              <p className="text-gray-600">
                 Tell us about your dream crochet item and we'll bring it to life for you.
               </p>
             </div>
             
-            <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-crochet-100 p-8">
+            <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-red-100 p-8">
               <form onSubmit={handleCustomOrderSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="itemType" className="text-sm font-medium text-crochet-700">
+                  <label htmlFor="itemType" className="text-sm font-medium text-gray-700">
                     Type of Item *
                   </label>
                   <input
@@ -319,13 +319,13 @@ const Contact = () => {
                     required
                     value={customOrderData.itemType}
                     onChange={handleCustomChange}
-                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                     placeholder="e.g. Blanket, Amigurumi, Garment"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="description" className="text-sm font-medium text-crochet-700">
+                  <label htmlFor="description" className="text-sm font-medium text-gray-700">
                     Description *
                   </label>
                   <textarea
@@ -335,13 +335,13 @@ const Contact = () => {
                     rows={4}
                     value={customOrderData.description}
                     onChange={handleCustomChange}
-                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors resize-none"
                     placeholder="Please describe your custom item in detail (size, design, etc)"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="preferredColors" className="text-sm font-medium text-crochet-700">
+                  <label htmlFor="preferredColors" className="text-sm font-medium text-gray-700">
                     Preferred Colors
                   </label>
                   <input
@@ -350,14 +350,14 @@ const Contact = () => {
                     type="text"
                     value={customOrderData.preferredColors}
                     onChange={handleCustomChange}
-                    className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                     placeholder="e.g. Blue, Green, Yellow"
                   />
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label htmlFor="budget" className="text-sm font-medium text-crochet-700">
+                    <label htmlFor="budget" className="text-sm font-medium text-gray-700">
                       Budget Range (Rs)
                     </label>
                     <input
@@ -366,13 +366,13 @@ const Contact = () => {
                       type="text"
                       value={customOrderData.budget}
                       onChange={handleCustomChange}
-                      className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                       placeholder="e.g. 1000-3000"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <label htmlFor="timeline" className="text-sm font-medium text-crochet-700">
+                    <label htmlFor="timeline" className="text-sm font-medium text-gray-700">
                       Desired Timeline
                     </label>
                     <input
@@ -381,7 +381,7 @@ const Contact = () => {
                       type="text"
                       value={customOrderData.timeline}
                       onChange={handleCustomChange}
-                      className="w-full px-4 py-3 rounded-lg border border-crochet-200 focus:ring-2 focus:ring-crochet-500 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
                       placeholder="e.g. 2 weeks, 1 month"
                     />
                   </div>
@@ -390,7 +390,7 @@ const Contact = () => {
                 <Button 
                   type="submit"
                   disabled={isCustomSubmitting}
-                  className="w-full bg-crochet-800 hover:bg-crochet-900"
+                  className="w-full bg-red-800 hover:bg-red-900"
                 >
                   {isCustomSubmitting ? "Submitting Request..." : "Submit Custom Order Request"}
                 </Button>
@@ -401,21 +401,21 @@ const Contact = () => {
       </section>
       
       {/* Map Section - Removed image */}
-      <section className="bg-crochet-50 py-16">
+      <section className="bg-red-50 py-16">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-medium text-crochet-900 mb-4">Visit Our Store</h2>
-            <p className="text-crochet-600 max-w-2xl mx-auto">
+            <h2 className="font-display text-3xl font-medium text-red-900 mb-4">Visit Our Store</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
               Come see our products in person at our physical location
             </p>
           </div>
           
-          <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-crochet-100 p-8 text-center">
+          <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-red-100 p-8 text-center">
             <h3 className="font-medium text-xl mb-4">Store Address</h3>
-            <p className="text-crochet-600 mb-4">
+            <p className="text-gray-600 mb-4">
               Kimdol, Kathmandu, Nepal
             </p>
-            <p className="text-crochet-600">
+            <p className="text-gray-600">
               <span className="font-medium">Business Hours:</span><br />
               Sunday - Friday: 10am - 8pm<br />
               Saturday: Closed

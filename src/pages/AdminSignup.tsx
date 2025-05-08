@@ -47,8 +47,8 @@ const AdminSignup = () => {
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (!validatePassword(formData.password)) {
+      newErrors.password = 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character';
     }
     
     if (formData.password !== formData.confirmPassword) {
@@ -57,6 +57,12 @@ const AdminSignup = () => {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const validatePassword = (password: string): boolean => {
+    // Minimum 8 characters, at least one uppercase, one lowercase, one number, and one special character
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -116,7 +122,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.name ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Full Name"
                 value={formData.name}
                 onChange={handleChange}
@@ -138,7 +144,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -160,7 +166,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -168,6 +174,9 @@ const AdminSignup = () => {
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
+              <p className="mt-1 text-xs text-gray-500">
+                Password must be at least 8 characters and include uppercase, lowercase, number, and special character
+              </p>
             </div>
             
             <div>
@@ -182,7 +191,7 @@ const AdminSignup = () => {
                 required
                 className={`appearance-none relative block w-full px-3 py-2 border ${
                   errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-1`}
+                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm mt-1`}
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -196,7 +205,7 @@ const AdminSignup = () => {
           <div>
             <Button
               type="submit"
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full bg-red-600 hover:bg-red-700"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -216,7 +225,7 @@ const AdminSignup = () => {
           <div className="text-center">
             <p className="text-sm">
               Already have an account?{' '}
-              <a href="/admin" className="font-medium text-amber-600 hover:text-amber-500">
+              <a href="/admin" className="font-medium text-red-600 hover:text-red-500">
                 Log in
               </a>
             </p>

@@ -144,7 +144,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <Link 
             to="/" 
-            className="relative z-10 font-display text-xl text-amber-800 font-medium"
+            className="relative z-10 font-display text-xl text-red-800 font-medium"
           >
             Crochet with Limboo
           </Link>
@@ -155,10 +155,10 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "text-sm transition-colors hover:text-amber-700",
+                  "text-sm transition-colors hover:text-red-700",
                   location.pathname === item.path 
-                    ? "text-amber-800 font-medium" 
-                    : "text-amber-600"
+                    ? "text-red-800 font-medium" 
+                    : "text-red-600"
                 )}
               >
                 {item.name}
@@ -172,7 +172,7 @@ const Header = () => {
               size="icon" 
               aria-label="Search"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="text-amber-700 hover:text-amber-900 hover:bg-orange-50"
+              className="text-red-700 hover:text-red-900 hover:bg-red-50"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -180,7 +180,7 @@ const Header = () => {
               variant="ghost" 
               size="icon" 
               aria-label="Cart" 
-              className="relative text-amber-700 hover:text-amber-900 hover:bg-orange-50"
+              className="relative text-red-700 hover:text-red-900 hover:bg-red-50"
               onClick={() => navigate("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
@@ -193,10 +193,10 @@ const Header = () => {
             
             {isLoggedIn ? (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-amber-700">Hello, {customerName}</span>
+                <span className="text-sm text-red-700">Hello, {customerName}</span>
                 <Button 
                   variant="outline"
-                  className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
+                  className="ml-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-900"
                   onClick={handleLogout}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -206,7 +206,7 @@ const Header = () => {
             ) : (
               <Button 
                 variant="outline"
-                className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
+                className="ml-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-900"
                 onClick={() => navigate("/login")}
               >
                 <User className="h-4 w-4 mr-2" />
@@ -216,7 +216,7 @@ const Header = () => {
             
             <Button 
               variant="outline"
-              className="ml-2 border-orange-200 text-amber-700 hover:bg-orange-50 hover:text-amber-900"
+              className="ml-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-900"
               onClick={() => navigate("/admin")}
             >
               <LogIn className="h-4 w-4 mr-2" />
@@ -227,7 +227,7 @@ const Header = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="md:hidden text-amber-700 hover:text-amber-900 hover:bg-orange-50"
+            className="md:hidden text-red-700 hover:text-red-900 hover:bg-red-50"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -241,12 +241,12 @@ const Header = () => {
               <Input
                 type="search"
                 placeholder="Search for crochet items..."
-                className="w-full border-orange-200 focus-visible:ring-amber-400"
+                className="w-full border-red-200 focus-visible:ring-red-400"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
               />
-              <Button type="submit" className="ml-2 bg-amber-700 hover:bg-amber-800">
+              <Button type="submit" className="ml-2 bg-red-700 hover:bg-red-800">
                 <Search className="h-4 w-4" />
               </Button>
               <Button 
@@ -254,7 +254,7 @@ const Header = () => {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setIsSearchOpen(false)}
-                className="ml-2 text-amber-700"
+                className="ml-2 text-red-700"
               >
                 Cancel
               </Button>
@@ -271,11 +271,11 @@ const Header = () => {
                 <Input
                   type="search"
                   placeholder="Search for crochet items..."
-                  className="w-full border-orange-200"
+                  className="w-full border-red-200"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Button type="submit" className="ml-2 bg-amber-700 hover:bg-amber-800">
+                <Button type="submit" className="ml-2 bg-red-700 hover:bg-red-800">
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -289,8 +289,8 @@ const Header = () => {
                   className={cn(
                     "text-lg py-2 border-b border-gray-100",
                     location.pathname === item.path 
-                      ? "text-amber-700 font-medium" 
-                      : "text-amber-600"
+                      ? "text-red-700 font-medium" 
+                      : "text-red-600"
                   )}
                 >
                   {item.name}
@@ -299,11 +299,11 @@ const Header = () => {
               
               {isLoggedIn ? (
                 <>
-                  <div className="text-lg py-2 border-b border-gray-100 flex items-center justify-between text-amber-600">
+                  <div className="text-lg py-2 border-b border-gray-100 flex items-center justify-between text-red-600">
                     <span>Hello, {customerName}</span>
                     <Button 
                       variant="ghost" 
-                      className="text-amber-700"
+                      className="text-red-700"
                       onClick={handleLogout}
                     >
                       <LogOut className="h-4 w-4 mr-2" />
@@ -314,7 +314,7 @@ const Header = () => {
               ) : (
                 <Link 
                   to="/login" 
-                  className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
+                  className="text-lg py-2 border-b border-gray-100 flex items-center text-red-600"
                 >
                   <User className="h-4 w-4 mr-2" />
                   Customer Login
@@ -323,7 +323,7 @@ const Header = () => {
               
               <Link 
                 to="/admin" 
-                className="text-lg py-2 border-b border-gray-100 flex items-center text-amber-600"
+                className="text-lg py-2 border-b border-gray-100 flex items-center text-red-600"
               >
                 <LogIn className="h-4 w-4 mr-2" />
                 Admin Login
@@ -333,7 +333,7 @@ const Header = () => {
             <div className="mt-6 flex justify-around">
               <Button 
                 variant="ghost" 
-                className="flex items-center text-amber-700"
+                className="flex items-center text-red-700"
                 onClick={() => navigate("/cart")}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
