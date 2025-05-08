@@ -15,7 +15,7 @@ const defaultHeroSlides: HeroSlide[] = [
     id: 1,
     title: "Crochet with Limboo",
     subtitle: "Handcrafted Creations Tailored Just for You",
-    image: "", // Empty image
+    image: "", // No image, will use animated background
     cta: "Explore Now",
     link: "/shop"
   },
@@ -23,7 +23,7 @@ const defaultHeroSlides: HeroSlide[] = [
     id: 2,
     title: "For Your Crochet",
     subtitle: "Bringing Creativity and Comfort to Life",
-    image: "", // Empty image
+    image: "", // No image, will use animated background
     cta: "Shop Collection",
     link: "/shop"
   }
