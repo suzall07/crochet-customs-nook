@@ -129,3 +129,12 @@
     transform: scale(1);
   }
 }
+
+/* Text shadow for better readability on image backgrounds */
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}

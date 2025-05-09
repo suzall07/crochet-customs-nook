@@ -83,27 +83,45 @@ const Hero = () => {
 
   return (
     <div className="hero-section relative h-[500px] flex items-center justify-center text-center overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-crochet-50 to-crochet-100 overflow-hidden">
-        {/* Animated yarn balls */}
-        {yarns.map((yarn, index) => (
-          <div 
-            key={yarn}
-            className={cn(
-              "absolute rounded-full opacity-70 animate-pulse",
-              index % 2 === 0 ? "animate-[pulse_4s_ease-in-out_infinite]" : "animate-[pulse_5s_ease-in-out_infinite]"
-            )}
-            style={{
-              backgroundColor: currentColors[index % currentColors.length],
-              width: `${80 + (index * 20)}px`,
-              height: `${80 + (index * 20)}px`,
-              left: `${15 + (index * 20)}%`,
-              top: `${20 + ((index % 3) * 20)}%`,
-              filter: 'blur(8px)',
-              animation: `float-${index} ${5 + index}s ease-in-out infinite alternate`
+      {/* Background Image or Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {slide.image ? (
+          <img 
+            src={slide.image} 
+            alt={slide.title} 
+            className="w-full h-full object-cover transition-opacity duration-500"
+            style={{ opacity: isAnimating ? 0.6 : 1 }}
+            onError={(e) => {
+              console.error("Failed to load hero image, using animated background");
+              e.currentTarget.style.display = 'none';
             }}
           />
-        ))}
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-crochet-50 to-crochet-100 overflow-hidden">
+            {/* Animated yarn balls */}
+            {yarns.map((yarn, index) => (
+              <div 
+                key={yarn}
+                className={cn(
+                  "absolute rounded-full opacity-70 animate-pulse",
+                  index % 2 === 0 ? "animate-[pulse_4s_ease-in-out_infinite]" : "animate-[pulse_5s_ease-in-out_infinite]"
+                )}
+                style={{
+                  backgroundColor: currentColors[index % currentColors.length],
+                  width: `${80 + (index * 20)}px`,
+                  height: `${80 + (index * 20)}px`,
+                  left: `${15 + (index * 20)}%`,
+                  top: `${20 + ((index % 3) * 20)}%`,
+                  filter: 'blur(8px)',
+                  animation: `float-${index} ${5 + index}s ease-in-out infinite alternate`
+                }}
+              />
+            ))}
+          </div>
+        )}
+        
+        {/* Overlay for better text contrast */}
+        <div className="absolute inset-0 bg-black/20"></div>
         
         {/* Crochet pattern overlay */}
         <div 
@@ -127,7 +145,7 @@ const Hero = () => {
           </div>
         )}
         
-        <h1 className="text-5xl font-display font-bold text-crochet-900 mb-4 relative">
+        <h1 className="text-5xl font-display font-bold text-white mb-4 relative text-shadow-lg">
           {slide.title}
           {showSparkle && (
             <span className="absolute -top-5 -right-5 animate-fade-in">
@@ -135,7 +153,7 @@ const Hero = () => {
             </span>
           )}
         </h1>
-        <p className="text-2xl text-crochet-700 mb-8">
+        <p className="text-2xl text-white mb-8 text-shadow-md">
           {slide.subtitle}
         </p>
         <Button 
@@ -158,7 +176,7 @@ const Hero = () => {
           onClick={prevSlide}
           className="bg-white/20 hover:bg-white/30 border-crochet-200"
         >
-          <ArrowLeft className="h-5 w-5 text-crochet-900" />
+          <ArrowLeft className="h-5 w-5 text-white" />
         </Button>
         <Button 
           variant="outline" 
@@ -166,7 +184,7 @@ const Hero = () => {
           onClick={nextSlide}
           className="bg-white/20 hover:bg-white/30 border-crochet-200"
         >
-          <ArrowRight className="h-5 w-5 text-crochet-900" />
+          <ArrowRight className="h-5 w-5 text-white" />
         </Button>
       </div>
       

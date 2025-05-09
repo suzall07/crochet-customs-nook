@@ -9,13 +9,13 @@ export interface HeroSlide {
   link: string;
 }
 
-// Default hero slides with no image references
+// Default hero slides with placeholder images
 const defaultHeroSlides: HeroSlide[] = [
   {
     id: 1,
     title: "Crochet with Limboo",
     subtitle: "Handcrafted Creations Tailored Just for You",
-    image: "", // No image, will use animated background
+    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg",
     cta: "Explore Now",
     link: "/shop"
   },
@@ -23,7 +23,7 @@ const defaultHeroSlides: HeroSlide[] = [
     id: 2,
     title: "For Your Crochet",
     subtitle: "Bringing Creativity and Comfort to Life",
-    image: "", // No image, will use animated background
+    image: "https://images.pexels.com/photos/6821115/pexels-photo-6821115.jpeg",
     cta: "Shop Collection",
     link: "/shop"
   }
