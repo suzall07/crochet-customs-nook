@@ -13,10 +13,11 @@ const Hero = () => {
   const [showSparkle, setShowSparkle] = useState(false);
 
   // Animation elements
-  const yarns = Array.from({ length: 4 }, (_, i) => i);
+  const yarns = Array.from({ length: 6 }, (_, i) => i); // Increased for more sweater elements
+  const sweaterStitches = Array.from({ length: 8 }, (_, i) => i);
   const colorSchemes = [
-    ["#FDE1D3", "#E5DEFF", "#F2FCE2", "#FFDEE2"], // First slide color scheme
-    ["#D3E4FD", "#FEF7CD", "#FEC6A1", "#F1F0FB"]  // Second slide color scheme
+    ["#FF2C2C20", "#FF2C2C30", "#FF2C2C15", "#FF2C2C25"], // First slide color scheme - red tones
+    ["#FF2C2C15", "#FF2C2C10", "#FF2C2C20", "#FF2C2C05"]  // Second slide color scheme - lighter red tones
   ];
 
   // Load slides from localStorage on mount and when they change
@@ -83,53 +84,54 @@ const Hero = () => {
 
   return (
     <div className="hero-section relative h-[500px] flex items-center justify-center text-center overflow-hidden">
-      {/* Background Image or Animated Background */}
+      {/* Animated Sweater Background */}
       <div className="absolute inset-0 overflow-hidden">
-        {slide.image ? (
-          <img 
-            src={slide.image} 
-            alt={slide.title} 
-            className="w-full h-full object-cover transition-opacity duration-500"
-            style={{ opacity: isAnimating ? 0.6 : 1 }}
-            onError={(e) => {
-              console.error("Failed to load hero image, using animated background");
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-r from-crochet-50 to-crochet-100 overflow-hidden">
-            {/* Animated yarn balls */}
-            {yarns.map((yarn, index) => (
-              <div 
-                key={yarn}
-                className={cn(
-                  "absolute rounded-full opacity-70 animate-pulse",
-                  index % 2 === 0 ? "animate-[pulse_4s_ease-in-out_infinite]" : "animate-[pulse_5s_ease-in-out_infinite]"
-                )}
-                style={{
-                  backgroundColor: currentColors[index % currentColors.length],
-                  width: `${80 + (index * 20)}px`,
-                  height: `${80 + (index * 20)}px`,
-                  left: `${15 + (index * 20)}%`,
-                  top: `${20 + ((index % 3) * 20)}%`,
-                  filter: 'blur(8px)',
-                  animation: `float-${index} ${5 + index}s ease-in-out infinite alternate`
-                }}
-              />
-            ))}
-          </div>
-        )}
+        {/* Use animated background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white to-gray-50 overflow-hidden">
+          {/* Sweater pattern base layer */}
+          <div className={`absolute inset-0 ${currentSlide % 2 === 0 ? 'sweater-bg-1' : 'sweater-bg-2'}`}></div>
+          
+          {/* Sweater pattern overlay */}
+          <div className="sweater-pattern"></div>
+          
+          {/* Animated yarn balls representing sweater stitches */}
+          {yarns.map((yarn, index) => (
+            <div 
+              key={yarn}
+              className={cn(
+                "absolute rounded-full opacity-70",
+                index % 2 === 0 ? "animate-pulse" : "animate-[pulse_4s_ease-in-out_infinite]"
+              )}
+              style={{
+                backgroundColor: currentColors[index % currentColors.length],
+                width: `${40 + (index * 15)}px`,
+                height: `${40 + (index * 15)}px`,
+                left: `${10 + (index * 15)}%`,
+                top: `${15 + ((index % 4) * 20)}%`,
+                filter: 'blur(12px)',
+                animation: `float-${index % 4} ${6 + index}s ease-in-out infinite alternate`
+              }}
+            />
+          ))}
+          
+          {/* Yarn strands */}
+          {sweaterStitches.map((stitch, index) => (
+            <div 
+              key={`stitch-${stitch}`}
+              className="yarn-strand"
+              style={{
+                width: `${150 + (index * 50)}px`,
+                left: `${5 + (index * 10)}%`,
+                top: `${20 + ((index % 5) * 15)}%`,
+                opacity: 0.5,
+                animationDelay: `${index * 0.5}s`
+              }}
+            />
+          ))}
+        </div>
         
         {/* Overlay for better text contrast */}
-        <div className="absolute inset-0 bg-black/20"></div>
-        
-        {/* Crochet pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-          }}
-        />
+        <div className="absolute inset-0 bg-black/10"></div>
       </div>
 
       {/* Slide content */}

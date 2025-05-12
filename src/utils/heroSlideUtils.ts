@@ -1,4 +1,3 @@
-
 // Define the type for a hero slide
 export interface HeroSlide {
   id: number;
@@ -9,22 +8,22 @@ export interface HeroSlide {
   link: string;
 }
 
-// Default hero slides with placeholder images
+// Default hero slides with sweater theme
 const defaultHeroSlides: HeroSlide[] = [
   {
     id: 1,
-    title: "Crochet with Limboo",
-    subtitle: "Handcrafted Creations Tailored Just for You",
-    image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg",
-    cta: "Explore Now",
+    title: "Cozy Handcrafted Sweaters",
+    subtitle: "Warmth and Style, Crafted with Love",
+    image: "", // Empty to use animated background
+    cta: "Shop Sweaters",
     link: "/shop"
   },
   {
     id: 2,
-    title: "For Your Crochet",
-    subtitle: "Bringing Creativity and Comfort to Life",
-    image: "https://images.pexels.com/photos/6821115/pexels-photo-6821115.jpeg",
-    cta: "Shop Collection",
+    title: "Winter Collection",
+    subtitle: "Unique Patterns for the Cold Season",
+    image: "", // Empty to use animated background
+    cta: "Explore Collection",
     link: "/shop"
   }
 ];
