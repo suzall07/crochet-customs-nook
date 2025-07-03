@@ -1,4 +1,3 @@
-
 // Authentication utility functions
 
 // Admin authentication
@@ -15,8 +14,8 @@ export const loginAdmin = (adminData: { name: string, email: string, password: s
   // Save current timestamp for session persistence
   localStorage.setItem('adminLoginTime', Date.now().toString());
   
-  // Set session expiration (24 hours)
-  const expirationTime = Date.now() + (24 * 60 * 60 * 1000);
+  // Set session expiration (7 days for better persistence)
+  const expirationTime = Date.now() + (7 * 24 * 60 * 60 * 1000);
   localStorage.setItem('adminSessionExpires', expirationTime.toString());
 };
 
@@ -69,8 +68,8 @@ export const loginCustomer = (customerData: CustomerData) => {
   // Save login timestamp for session persistence
   localStorage.setItem('customerLoginTime', Date.now().toString());
   
-  // Set session expiration (24 hours)
-  const expirationTime = Date.now() + (24 * 60 * 60 * 1000);
+  // Set session expiration (7 days for better persistence)
+  const expirationTime = Date.now() + (7 * 24 * 60 * 60 * 1000);
   localStorage.setItem('customerSessionExpires', expirationTime.toString());
   
   // Save cart if there's one in localStorage
@@ -233,13 +232,12 @@ export const initializeDefaultProducts = () => {
   }
 };
 
-// Initialize default customers if none exist
+// Initialize default customers if none exist - including a persistent demo account
 export const initializeDefaultCustomers = () => {
   if (!localStorage.getItem('customers')) {
-    // Create a strong password for the demo account
     const defaultCustomers = [
       {
-        id: "1",
+        id: "demo-user-001",
         name: "Demo User",
         email: "demo@example.com",
         password: "Password1@"
@@ -250,21 +248,45 @@ export const initializeDefaultCustomers = () => {
   }
 };
 
-// Check session on app load
+// Initialize default admin if none exists - for persistent login
+export const initializeDefaultAdmin = () => {
+  if (!localStorage.getItem('admin')) {
+    const defaultAdmin = {
+      name: "Admin User",
+      email: "admin@crochet.com",
+      password: "Admin123@"
+    };
+    
+    localStorage.setItem('admin', JSON.stringify(defaultAdmin));
+  }
+};
+
+// Check session on app load - with better error handling
 export const checkSessionStatus = () => {
-  // Check admin session
-  if (localStorage.getItem('adminLoggedIn') === 'true') {
-    const sessionExpires = localStorage.getItem('adminSessionExpires');
-    if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
-      logoutAdmin();
+  try {
+    // Check admin session
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+      const sessionExpires = localStorage.getItem('adminSessionExpires');
+      if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
+        logoutAdmin();
+      }
     }
-  }
-  
-  // Check customer session
-  if (localStorage.getItem('customerLoggedIn') === 'true') {
-    const sessionExpires = localStorage.getItem('customerSessionExpires');
-    if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
-      logoutCustomer();
+    
+    // Check customer session
+    if (localStorage.getItem('customerLoggedIn') === 'true') {
+      const sessionExpires = localStorage.getItem('customerSessionExpires');
+      if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
+        logoutCustomer();
+      }
     }
+  } catch (error) {
+    console.error('Error checking session status:', error);
   }
+};
+
+// Initialize all default data
+export const initializeDefaultData = () => {
+  initializeDefaultProducts();
+  initializeDefaultCustomers();
+  initializeDefaultAdmin();
 };
