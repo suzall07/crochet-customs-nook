@@ -511,7 +511,7 @@ const AdminProductList = () => {
           </ScrollArea>
           <DialogFooter className="sticky bottom-0 pt-4 bg-background">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEvent}>
+            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEdit}>
               {formData.id === 0 ? 'Add Product' : 'Update Product'}
             </Button>
           </DialogFooter>
