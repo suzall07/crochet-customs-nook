@@ -1,7 +1,6 @@
 
 import { useEffect } from 'react';
 import Hero from '@/components/Hero';
-import FeaturedProducts from '@/components/FeaturedProducts';
 
 const Index = () => {
   // Scroll to top on page load
@@ -14,9 +13,6 @@ const Index = () => {
       {/* Hero Section */}
       <Hero />
       
-      {/* Featured Products Section */}
-      <FeaturedProducts />
-      
       {/* Testimonials */}
       <section className="container mx-auto px-4 py-12">
         <div className="text-center mb-8">
@@ -28,9 +24,9 @@ const Index = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Testimonial 1 */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-crochet-100">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-medium">
                 R
               </div>
               <div className="ml-4">
@@ -44,15 +40,15 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            <p className="text-crochet-700">
+            <p className="text-gray-700">
               "The quality of the baby blanket I ordered is exceptional. The stitches are so even and the yarn is incredibly soft. My daughter loves it!"
             </p>
           </div>
           
           {/* Testimonial 2 */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-crochet-100">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-medium">
                 A
               </div>
               <div className="ml-4">
@@ -66,15 +62,15 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            <p className="text-crochet-700">
+            <p className="text-gray-700">
               "I ordered a custom sweater and the attention to detail is amazing. It fits perfectly and the color is exactly what I wanted. Worth every rupee."
             </p>
           </div>
           
           {/* Testimonial 3 */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-crochet-100">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-full bg-crochet-100 flex items-center justify-center text-crochet-700 font-medium">
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-medium">
                 S
               </div>
               <div className="ml-4">
@@ -88,7 +84,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            <p className="text-crochet-700">
+            <p className="text-gray-700">
               "The items I purchased are beautiful and unique. They've added so much charm to my living room. Shipping was fast too!"
             </p>
           </div>

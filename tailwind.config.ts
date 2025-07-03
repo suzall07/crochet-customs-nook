@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -26,7 +25,7 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: '#FF2C2C', // Changed to red #FF2C2C
+					DEFAULT: '#000000', // Changed to black
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
@@ -64,17 +63,17 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				crochet: {
-					50: '#FFF9F2',
-					100: '#FFF3E6',
-					200: '#FEE5CC',
-					300: '#FDD6B3',
-					400: '#FBB980',
-					500: '#F9A04D',
-					600: '#E08536',
-					700: '#BD6423',
-					800: '#9A4C1A',
-					900: '#7A3D13',
-					950: '#59290B',
+					50: '#F9F9F9',
+					100: '#F0F0F0',
+					200: '#E0E0E0',
+					300: '#D0D0D0',
+					400: '#B0B0B0',
+					500: '#909090',
+					600: '#707070',
+					700: '#505050',
+					800: '#303030',
+					900: '#202020',
+					950: '#101010',
 				}
 			},
 			borderRadius: {
