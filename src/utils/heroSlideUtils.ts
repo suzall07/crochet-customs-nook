@@ -1,3 +1,4 @@
+
 // Define the type for a hero slide
 export interface HeroSlide {
   id: number;
@@ -8,22 +9,22 @@ export interface HeroSlide {
   link: string;
 }
 
-// Default hero slides with sweater theme
+// Simple text-based hero slides with white background
 const defaultHeroSlides: HeroSlide[] = [
   {
     id: 1,
-    title: "Cozy Handcrafted Sweaters",
-    subtitle: "Warmth and Style, Crafted with Love",
-    image: "", // Empty to use animated background
-    cta: "Shop Sweaters",
+    title: "Welcome to Crocheting World",
+    subtitle: "",
+    image: "",
+    cta: "Get Started",
     link: "/shop"
   },
   {
     id: 2,
-    title: "Winter Collection",
-    subtitle: "Unique Patterns for the Cold Season",
-    image: "", // Empty to use animated background
-    cta: "Explore Collection",
+    title: "Explore with Us",
+    subtitle: "",
+    image: "",
+    cta: "Start Exploring",
     link: "/shop"
   }
 ];
