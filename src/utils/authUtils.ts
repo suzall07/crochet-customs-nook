@@ -204,6 +204,7 @@ export const initializeDefaultProducts = () => {
         category: "Blankets",
         image: "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg",
         description: "A beautiful handmade crochet blanket made with high-quality yarn. Perfect for adding warmth and style to your home.",
+        stock: 15,
         isFeatured: true
       },
       {
@@ -213,6 +214,7 @@ export const initializeDefaultProducts = () => {
         category: "Baby Items",
         image: "https://images.pexels.com/photos/8458560/pexels-photo-8458560.jpeg",
         description: "Adorable and soft crochet hat perfect for newborns and infants. Made with baby-friendly yarn.",
+        stock: 8,
         isNew: true
       },
       {
@@ -222,6 +224,7 @@ export const initializeDefaultProducts = () => {
         category: "Home Decor",
         image: "https://images.pexels.com/photos/4993247/pexels-photo-4993247.jpeg",
         description: "Add a touch of handmade charm to your living space with this unique crochet pillow cover.",
+        stock: 12,
         isFeatured: true
       }
     ];

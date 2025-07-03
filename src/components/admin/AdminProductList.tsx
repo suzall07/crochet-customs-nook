@@ -27,6 +27,7 @@ const defaultProducts: Product[] = [
     image: "https://images.pexels.com/photos/6850490/pexels-photo-6850490.jpeg",
     category: "Shop",
     isNew: true,
+    stock: 10,
     description: "This beautiful handmade crochet blanket is crafted with care and attention to detail. Made from high-quality materials, it's designed to last for years to come."
   },
   {
@@ -36,6 +37,7 @@ const defaultProducts: Product[] = [
     image: "https://images.pexels.com/photos/6850483/pexels-photo-6850483.jpeg",
     category: "Popular Crochet",
     isFeatured: true,
+    stock: 5,
     description: "Adorable handcrafted elephant amigurumi. Perfect gift for children or as a decorative piece for your home."
   }
 ];
@@ -54,6 +56,7 @@ const AdminProductList = () => {
     image: '',
     category: '',
     description: '',
+    stock: 0,
     isNew: false,
     isFeatured: false
   });
@@ -81,7 +84,7 @@ const AdminProductList = () => {
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
-    } else if (name === 'price') {
+    } else if (name === 'price' || name === 'stock') {
       setFormData(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -205,6 +208,7 @@ const AdminProductList = () => {
       image: product.image,
       category: product.category,
       description: product.description || '',
+      stock: product.stock || 0,
       isNew: product.isNew || false,
       isFeatured: product.isFeatured || false
     });
@@ -229,6 +233,7 @@ const AdminProductList = () => {
       image: '',
       category: '',
       description: '',
+      stock: 0,
       isNew: false,
       isFeatured: false
     });
@@ -264,11 +269,12 @@ const AdminProductList = () => {
         <div className="border rounded-md">
           <div className="grid grid-cols-12 gap-2 p-4 font-medium bg-blue-50">
             <div className="col-span-1">ID</div>
-            <div className="col-span-3">Name</div>
+            <div className="col-span-2">Name</div>
             <div className="col-span-2">Category</div>
-            <div className="col-span-2">Price</div>
+            <div className="col-span-1">Price</div>
+            <div className="col-span-1">Stock</div>
             <div className="col-span-2">Status</div>
-            <div className="col-span-2">Actions</div>
+            <div className="col-span-3">Actions</div>
           </div>
           <Separator />
           {products.length === 0 ? (
@@ -279,9 +285,18 @@ const AdminProductList = () => {
             products.map((product) => (
               <div key={product.id} className="grid grid-cols-12 gap-2 p-4 items-center">
                 <div className="col-span-1">{product.id}</div>
-                <div className="col-span-3">{product.name}</div>
+                <div className="col-span-2">{product.name}</div>
                 <div className="col-span-2">{product.category}</div>
-                <div className="col-span-2">Rs {product.price.toLocaleString()}</div>
+                <div className="col-span-1">Rs {product.price.toLocaleString()}</div>
+                <div className="col-span-1">
+                  <span className={`font-medium ${
+                    product.stock === undefined ? 'text-gray-500' :
+                    product.stock === 0 ? 'text-red-500' :
+                    product.stock <= 5 ? 'text-yellow-600' : 'text-green-600'
+                  }`}>
+                    {product.stock !== undefined ? product.stock : 'N/A'}
+                  </span>
+                </div>
                 <div className="col-span-2">
                   {product.isNew && (
                     <span className="inline-block px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 mr-1">
@@ -299,7 +314,7 @@ const AdminProductList = () => {
                     </span>
                   )}
                 </div>
-                <div className="col-span-2 flex space-x-2">
+                <div className="col-span-3 flex space-x-2">
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -347,7 +362,7 @@ const AdminProductList = () => {
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="price">Price (Rs) *</Label>
                   <Input
@@ -358,6 +373,18 @@ const AdminProductList = () => {
                     onChange={handleChange}
                     placeholder="Enter price"
                     required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stock">Stock Quantity</Label>
+                  <Input
+                    id="stock"
+                    name="stock"
+                    type="number"
+                    value={formData.stock}
+                    onChange={handleChange}
+                    placeholder="Enter stock quantity"
+                    min="0"
                   />
                 </div>
                 <div className="space-y-2">
@@ -484,7 +511,7 @@ const AdminProductList = () => {
           </ScrollArea>
           <DialogFooter className="sticky bottom-0 pt-4 bg-background">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEdit}>
+            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEvent}>
               {formData.id === 0 ? 'Add Product' : 'Update Product'}
             </Button>
           </DialogFooter>

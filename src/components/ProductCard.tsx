@@ -15,6 +15,7 @@ export interface Product {
   description?: string;
   isNew?: boolean;
   isFeatured?: boolean;
+  stock?: number;
 }
 
 interface ProductCardProps {
@@ -31,6 +32,16 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     e.preventDefault();
     e.stopPropagation();
     
+    // Check stock availability
+    if (product.stock !== undefined && product.stock <= 0) {
+      toast({
+        title: "Out of stock",
+        description: `${product.name} is currently out of stock.`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
       
@@ -39,6 +50,16 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       if (!isInCart) {
         const updatedCart = [...existingCart, product];
         localStorage.setItem('cart', JSON.stringify(updatedCart));
+        
+        // Update product stock
+        if (product.stock !== undefined) {
+          const products = JSON.parse(localStorage.getItem('products') || '[]');
+          const updatedProducts = products.map((p: Product) => 
+            p.id === product.id ? { ...p, stock: p.stock! - 1 } : p
+          );
+          localStorage.setItem('products', JSON.stringify(updatedProducts));
+          window.dispatchEvent(new Event('productsUpdated'));
+        }
         
         toast({
           title: "Added to cart",
@@ -69,6 +90,9 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     e.currentTarget.src = fallbackImage;
   };
 
+  const isOutOfStock = product.stock !== undefined && product.stock <= 0;
+  const isLowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+
   return (
     <div 
       className={cn("relative rounded-lg shadow-sm bg-white", className)}
@@ -90,7 +114,8 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             className={cn(
               "w-full h-full object-cover transition-transform duration-500",
               isHovered ? "scale-105" : "scale-100",
-              !imageLoaded && "opacity-0"
+              !imageLoaded && "opacity-0",
+              isOutOfStock && "grayscale opacity-75"
             )}
           />
           
@@ -103,6 +128,16 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             {product.isFeatured && (
               <span className="bg-accent text-accent-foreground text-xs font-medium px-2 py-1 rounded">
                 Featured
+              </span>
+            )}
+            {isOutOfStock && (
+              <span className="bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
+                Out of Stock
+              </span>
+            )}
+            {isLowStock && (
+              <span className="bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded">
+                Low Stock
               </span>
             )}
           </div>
@@ -119,14 +154,26 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             Rs {product.price.toLocaleString()}
           </div>
           
+          {product.stock !== undefined && (
+            <div className="text-xs text-gray-600 mt-1">
+              Stock: {product.stock} left
+            </div>
+          )}
+          
           <div className="mt-3 flex justify-end">
             <Button 
               size="sm"
-              className="bg-amber-800 hover:bg-amber-900 text-white text-xs"
+              className={cn(
+                "text-xs",
+                isOutOfStock 
+                  ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed" 
+                  : "bg-amber-800 hover:bg-amber-900 text-white"
+              )}
               onClick={handleAddToCart}
+              disabled={isOutOfStock}
             >
               <ShoppingCart className="h-3 w-3 mr-1" />
-              Add to Cart
+              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </Button>
           </div>
         </div>
