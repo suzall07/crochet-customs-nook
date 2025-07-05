@@ -7,6 +7,10 @@ import { useToast } from '@/components/ui/use-toast';
 import ProductCard, { Product } from '@/components/ProductCard';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { useInteractionTracking } from '@/hooks/useRecommendations';
+import { recommendationService } from '@/services/recommendationService';
+import Recommendations from '@/components/Recommendations';
 
 interface Review {
   id: string;
@@ -14,12 +18,18 @@ interface Review {
   rating: number;
   comment: string;
   date: string;
+  sentiment?: {
+    label: 'positive' | 'negative' | 'neutral';
+    score: number;
+    confidence: number;
+  };
 }
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { trackInteraction } = useInteractionTracking();
   const [product, setProduct] = useState<Product | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -74,7 +84,6 @@ const ProductDetail = () => {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    // Custom event for product updates
     window.addEventListener('productsUpdated', handleStorageChange);
 
     return () => {
@@ -91,18 +100,37 @@ const ProductDetail = () => {
     setProduct(foundProduct);
     
     if (foundProduct) {
+      // Track product view
+      trackInteraction(foundProduct.id, 'view');
+      
       const related = allProducts
         .filter(p => p.category === foundProduct.category && p.id !== foundProduct.id)
         .slice(0, 4);
       setRelatedProducts(related);
       
       const storedReviews = JSON.parse(localStorage.getItem(`product_reviews_${id}`) || '[]');
-      setReviews(storedReviews);
+      
+      // Add sentiment analysis to existing reviews
+      const reviewsWithSentiment = storedReviews.map((review: Review) => {
+        if (!review.sentiment && review.comment) {
+          // Analyze sentiment for this review
+          recommendationService.analyzeSentiment(review.comment).then(sentiment => {
+            review.sentiment = {
+              label: sentiment.sentiment_label,
+              score: sentiment.sentiment_score,
+              confidence: sentiment.confidence
+            };
+          });
+        }
+        return review;
+      });
+      
+      setReviews(reviewsWithSentiment);
     }
     
     window.scrollTo(0, 0);
     setImageLoaded(false);
-  }, [id, allProducts]);
+  }, [id, allProducts, trackInteraction]);
 
   const handleAddToCart = () => {
     if (!isLoggedIn) {
@@ -111,12 +139,14 @@ const ProductDetail = () => {
         description: "Please login to add items to your cart.",
         variant: "destructive"
       });
-      // Fix: Change the redirect URL to the correct path
       navigate('/login');
       return;
     }
 
     if (product) {
+      // Track cart add interaction
+      trackInteraction(product.id, 'cart_add');
+      
       const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
       
       if (!existingCart.some((item: Product) => item.id === product.id)) {
@@ -128,7 +158,6 @@ const ProductDetail = () => {
           description: `${product.name} has been added to your cart.`,
         });
         
-        // Dispatch custom event to notify other components
         window.dispatchEvent(new Event('cartUpdated'));
       } else {
         toast({
@@ -139,7 +168,7 @@ const ProductDetail = () => {
     }
   };
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isLoggedIn) {
@@ -148,7 +177,6 @@ const ProductDetail = () => {
         description: "Please login to leave a review.",
         variant: "destructive"
       });
-      // Fix: Change the redirect URL to the correct path
       navigate('/login');
       return;
     }
@@ -162,12 +190,20 @@ const ProductDetail = () => {
       return;
     }
     
+    // Analyze sentiment of the review
+    const sentimentResult = await recommendationService.analyzeSentiment(reviewComment);
+    
     const newReview: Review = {
       id: Date.now().toString(),
       name: reviewName,
       rating: reviewRating,
       comment: reviewComment,
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString(),
+      sentiment: {
+        label: sentimentResult.sentiment_label,
+        score: sentimentResult.sentiment_score,
+        confidence: sentimentResult.confidence
+      }
     };
     
     const updatedReviews = [newReview, ...reviews];
@@ -199,12 +235,38 @@ const ProductDetail = () => {
   };
 
   useEffect(() => {
-    // Prefill review name if customer is logged in
     const customer = getCurrentCustomer();
     if (customer && customer.name) {
       setReviewName(customer.name);
     }
   }, []);
+
+  const getSentimentBadge = (sentiment: Review['sentiment']) => {
+    if (!sentiment) return null;
+    
+    const { label, confidence } = sentiment;
+    let badgeColor = 'bg-gray-100 text-gray-800';
+    
+    if (confidence > 0.3) {
+      switch (label) {
+        case 'positive':
+          badgeColor = 'bg-green-100 text-green-800';
+          break;
+        case 'negative':
+          badgeColor = 'bg-red-100 text-red-800';
+          break;
+        case 'neutral':
+          badgeColor = 'bg-yellow-100 text-yellow-800';
+          break;
+      }
+    }
+    
+    return (
+      <Badge className={`${badgeColor} text-xs`}>
+        {label} {Math.round(confidence * 100)}%
+      </Badge>
+    );
+  };
 
   if (!product) {
     return (
@@ -330,10 +392,13 @@ const ProductDetail = () => {
             <div className="space-y-6">
               {reviews.map((review) => (
                 <div key={review.id} className="border-b border-gray-200 pb-6">
-                  <div className="flex items-center mb-2">
-                    <div className="font-medium">{review.name}</div>
-                    <span className="mx-2 text-gray-400">•</span>
-                    <div className="text-sm text-gray-500">{review.date}</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <div className="font-medium">{review.name}</div>
+                      <span className="mx-2 text-gray-400">•</span>
+                      <div className="text-sm text-gray-500">{review.date}</div>
+                    </div>
+                    {getSentimentBadge(review.sentiment)}
                   </div>
                   <div className="flex mb-2">
                     {[...Array(5)].map((_, i) => (
@@ -354,6 +419,11 @@ const ProductDetail = () => {
           ) : (
             <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
           )}
+        </div>
+        
+        {/* Recommendations Section */}
+        <div className="mb-16">
+          <Recommendations />
         </div>
         
         {relatedProducts.length > 0 && (
@@ -389,4 +459,3 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
-

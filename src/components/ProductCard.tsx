@@ -5,6 +5,7 @@ import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
+import { useInteractionTracking } from '@/hooks/useRecommendations';
 
 export interface Product {
   id: number;
@@ -27,10 +28,14 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { toast } = useToast();
+  const { trackInteraction } = useInteractionTracking();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Track cart add interaction
+    trackInteraction(product.id, 'cart_add');
     
     // Check stock availability
     if (product.stock !== undefined && product.stock <= 0) {
@@ -82,6 +87,11 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       });
     }
   };
+
+  const handleProductView = () => {
+    // Track view interaction
+    trackInteraction(product.id, 'view');
+  };
   
   const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
   
@@ -99,7 +109,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link to={`/products/${product.id}`} className="block">
+      <Link to={`/products/${product.id}`} className="block" onClick={handleProductView}>
         <div className="relative overflow-hidden rounded-t-lg aspect-[4/5]">
           {!imageLoaded && (
             <div className="absolute inset-0 bg-orange-50 animate-pulse" />
