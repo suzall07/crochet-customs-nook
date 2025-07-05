@@ -48,10 +48,10 @@ const Popular = () => {
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-display font-medium mb-2 text-amber-800">Popular Crochet Items</h1>
-        <p className="text-amber-700 mb-8">Our most loved crochet items chosen by our customers</p>
+        <h1 className="text-3xl font-display font-medium mb-2 text-black">Popular Crochet Items</h1>
+        <p className="text-gray-700 mb-8">Our most loved crochet items chosen by our customers</p>
         
-        <Separator className="mb-8 bg-orange-200" />
+        <Separator className="mb-8 bg-gray-200" />
         
         {products.length > 0 ? (
           <div className="product-grid">
@@ -60,9 +60,9 @@ const Popular = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-orange-50 rounded-lg">
-            <p className="text-lg text-amber-700 mb-4">No products in this category yet.</p>
-            <p className="text-amber-600">Products added to the "Popular Crochet" category will appear here.</p>
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <p className="text-lg text-black mb-4">No products in this category yet.</p>
+            <p className="text-gray-600">Products added to the "Popular Crochet" category will appear here.</p>
           </div>
         )}
       </div>
