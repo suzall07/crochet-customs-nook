@@ -44,7 +44,7 @@ class RecommendationService {
 
     try {
       const { error } = await supabase
-        .from('user_interactions')
+        .from('user_interactions' as any)
         .insert({
           user_id: user.id,
           product_id: productId,
@@ -65,7 +65,7 @@ class RecommendationService {
     try {
       // Get user's interaction history
       const { data: interactions } = await supabase
-        .from('user_interactions')
+        .from('user_interactions' as any)
         .select('product_id, interaction_type, rating')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -75,23 +75,23 @@ class RecommendationService {
       }
 
       // Get features for interacted products
-      const interactedProductIds = [...new Set(interactions.map(i => i.product_id))];
+      const interactedProductIds = [...new Set(interactions.map((i: any) => i.product_id))];
       
       const { data: userProductFeatures } = await supabase
-        .from('product_features')
+        .from('product_features' as any)
         .select('*')
         .in('product_id', interactedProductIds);
 
       // Calculate user preferences based on features
       const featurePreferences: Record<string, Record<string, number>> = {};
       
-      userProductFeatures?.forEach(feature => {
+      userProductFeatures?.forEach((feature: any) => {
         if (!featurePreferences[feature.feature_name]) {
           featurePreferences[feature.feature_name] = {};
         }
         
         const interactionScore = this.calculateInteractionScore(
-          interactions.filter(i => i.product_id === feature.product_id)
+          interactions.filter((i: any) => i.product_id === feature.product_id)
         );
         
         featurePreferences[feature.feature_name][feature.feature_value] = 
@@ -101,13 +101,13 @@ class RecommendationService {
 
       // Get all product features
       const { data: allFeatures } = await supabase
-        .from('product_features')
+        .from('product_features' as any)
         .select('*');
 
       // Calculate similarity scores for all products
       const productScores: Record<number, { score: number; reasons: string[] }> = {};
       
-      allFeatures?.forEach(feature => {
+      allFeatures?.forEach((feature: any) => {
         if (interactedProductIds.includes(feature.product_id)) return;
         
         if (!productScores[feature.product_id]) {
@@ -145,7 +145,7 @@ class RecommendationService {
     try {
       // Get user's interactions
       const { data: userInteractions } = await supabase
-        .from('user_interactions')
+        .from('user_interactions' as any)
         .select('product_id, interaction_type, rating')
         .eq('user_id', userId);
 
@@ -153,11 +153,11 @@ class RecommendationService {
         return [];
       }
 
-      const userProductIds = new Set(userInteractions.map(i => i.product_id));
+      const userProductIds = new Set(userInteractions.map((i: any) => i.product_id));
 
       // Find similar users based on common interactions
       const { data: allInteractions } = await supabase
-        .from('user_interactions')
+        .from('user_interactions' as any)
         .select('user_id, product_id, interaction_type, rating')
         .in('product_id', Array.from(userProductIds))
         .neq('user_id', userId);
@@ -165,7 +165,7 @@ class RecommendationService {
       // Calculate user similarity
       const userSimilarity: Record<string, { score: number; commonProducts: number[] }> = {};
       
-      allInteractions?.forEach(interaction => {
+      allInteractions?.forEach((interaction: any) => {
         if (!userSimilarity[interaction.user_id]) {
           userSimilarity[interaction.user_id] = { score: 0, commonProducts: [] };
         }
@@ -187,14 +187,14 @@ class RecommendationService {
       }
 
       const { data: similarUserInteractions } = await supabase
-        .from('user_interactions')
+        .from('user_interactions' as any)
         .select('product_id, interaction_type, rating, user_id')
         .in('user_id', similarUsers.map(([userId]) => userId));
 
       // Calculate product scores based on similar users
       const productScores: Record<number, { score: number; reasons: string[] }> = {};
       
-      similarUserInteractions?.forEach(interaction => {
+      similarUserInteractions?.forEach((interaction: any) => {
         if (userProductIds.has(interaction.product_id)) return;
         
         if (!productScores[interaction.product_id]) {
@@ -286,7 +286,7 @@ class RecommendationService {
   async saveSentimentAnalysis(reviewId: number, sentimentResult: SentimentResult) {
     try {
       const { error } = await supabase
-        .from('sentiment_analysis')
+        .from('sentiment_analysis' as any)
         .insert({
           review_id: reviewId,
           sentiment_score: sentimentResult.sentiment_score,
@@ -386,7 +386,7 @@ class RecommendationService {
     try {
       // Clear existing cache for user
       await supabase
-        .from('recommendations')
+        .from('recommendations' as any)
         .delete()
         .eq('user_id', userId);
 
@@ -400,7 +400,7 @@ class RecommendationService {
       }));
 
       const { error } = await supabase
-        .from('recommendations')
+        .from('recommendations' as any)
         .insert(recommendationsToInsert);
 
       if (error) {
@@ -415,7 +415,7 @@ class RecommendationService {
   async getCachedRecommendations(userId: string): Promise<Recommendation[]> {
     try {
       const { data: cachedRecs } = await supabase
-        .from('recommendations')
+        .from('recommendations' as any)
         .select('*')
         .eq('user_id', userId)
         .gt('expires_at', new Date().toISOString())
@@ -425,7 +425,7 @@ class RecommendationService {
         return [];
       }
 
-      return cachedRecs.map(rec => ({
+      return cachedRecs.map((rec: any) => ({
         product_id: rec.product_id,
         score: rec.score,
         type: rec.recommendation_type as 'content_based' | 'collaborative' | 'hybrid',

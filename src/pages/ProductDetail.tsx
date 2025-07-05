@@ -1,155 +1,132 @@
 
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingCart, ArrowLeft } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, ShoppingCart, Star, Heart, Package, Truck, Shield, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import ProductCard, { Product } from '@/components/ProductCard';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { useInteractionTracking } from '@/hooks/useRecommendations';
-import { recommendationService } from '@/services/recommendationService';
-import Recommendations from '@/components/Recommendations';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  description: string;
+  stock: number;
+}
 
 interface Review {
-  id: string;
-  name: string;
+  id: number;
+  user_id: string;
   rating: number;
   comment: string;
-  date: string;
-  sentiment?: {
-    label: 'positive' | 'negative' | 'neutral';
-    score: number;
-    confidence: number;
+  created_at: string;
+  profiles?: {
+    email: string;
   };
 }
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
   const { trackInteraction } = useInteractionTracking();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewName, setReviewName] = useState('');
-  const [reviewComment, setReviewComment] = useState('');
-  const [reviewRating, setReviewRating] = useState(5);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const fallbackImage = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    console.error('Failed to load product image, using fallback');
-    e.currentTarget.src = fallbackImage;
-  };
-
-  // Check if customer is logged in
+  
   useEffect(() => {
-    const customerLoggedIn = localStorage.getItem('customerLoggedIn');
-    if (customerLoggedIn === 'true') {
-      setIsLoggedIn(true);
+    if (id) {
+      fetchProduct();
+      fetchReviews();
     }
+  }, [id]);
+
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkAuth();
   }, []);
 
-  // Load all products first
-  useEffect(() => {
+  const fetchProduct = async () => {
     try {
-      const storedProducts = localStorage.getItem('products');
-      if (storedProducts) {
-        setAllProducts(JSON.parse(storedProducts));
-      } else {
-        setAllProducts([]);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', parseInt(id!))
+        .single();
+
+      if (error) throw error;
+      
+      setProduct(data);
+      
+      // Track product view
+      if (data) {
+        trackInteraction(data.id, 'view');
       }
     } catch (error) {
-      console.error('Error loading products:', error);
-      setAllProducts([]);
-    }
-  }, []);
-
-  // Listen for product changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        const storedProducts = localStorage.getItem('products');
-        if (storedProducts) {
-          setAllProducts(JSON.parse(storedProducts));
-        }
-      } catch (error) {
-        console.error('Error handling storage change:', error);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('productsUpdated', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('productsUpdated', handleStorageChange);
-    };
-  }, []);
-
-  // Find the current product and related products
-  useEffect(() => {
-    if (allProducts.length === 0 || !id) return;
-
-    const foundProduct = allProducts.find(p => p.id === Number(id)) || null;
-    setProduct(foundProduct);
-    
-    if (foundProduct) {
-      // Track product view
-      trackInteraction(foundProduct.id, 'view');
-      
-      const related = allProducts
-        .filter(p => p.category === foundProduct.category && p.id !== foundProduct.id)
-        .slice(0, 4);
-      setRelatedProducts(related);
-      
-      const storedReviews = JSON.parse(localStorage.getItem(`product_reviews_${id}`) || '[]');
-      
-      // Add sentiment analysis to existing reviews
-      const reviewsWithSentiment = storedReviews.map((review: Review) => {
-        if (!review.sentiment && review.comment) {
-          // Analyze sentiment for this review
-          recommendationService.analyzeSentiment(review.comment).then(sentiment => {
-            review.sentiment = {
-              label: sentiment.sentiment_label,
-              score: sentiment.sentiment_score,
-              confidence: sentiment.confidence
-            };
-          });
-        }
-        return review;
-      });
-      
-      setReviews(reviewsWithSentiment);
-    }
-    
-    window.scrollTo(0, 0);
-    setImageLoaded(false);
-  }, [id, allProducts, trackInteraction]);
-
-  const handleAddToCart = () => {
-    if (!isLoggedIn) {
+      console.error('Error fetching product:', error);
       toast({
-        title: "Login Required",
-        description: "Please login to add items to your cart.",
+        title: "Error",
+        description: "Failed to load product details.",
         variant: "destructive"
       });
-      navigate('/login');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('product_reviews')
+        .select(`
+          *,
+          profiles (
+            email
+          )
+        `)
+        .eq('product_id', parseInt(id!))
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setReviews(data || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    // Track cart add interaction
+    trackInteraction(product.id, 'cart_add');
+    
+    if (product.stock <= 0) {
+      toast({
+        title: "Out of stock",
+        description: `${product.name} is currently out of stock.`,
+        variant: "destructive"
+      });
       return;
     }
-
-    if (product) {
-      // Track cart add interaction
-      trackInteraction(product.id, 'cart_add');
-      
+    
+    try {
       const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const isInCart = existingCart.some((item: Product) => item.id === product.id);
       
-      if (!existingCart.some((item: Product) => item.id === product.id)) {
+      if (!isInCart) {
         const updatedCart = [...existingCart, product];
         localStorage.setItem('cart', JSON.stringify(updatedCart));
         
@@ -165,293 +142,287 @@ const ProductDetail = () => {
           description: `${product.name} is already in your cart.`,
         });
       }
-    }
-  };
-
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isLoggedIn) {
-      toast({
-        title: "Login Required",
-        description: "Please login to leave a review.",
-        variant: "destructive"
-      });
-      navigate('/login');
-      return;
-    }
-    
-    if (!reviewName.trim() || !reviewComment.trim()) {
+    } catch (error) {
+      console.error('Error adding to cart:', error);
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: "Could not add item to cart. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to submit a review.",
         variant: "destructive"
       });
       return;
     }
-    
-    // Analyze sentiment of the review
-    const sentimentResult = await recommendationService.analyzeSentiment(reviewComment);
-    
-    const newReview: Review = {
-      id: Date.now().toString(),
-      name: reviewName,
-      rating: reviewRating,
-      comment: reviewComment,
-      date: new Date().toLocaleDateString(),
-      sentiment: {
-        label: sentimentResult.sentiment_label,
-        score: sentimentResult.sentiment_score,
-        confidence: sentimentResult.confidence
-      }
-    };
-    
-    const updatedReviews = [newReview, ...reviews];
-    setReviews(updatedReviews);
-    
-    localStorage.setItem(`product_reviews_${id}`, JSON.stringify(updatedReviews));
-    
-    setReviewName('');
-    setReviewComment('');
-    setReviewRating(5);
-    
-    toast({
-      title: "Review submitted",
-      description: "Thank you for your feedback!"
-    });
-  };
 
-  const getCurrentCustomer = () => {
+    if (!newReview.comment.trim()) {
+      toast({
+        title: "Comment required",
+        description: "Please write a comment for your review.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    
     try {
-      const customerData = localStorage.getItem('currentCustomer');
-      if (customerData) {
-        return JSON.parse(customerData);
-      }
-      return null;
+      const { error } = await supabase
+        .from('product_reviews')
+        .insert({
+          product_id: parseInt(id!),
+          user_id: user.id,
+          rating: newReview.rating,
+          comment: newReview.comment
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Review submitted",
+        description: "Thank you for your review!",
+      });
+
+      setNewReview({ rating: 5, comment: '' });
+      fetchReviews(); // Refresh reviews
     } catch (error) {
-      console.error('Error getting customer data:', error);
-      return null;
+      console.error('Error submitting review:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit review. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmittingReview(false);
     }
   };
 
-  useEffect(() => {
-    const customer = getCurrentCustomer();
-    if (customer && customer.name) {
-      setReviewName(customer.name);
-    }
-  }, []);
-
-  const getSentimentBadge = (sentiment: Review['sentiment']) => {
-    if (!sentiment) return null;
-    
-    const { label, confidence } = sentiment;
-    let badgeColor = 'bg-gray-100 text-gray-800';
-    
-    if (confidence > 0.3) {
-      switch (label) {
-        case 'positive':
-          badgeColor = 'bg-green-100 text-green-800';
-          break;
-        case 'negative':
-          badgeColor = 'bg-red-100 text-red-800';
-          break;
-        case 'neutral':
-          badgeColor = 'bg-yellow-100 text-yellow-800';
-          break;
-      }
-    }
-    
+  if (loading) {
     return (
-      <Badge className={`${badgeColor} text-xs`}>
-        {label} {Math.round(confidence * 100)}%
-      </Badge>
+      <div className="min-h-screen bg-orange-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-600"></div>
+      </div>
     );
-  };
+  }
 
   if (!product) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center">
+      <div className="min-h-screen bg-orange-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-medium mb-2">Product not found</h2>
-          <Button onClick={() => navigate("/shop")} className="bg-amber-600 hover:bg-amber-700">Back to Shop</Button>
+          <h1 className="text-2xl font-bold text-amber-800 mb-4">Product not found</h1>
+          <Link to="/shop">
+            <Button>Back to Shop</Button>
+          </Link>
         </div>
       </div>
     );
   }
 
+  const averageRating = reviews.length > 0 
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+    : 0;
+
+  const isOutOfStock = product.stock <= 0;
+  const isLowStock = product.stock > 0 && product.stock <= 5;
+
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4">
-        <Button 
-          variant="ghost" 
-          className="mb-6 text-amber-600 hover:bg-orange-50"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <div className="rounded-lg overflow-hidden">
-            {!imageLoaded && (
-              <div className="w-full aspect-square bg-orange-100 animate-pulse" />
-            )}
+    <div className="min-h-screen bg-orange-50">
+      <div className="container mx-auto px-4 py-8">
+        <Link to="/shop" className="inline-flex items-center text-amber-600 hover:text-amber-700 mb-6">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Shop
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Product Image */}
+          <div className="aspect-square overflow-hidden rounded-lg bg-white shadow-sm">
             <img 
               src={product.image} 
-              alt={product.name} 
-              className="w-full h-auto"
-              loading="lazy"
-              onLoad={() => setImageLoaded(true)}
-              onError={handleImageError}
-              style={{ display: imageLoaded ? "block" : "none" }}
+              alt={product.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "https://images.pexels.com/photos/6850711/pexels-photo-6850711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+              }}
             />
           </div>
-          
-          <div>
-            <span className="text-sm text-muted-foreground">{product.category}</span>
-            <h1 className="text-3xl font-medium mt-1 mb-2 text-amber-800">{product.name}</h1>
-            <p className="text-2xl font-medium mb-6">Rs {product.price.toLocaleString()}</p>
-            
-            <div className="mb-8">
-              <h3 className="text-lg font-medium mb-2">Description</h3>
-              <p className="text-muted-foreground">
-                {product.description || "This beautiful handmade crochet item is crafted with care and attention to detail. Made from high-quality materials, it's designed to last for years to come."}
-              </p>
+
+          {/* Product Details */}
+          <div className="space-y-6">
+            <div>
+              <Badge variant="secondary" className="mb-2">
+                {product.category}
+              </Badge>
+              <h1 className="text-3xl font-bold text-amber-900 mb-2">{product.name}</h1>
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-2xl font-bold text-amber-800">
+                  Rs {product.price.toLocaleString()}
+                </span>
+                {reviews.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-gray-600">
+                      {averageRating.toFixed(1)} ({reviews.length} reviews)
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-2 mb-4">
+                {isOutOfStock && (
+                  <Badge variant="destructive">Out of Stock</Badge>
+                )}
+                {isLowStock && (
+                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                    Only {product.stock} left
+                  </Badge>
+                )}
+                {!isOutOfStock && !isLowStock && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    In Stock ({product.stock} available)
+                  </Badge>
+                )}
+              </div>
             </div>
-            
-            <div className="flex space-x-4">
+
+            <p className="text-gray-700 leading-relaxed">{product.description}</p>
+
+            <div className="flex gap-4">
               <Button 
-                size="lg"
-                className="flex-1 bg-amber-800 hover:bg-amber-900"
                 onClick={handleAddToCart}
+                disabled={isOutOfStock}
+                className={`flex-1 ${isOutOfStock 
+                  ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
+                  : 'bg-amber-800 hover:bg-amber-900'
+                }`}
               >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </Button>
+              <Button variant="outline" size="icon">
+                <Heart className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Product Features */}
+            <div className="grid grid-cols-2 gap-4 pt-6 border-t">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Package className="h-4 w-4" />
+                Free shipping on orders over Rs 2000
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Truck className="h-4 w-4" />
+                Fast delivery within 3-5 days
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Shield className="h-4 w-4" />
+                1 year warranty included
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <RotateCcw className="h-4 w-4" />
+                30-day return policy
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className="mb-16">
-          <h2 className="text-2xl font-medium mb-6 text-amber-800">Customer Reviews</h2>
+
+        <Separator className="my-8" />
+
+        {/* Reviews Section */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-amber-900">Customer Reviews</h2>
           
-          <div className="bg-orange-50 p-6 rounded-lg mb-8">
-            <h3 className="text-lg font-medium mb-4">Leave a Review</h3>
-            <form onSubmit={handleSubmitReview}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {user && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Write a Review</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-1">Your Name</label>
-                  <Input 
-                    id="name"
-                    value={reviewName}
-                    onChange={(e) => setReviewName(e.target.value)}
-                    placeholder="Enter your name"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="rating" className="block text-sm font-medium mb-1">Rating</label>
-                  <select 
-                    id="rating"
-                    className="w-full border border-orange-300 rounded-md px-3 py-2"
-                    value={reviewRating}
-                    onChange={(e) => setReviewRating(Number(e.target.value))}
-                  >
-                    <option value="5">5 Stars</option>
-                    <option value="4">4 Stars</option>
-                    <option value="3">3 Stars</option>
-                    <option value="2">2 Stars</option>
-                    <option value="1">1 Star</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mb-4">
-                <label htmlFor="comment" className="block text-sm font-medium mb-1">Your Review</label>
-                <Textarea 
-                  id="comment"
-                  value={reviewComment}
-                  onChange={(e) => setReviewComment(e.target.value)}
-                  placeholder="Share your experience with this product"
-                  rows={4}
-                  required
-                />
-              </div>
-              <Button 
-                type="submit"
-                className="bg-amber-600 hover:bg-amber-700"
-              >
-                Submit Review
-              </Button>
-              {!isLoggedIn && (
-                <p className="mt-2 text-sm text-red-500">Please login to leave a review.</p>
-              )}
-            </form>
-          </div>
-          
-          {reviews.length > 0 ? (
-            <div className="space-y-6">
-              {reviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-200 pb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center">
-                      <div className="font-medium">{review.name}</div>
-                      <span className="mx-2 text-gray-400">•</span>
-                      <div className="text-sm text-gray-500">{review.date}</div>
-                    </div>
-                    {getSentimentBadge(review.sentiment)}
-                  </div>
-                  <div className="flex mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <svg 
-                        key={i} 
-                        className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`} 
-                        fill="currentColor" 
-                        viewBox="0 0 20 20"
+                  <label className="block text-sm font-medium mb-2">Rating</label>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => setNewReview(prev => ({ ...prev, rating: star }))}
+                        className="focus:outline-none"
                       >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                      </svg>
+                        <Star 
+                          className={`h-6 w-6 ${
+                            star <= newReview.rating 
+                              ? 'fill-yellow-400 text-yellow-400' 
+                              : 'text-gray-300'
+                          }`} 
+                        />
+                      </button>
                     ))}
                   </div>
-                  <p className="text-black">{review.comment}</p>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Comment</label>
+                  <Textarea
+                    value={newReview.comment}
+                    onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
+                    placeholder="Share your experience with this product..."
+                    rows={4}
+                  />
+                </div>
+                <Button 
+                  onClick={handleSubmitReview}
+                  disabled={isSubmittingReview}
+                  className="bg-amber-800 hover:bg-amber-900"
+                >
+                  {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {reviews.length > 0 ? (
+            <div className="space-y-4">
+              {reviews.map((review) => (
+                <Card key={review.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-sm">
+                            {review.profiles?.email?.split('@')[0] || 'Anonymous'}
+                          </span>
+                          <div className="flex">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star 
+                                key={star}
+                                className={`h-4 w-4 ${
+                                  star <= review.rating 
+                                    ? 'fill-yellow-400 text-yellow-400' 
+                                    : 'text-gray-300'
+                                }`} 
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
+            <div className="text-center py-8 text-gray-500">
+              <p>No reviews yet. Be the first to review this product!</p>
+            </div>
           )}
-        </div>
-        
-        {/* Recommendations Section */}
-        <div className="mb-16">
-          <Recommendations />
-        </div>
-        
-        {relatedProducts.length > 0 && (
-          <div>
-            <h2 className="text-2xl font-medium mb-6 text-amber-800">You might also like</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {relatedProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Business Hours */}
-        <div className="mt-16 p-6 bg-orange-50 rounded-lg border border-orange-100">
-          <h2 className="text-xl font-medium mb-4 text-amber-800">Business Hours</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="mb-2"><span className="font-medium">Monday - Friday:</span> 9:00 AM - 6:00 PM</p>
-              <p className="mb-2"><span className="font-medium">Saturday:</span> 10:00 AM - 4:00 PM</p>
-              <p><span className="font-medium">Sunday:</span> Closed</p>
-            </div>
-            <div>
-              <p className="mb-2"><span className="font-medium">Phone:</span> +1 (555) 123-4567</p>
-              <p className="mb-2"><span className="font-medium">Email:</span> contact@crochetstudio.com</p>
-              <p><span className="font-medium">Address:</span> 123 Yarn Street, Crafty City</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
