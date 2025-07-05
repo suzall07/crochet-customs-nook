@@ -206,17 +206,17 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-orange-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-600"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-orange-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-amber-800 mb-4">Product not found</h1>
+          <h1 className="text-2xl font-bold text-black mb-4">Product not found</h1>
           <Link to="/shop">
             <Button>Back to Shop</Button>
           </Link>
@@ -233,9 +233,9 @@ const ProductDetail = () => {
   const isLowStock = product.stock > 0 && product.stock <= 5;
 
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <Link to="/shop" className="inline-flex items-center text-amber-600 hover:text-amber-700 mb-6">
+        <Link to="/shop" className="inline-flex items-center text-black hover:text-gray-700 mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Shop
         </Link>
@@ -259,9 +259,9 @@ const ProductDetail = () => {
               <Badge variant="secondary" className="mb-2">
                 {product.category}
               </Badge>
-              <h1 className="text-3xl font-bold text-amber-900 mb-2">{product.name}</h1>
+              <h1 className="text-3xl font-bold text-black mb-2">{product.name}</h1>
               <div className="flex items-center gap-4 mb-4">
-                <span className="text-2xl font-bold text-amber-800">
+                <span className="text-2xl font-bold text-black">
                   Rs {product.price.toLocaleString()}
                 </span>
                 {reviews.length > 0 && (
@@ -299,7 +299,7 @@ const ProductDetail = () => {
                 disabled={isOutOfStock}
                 className={`flex-1 ${isOutOfStock 
                   ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
-                  : 'bg-amber-800 hover:bg-amber-900'
+                  : 'bg-black hover:bg-gray-800'
                 }`}
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
@@ -336,7 +336,7 @@ const ProductDetail = () => {
 
         {/* Reviews Section */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-amber-900">Customer Reviews</h2>
+          <h2 className="text-2xl font-bold text-black">Customer Reviews</h2>
           
           {user && (
             <Card>
@@ -376,7 +376,7 @@ const ProductDetail = () => {
                 <Button 
                   onClick={handleSubmitReview}
                   disabled={isSubmittingReview}
-                  className="bg-amber-800 hover:bg-amber-900"
+                  className="bg-black hover:bg-gray-800"
                 >
                   {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
                 </Button>
