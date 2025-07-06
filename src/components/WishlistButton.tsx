@@ -25,7 +25,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ productId, className })
       if (!user) return;
 
       const { data, error } = await supabase
-        .from('wishlists')
+        .from('wishlists' as any)
         .select('id')
         .eq('user_id', user.id)
         .eq('product_id', productId)
@@ -58,7 +58,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ productId, className })
 
       if (isInWishlist) {
         const { error } = await supabase
-          .from('wishlists')
+          .from('wishlists' as any)
           .delete()
           .eq('user_id', user.id)
           .eq('product_id', productId);
@@ -72,7 +72,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ productId, className })
         });
       } else {
         const { error } = await supabase
-          .from('wishlists')
+          .from('wishlists' as any)
           .insert({
             user_id: user.id,
             product_id: productId
