@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound';
 import Admin from './pages/Admin';
 import AdminSignup from './pages/AdminSignup';
 import CustomerLogin from './pages/CustomerLogin';
+import CustomerProfile from './pages/CustomerProfile';
 import { Toaster } from '@/components/ui/toaster';
 import { initializeDefaultProducts, initializeDefaultCustomers, checkSessionStatus } from '@/utils/authUtils';
 import './App.css';
@@ -56,6 +57,7 @@ function App() {
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin-signup" element={<AdminSignup />} />
                 <Route path="/login" element={<CustomerLogin />} />
+                <Route path="/profile" element={<CustomerProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>

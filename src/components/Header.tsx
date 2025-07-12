@@ -193,10 +193,17 @@ const Header = () => {
             
             {isLoggedIn ? (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">Hello, {customerName}</span>
+                <Button 
+                  variant="ghost"
+                  className="text-gray-700 hover:bg-gray-50 hover:text-black"
+                  onClick={() => navigate("/profile")}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  {customerName}
+                </Button>
                 <Button 
                   variant="outline"
-                  className="ml-2 border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-black"
+                  className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-black"
                   onClick={handleLogout}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -299,8 +306,15 @@ const Header = () => {
               
               {isLoggedIn ? (
                 <>
+                  <Link 
+                    to="/profile" 
+                    className="text-lg py-2 border-b border-gray-100 flex items-center text-gray-600"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    My Profile ({customerName})
+                  </Link>
                   <div className="text-lg py-2 border-b border-gray-100 flex items-center justify-between text-gray-600">
-                    <span>Hello, {customerName}</span>
+                    <span>Account Actions</span>
                     <Button 
                       variant="ghost" 
                       className="text-gray-700"
