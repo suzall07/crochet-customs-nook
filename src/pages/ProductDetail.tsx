@@ -9,6 +9,9 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 import WishlistButton from '@/components/WishlistButton';
 import ProductImageGallery from '@/components/ProductImageGallery';
+import ProductReviews from '@/components/ProductReviews';
+import StarRating from '@/components/StarRating';
+import { useProductReviews } from '@/hooks/useProductReviews';
 import { isCustomerLoggedIn, getCurrentCustomer } from '@/utils/authUtils';
 
 const ProductDetail = () => {
@@ -18,6 +21,9 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+
+  // Get reviews data for the rating display
+  const { averageRating, totalReviews } = useProductReviews(product?.id);
 
   useEffect(() => {
     const loadProduct = () => {
@@ -161,17 +167,10 @@ const ProductDetail = () => {
               </div>
 
               <div className="flex items-center space-x-2 mb-4">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${
-                        i < 4 ? 'fill-gray-900 text-gray-900' : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">(24 reviews)</span>
+                <StarRating rating={averageRating || 0} size="md" />
+                <span className="text-sm text-gray-600">
+                  ({totalReviews} review{totalReviews !== 1 ? 's' : ''})
+                </span>
               </div>
             </div>
 
@@ -263,52 +262,7 @@ const ProductDetail = () => {
 
         {/* Reviews Section */}
         <div className="mt-16">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Reviews</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {/* Sample Review */}
-                <div className="border-b pb-6">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-4 w-4 fill-gray-900 text-gray-900"
-                        />
-                      ))}
-                    </div>
-                    <span className="font-medium">Sarah K.</span>
-                    <span className="text-sm text-gray-500">2 weeks ago</span>
-                  </div>
-                  <p className="text-gray-600">
-                    "Absolutely beautiful craftsmanship! The quality is outstanding and it arrived exactly as pictured. Will definitely order again."
-                  </p>
-                </div>
-
-                <div className="border-b pb-6">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <div className="flex items-center">
-                      {[...Array(4)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-4 w-4 fill-gray-900 text-gray-900"
-                        />
-                      ))}
-                      <Star className="h-4 w-4 text-gray-300" />
-                    </div>
-                    <span className="font-medium">Mike R.</span>
-                    <span className="text-sm text-gray-500">1 month ago</span>
-                  </div>
-                  <p className="text-gray-600">
-                    "Great product! My wife loves it. Fast shipping and excellent customer service."
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ProductReviews productId={product.id} />
         </div>
       </div>
     </div>
