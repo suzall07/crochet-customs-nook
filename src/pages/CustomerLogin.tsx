@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { loginCustomer, isCustomerLoggedIn } from '@/utils/authUtils';
+import { loginCustomer, isCustomerLoggedIn, registerCustomer, verifyCustomerLogin } from '@/utils/authUtils';
 
 interface Customer {
   id: string;
@@ -82,11 +82,12 @@ const CustomerLogin = () => {
       return;
     }
     
-    // Check if customer exists in localStorage
-    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
-    const customer = customers.find((c: Customer) => c.email === loginEmail);
+    console.log('Attempting login for:', loginEmail);
     
-    if (customer && customer.password === loginPassword) {
+    // Use the enhanced verification function
+    const loginResult = verifyCustomerLogin(loginEmail, loginPassword);
+    
+    if (loginResult.success && loginResult.customer) {
       // Save email if remember me is checked
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', loginEmail);
@@ -96,22 +97,23 @@ const CustomerLogin = () => {
       
       // Use the auth utility to handle login
       loginCustomer({
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        password: customer.password
+        id: loginResult.customer.id,
+        name: loginResult.customer.name,
+        email: loginResult.customer.email,
+        password: loginResult.customer.password
       });
       
       toast({
         title: "Login Successful",
-        description: `Welcome back, ${customer.name}!`
+        description: `Welcome back, ${loginResult.customer.name}!`
       });
       
       navigate('/shop');
     } else {
+      console.log('Login failed:', loginResult.error);
       toast({
         title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
+        description: loginResult.error || "Invalid email or password. Please try again.",
         variant: "destructive"
       });
     }
@@ -153,37 +155,34 @@ const CustomerLogin = () => {
       return;
     }
     
-    // Check if email already exists
-    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
-    if (customers.some((c: Customer) => c.email === email)) {
+    console.log('Attempting registration for:', email);
+    
+    // Use the enhanced registration function
+    const registrationResult = registerCustomer({ name, email, password });
+    
+    if (registrationResult.success && registrationResult.customer) {
+      // Automatically log in the new customer
+      loginCustomer({
+        id: registrationResult.customer.id,
+        name: registrationResult.customer.name,
+        email: registrationResult.customer.email,
+        password: registrationResult.customer.password
+      });
+      
+      toast({
+        title: "Registration Successful",
+        description: `Welcome, ${name}! Your account has been created and you're now logged in.`
+      });
+      
+      navigate('/shop');
+    } else {
+      console.log('Registration failed:', registrationResult.error);
       toast({
         title: "Registration Failed",
-        description: "An account with this email already exists",
+        description: registrationResult.error || "Unable to create account. Please try again.",
         variant: "destructive"
       });
-      return;
     }
-    
-    // Add new customer
-    const newCustomer = {
-      id: Date.now().toString(),
-      name,
-      email,
-      password
-    };
-    
-    customers.push(newCustomer);
-    localStorage.setItem('customers', JSON.stringify(customers));
-    
-    // Use the auth utility to handle login
-    loginCustomer(newCustomer);
-    
-    toast({
-      title: "Registration Successful",
-      description: `Welcome, ${name}! Your account has been created.`
-    });
-    
-    navigate('/shop');
   };
   
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -329,3 +328,4 @@ const CustomerLogin = () => {
 };
 
 export default CustomerLogin;
+

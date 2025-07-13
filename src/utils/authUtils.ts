@@ -68,8 +68,8 @@ export const loginCustomer = (customerData: CustomerData) => {
   // Save login timestamp for session persistence
   localStorage.setItem('customerLoginTime', Date.now().toString());
   
-  // Set session expiration (7 days for better persistence)
-  const expirationTime = Date.now() + (7 * 24 * 60 * 60 * 1000);
+  // Set session expiration (30 days for better persistence)
+  const expirationTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
   localStorage.setItem('customerSessionExpires', expirationTime.toString());
   
   // Save cart if there's one in localStorage
@@ -127,6 +127,64 @@ export const getCurrentCustomer = (): CustomerData | null => {
   } catch (e) {
     console.error("Error parsing current customer data:", e);
     return null;
+  }
+};
+
+// Enhanced customer registration function
+export const registerCustomer = (customerData: { name: string, email: string, password: string }) => {
+  try {
+    // Get existing customers
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    
+    // Check if email already exists
+    const existingCustomer = customers.find((c: CustomerData) => c.email === customerData.email);
+    if (existingCustomer) {
+      return { success: false, error: 'Email already exists' };
+    }
+    
+    // Create new customer with unique ID
+    const newCustomer = {
+      id: `customer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name: customerData.name,
+      email: customerData.email,
+      password: customerData.password,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Add to customers array
+    customers.push(newCustomer);
+    
+    // Save updated customers array
+    localStorage.setItem('customers', JSON.stringify(customers));
+    
+    console.log('Customer registered successfully:', { email: newCustomer.email, id: newCustomer.id });
+    
+    return { success: true, customer: newCustomer };
+  } catch (error) {
+    console.error('Error registering customer:', error);
+    return { success: false, error: 'Registration failed' };
+  }
+};
+
+// Enhanced customer login verification
+export const verifyCustomerLogin = (email: string, password: string) => {
+  try {
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    console.log('Checking login for:', email);
+    console.log('Available customers:', customers.map((c: CustomerData) => ({ email: c.email, id: c.id })));
+    
+    const customer = customers.find((c: CustomerData) => c.email === email && c.password === password);
+    
+    if (customer) {
+      console.log('Login successful for:', email);
+      return { success: true, customer };
+    } else {
+      console.log('Login failed - no matching customer found');
+      return { success: false, error: 'Invalid email or password' };
+    }
+  } catch (error) {
+    console.error('Error verifying login:', error);
+    return { success: false, error: 'Login verification failed' };
   }
 };
 
@@ -240,11 +298,13 @@ export const initializeDefaultCustomers = () => {
         id: "demo-user-001",
         name: "Demo User",
         email: "demo@example.com",
-        password: "Password1@"
+        password: "Password1@",
+        createdAt: new Date().toISOString()
       }
     ];
     
     localStorage.setItem('customers', JSON.stringify(defaultCustomers));
+    console.log('Initialized default customers');
   }
 };
 
@@ -278,6 +338,13 @@ export const checkSessionStatus = () => {
       if (sessionExpires && parseInt(sessionExpires) < Date.now()) {
         logoutCustomer();
       }
+    }
+    
+    // Log current state for debugging
+    console.log('Session check completed');
+    console.log('Customer logged in:', isCustomerLoggedIn());
+    if (isCustomerLoggedIn()) {
+      console.log('Current customer:', getCurrentCustomer());
     }
   } catch (error) {
     console.error('Error checking session status:', error);
