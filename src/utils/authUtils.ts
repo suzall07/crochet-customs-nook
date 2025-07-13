@@ -53,6 +53,8 @@ export interface CustomerData {
   name: string;
   email: string;
   password?: string;
+  joinDate?: string;
+  createdAt?: string;
 }
 
 export const loginCustomer = (customerData: CustomerData) => {
@@ -123,7 +125,12 @@ export const getCurrentCustomer = (): CustomerData | null => {
   if (!customerStr) return null;
   
   try {
-    return JSON.parse(customerStr) as CustomerData;
+    const customer = JSON.parse(customerStr) as CustomerData;
+    // Ensure backwards compatibility with joinDate
+    if (!customer.joinDate && customer.createdAt) {
+      customer.joinDate = customer.createdAt;
+    }
+    return customer;
   } catch (e) {
     console.error("Error parsing current customer data:", e);
     return null;
@@ -142,13 +149,15 @@ export const registerCustomer = (customerData: { name: string, email: string, pa
       return { success: false, error: 'Email already exists' };
     }
     
-    // Create new customer with unique ID
+    // Create new customer with unique ID and proper timestamps
+    const now = new Date().toISOString();
     const newCustomer = {
       id: `customer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name: customerData.name,
       email: customerData.email,
       password: customerData.password,
-      createdAt: new Date().toISOString()
+      createdAt: now,
+      joinDate: now
     };
     
     // Add to customers array
@@ -293,13 +302,15 @@ export const initializeDefaultProducts = () => {
 // Initialize default customers if none exist - including a persistent demo account
 export const initializeDefaultCustomers = () => {
   if (!localStorage.getItem('customers')) {
+    const now = new Date().toISOString();
     const defaultCustomers = [
       {
         id: "demo-user-001",
         name: "Demo User",
         email: "demo@example.com",
         password: "Password1@",
-        createdAt: new Date().toISOString()
+        createdAt: now,
+        joinDate: now
       }
     ];
     
