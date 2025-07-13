@@ -13,51 +13,18 @@ export interface Order {
   id: string;
   customerId: string;
   date: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
+  status: 'confirmed' | 'shipped' | 'delivered';
   total: number;
   items: OrderItem[];
+  shippingAddress?: {
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+  };
 }
 
-// Create a sample order for demonstration
-export const createSampleOrder = (customerId: string): Order => {
-  const products = JSON.parse(localStorage.getItem('products') || '[]');
-  const sampleProducts = products.slice(0, 2); // Take first 2 products
-  
-  const orderItems: OrderItem[] = sampleProducts.map((product: any) => ({
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    quantity: Math.floor(Math.random() * 3) + 1,
-    image: product.image
-  }));
-  
-  const total = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  return {
-    id: `ORD-${Date.now()}`,
-    customerId,
-    date: new Date().toLocaleDateString(),
-    status: ['pending', 'processing', 'shipped', 'delivered'][Math.floor(Math.random() * 4)] as any,
-    total,
-    items: orderItems
-  };
-};
-
-// Initialize sample orders for a customer
-export const initializeSampleOrders = (customerId: string) => {
-  const existingOrders = JSON.parse(localStorage.getItem(`orders_${customerId}`) || '[]');
-  
-  if (existingOrders.length === 0) {
-    // Create 2-3 sample orders
-    const sampleOrders = [];
-    for (let i = 0; i < 3; i++) {
-      sampleOrders.push(createSampleOrder(customerId));
-    }
-    localStorage.setItem(`orders_${customerId}`, JSON.stringify(sampleOrders));
-  }
-};
-
-// Add a new order
+// Add a new order (called after successful checkout)
 export const addOrder = (order: Order) => {
   const existingOrders = JSON.parse(localStorage.getItem(`orders_${order.customerId}`) || '[]');
   existingOrders.unshift(order); // Add to beginning
@@ -67,4 +34,46 @@ export const addOrder = (order: Order) => {
 // Get orders for a customer
 export const getCustomerOrders = (customerId: string): Order[] => {
   return JSON.parse(localStorage.getItem(`orders_${customerId}`) || '[]');
+};
+
+// Create order from cart items (utility function for checkout)
+export const createOrderFromCart = (
+  customerId: string,
+  cartItems: any[],
+  shippingAddress: any
+): Order => {
+  const orderItems: OrderItem[] = cartItems.map(item => ({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+    image: item.image
+  }));
+
+  const total = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  return {
+    id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
+    customerId,
+    date: new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }),
+    status: 'confirmed',
+    total,
+    items: orderItems,
+    shippingAddress
+  };
+};
+
+// Update order status (for admin or system updates)
+export const updateOrderStatus = (customerId: string, orderId: string, newStatus: Order['status']) => {
+  const orders = getCustomerOrders(customerId);
+  const updatedOrders = orders.map(order => 
+    order.id === orderId 
+      ? { ...order, status: newStatus }
+      : order
+  );
+  localStorage.setItem(`orders_${customerId}`, JSON.stringify(updatedOrders));
 };
