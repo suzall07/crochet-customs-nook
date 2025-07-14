@@ -1,1 +1,7 @@
 project_id = "qjxhtllsaevjfhlfqnvu"
+
+[functions.khalti-payment]
+verify_jwt = false
+
+[functions.verify-khalti-payment]
+verify_jwt = false

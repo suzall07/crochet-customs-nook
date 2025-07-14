@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { X, Minus, Plus, ShoppingBag, ArrowLeft, Trash } from 'lucide-react';
 import { Product } from '@/components/ProductCard';
+import { initiateKhaltiPayment } from '@/lib/khalti';
 
 interface CartItem extends Product {
   quantity: number;
@@ -149,15 +150,15 @@ const Cart = () => {
     setIsCheckingOut(true);
   };
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Save order to localStorage
+    try {
+      // Create order details
+      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
       const newOrder = {
-        id: `ORD-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+        id: orderId,
         customer: {
           name: formData.name,
           email: formData.email,
@@ -166,29 +167,61 @@ const Cart = () => {
         items: cartItems,
         total: calculateTotal(),
         status: 'pending',
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        paymentMethod: formData.paymentMethod
       };
-      
-      // Get existing orders or initialize empty array
-      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-      localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
-      
-      // Clear the cart
-      localStorage.removeItem('cart');
-      
-      // Show success message
+
+      if (formData.paymentMethod === 'khalti') {
+        // Process Khalti payment
+        await initiateKhaltiPayment({
+          amount: calculateTotal(),
+          purchaseOrderId: orderId,
+          purchaseOrderName: `Order ${orderId}`,
+          customerInfo: {
+            name: formData.name,
+            email: formData.email,
+          },
+        });
+
+        // Save order to localStorage before redirecting
+        const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
+        
+        // Note: The Khalti library will handle redirecting to payment success page
+        setIsProcessing(false);
+      } else {
+        // Handle other payment methods (cash on delivery, bank transfer)
+        setTimeout(() => {
+          // Save order to localStorage
+          const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+          localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
+          
+          // Clear the cart
+          localStorage.removeItem('cart');
+          
+          // Show success message
+          toast({
+            title: "Order Placed Successfully!",
+            description: `Your order #${newOrder.id} has been placed. Thank you for shopping with us!`,
+          });
+          
+          // Redirect to home page
+          setIsProcessing(false);
+          navigate('/');
+          
+          // Dispatch custom event to notify other components
+          window.dispatchEvent(new Event('cartUpdated'));
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('Error placing order:', error);
       toast({
-        title: "Order Placed Successfully!",
-        description: `Your order #${newOrder.id} has been placed. Thank you for shopping with us!`,
+        title: "Payment Error",
+        description: error.message || "Failed to process payment. Please try again.",
+        variant: "destructive"
       });
-      
-      // Redirect to home page
       setIsProcessing(false);
-      navigate('/');
-      
-      // Dispatch custom event to notify other components
-      window.dispatchEvent(new Event('cartUpdated'));
-    }, 2000);
+    }
   };
 
   // Handle the empty cart state
@@ -448,6 +481,7 @@ const Cart = () => {
                         className="w-full p-2 border rounded-md"
                       >
                         <option value="cash-on-delivery">Cash on Delivery</option>
+                        <option value="khalti">Khalti Digital Payment</option>
                         <option value="bank-transfer">Bank Transfer</option>
                       </select>
                     </div>
