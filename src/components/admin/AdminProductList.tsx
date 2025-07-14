@@ -11,6 +11,7 @@ import { Product } from '@/components/ProductCard';
 import { PlusCircle, Edit, Trash, Image, AlertTriangle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Carousel,
   CarouselContent,
@@ -49,6 +50,7 @@ const AdminProductList = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     id: 0,
     name: '',
@@ -64,19 +66,39 @@ const AdminProductList = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
     try {
-      const storedProducts = localStorage.getItem('products');
-      if (storedProducts) {
-        setProducts(JSON.parse(storedProducts));
-      } else {
-        setProducts(defaultProducts);
-        localStorage.setItem('products', JSON.stringify(defaultProducts));
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Error loading products:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load products from database.",
+          variant: "destructive"
+        });
+        return;
       }
+
+      setProducts(data || []);
     } catch (error) {
       console.error('Error loading products:', error);
-      setProducts(defaultProducts);
+      toast({
+        title: "Error",
+        description: "Failed to load products.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -114,7 +136,7 @@ const AdminProductList = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleAddEdit = () => {
+  const handleAddEdit = async () => {
     if (!formData.name || !formData.price || (!formData.image && !imagePreview) || !formData.category || !formData.description) {
       toast({
         title: "Validation Error",
@@ -124,35 +146,47 @@ const AdminProductList = () => {
       return;
     }
 
-    let updatedProducts: Product[];
-    if (formData.id === 0) {
-      const newProduct = {
-        ...formData,
-        id: Math.max(0, ...products.map(p => p.id)) + 1,
-        image: formData.image || imagePreview || ''
-      };
-      updatedProducts = [...products, newProduct];
-      toast({
-        title: "Product Added",
-        description: `${formData.name} has been added to products.`
-      });
-    } else {
-      updatedProducts = products.map(product => 
-        product.id === formData.id ? {
-          ...formData,
-          image: formData.image || imagePreview || product.image
-        } : product
-      );
-      toast({
-        title: "Product Updated",
-        description: `${formData.name} has been updated.`
-      });
-    }
-
     try {
-      localStorage.setItem('products', JSON.stringify(updatedProducts));
-      setProducts(updatedProducts);
-      window.dispatchEvent(new Event('productsUpdated'));
+      setIsLoading(true);
+      const productData = {
+        name: formData.name,
+        price: formData.price,
+        image: formData.image || imagePreview || '',
+        category: formData.category,
+        description: formData.description,
+        stock: formData.stock
+      };
+
+      if (formData.id === 0) {
+        // Add new product
+        const { data, error } = await supabase
+          .from('products')
+          .insert([productData])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        toast({
+          title: "Product Added",
+          description: `${formData.name} has been added to products.`
+        });
+      } else {
+        // Update existing product
+        const { error } = await supabase
+          .from('products')
+          .update(productData)
+          .eq('id', formData.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Product Updated",
+          description: `${formData.name} has been updated.`
+        });
+      }
+
+      await loadProducts();
       setIsDialogOpen(false);
       resetForm();
     } catch (error) {
@@ -162,37 +196,70 @@ const AdminProductList = () => {
         description: "Failed to save product. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!currentProduct) return;
     
-    const updatedProducts = products.filter(product => product.id !== currentProduct.id);
-    setProducts(updatedProducts);
-    localStorage.setItem('products', JSON.stringify(updatedProducts));
-    window.dispatchEvent(new Event('productsUpdated'));
-    
-    toast({
-      title: "Product Deleted",
-      description: `${currentProduct.name} has been removed.`
-    });
-    
-    setIsDeleteDialogOpen(false);
-    setCurrentProduct(null);
+    try {
+      setIsLoading(true);
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', currentProduct.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Product Deleted",
+        description: `${currentProduct.name} has been removed.`
+      });
+
+      await loadProducts();
+      setIsDeleteDialogOpen(false);
+      setCurrentProduct(null);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete product. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteAll = () => {
-    setProducts([]);
-    localStorage.setItem('products', JSON.stringify([]));
-    window.dispatchEvent(new Event('productsUpdated'));
-    
-    toast({
-      title: "All Products Deleted",
-      description: "All products have been removed from the catalog."
-    });
-    
-    setIsDeleteAllDialogOpen(false);
+  const handleDeleteAll = async () => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .neq('id', 0); // Delete all products
+
+      if (error) throw error;
+
+      toast({
+        title: "All Products Deleted",
+        description: "All products have been removed from the catalog."
+      });
+
+      await loadProducts();
+      setIsDeleteAllDialogOpen(false);
+    } catch (error) {
+      console.error('Error deleting all products:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete all products. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const openAddDialog = () => {
@@ -254,6 +321,7 @@ const AdminProductList = () => {
           <Button 
             className="bg-red-600 hover:bg-red-700 text-white"
             onClick={openDeleteAllDialog}
+            disabled={isLoading}
           >
             <Trash className="mr-2 h-4 w-4" />
             Delete All Products
@@ -261,6 +329,7 @@ const AdminProductList = () => {
           <Button 
             className="bg-blue-600 hover:bg-blue-700"
             onClick={openAddDialog}
+            disabled={isLoading}
           >
             <PlusCircle className="mr-2 h-4 w-4" />
             Add New Product
@@ -277,7 +346,11 @@ const AdminProductList = () => {
             <div className="col-span-3">Actions</div>
           </div>
           <Separator />
-          {products.length === 0 ? (
+          {isLoading ? (
+            <div className="p-8 text-center text-muted-foreground">
+              Loading products...
+            </div>
+          ) : products.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               No products found. Add some products to get started.
             </div>
@@ -320,6 +393,7 @@ const AdminProductList = () => {
                     size="sm"
                     className="bg-blue-50 hover:bg-blue-100"
                     onClick={() => openEditDialog(product)}
+                    disabled={isLoading}
                   >
                     <Edit className="h-3.5 w-3.5 mr-1" />
                     Edit
@@ -329,6 +403,7 @@ const AdminProductList = () => {
                     size="sm" 
                     className="text-red-500"
                     onClick={() => openDeleteDialog(product)}
+                    disabled={isLoading}
                   >
                     <Trash className="h-3.5 w-3.5 mr-1" />
                     Delete
@@ -510,9 +585,9 @@ const AdminProductList = () => {
             </div>
           </ScrollArea>
           <DialogFooter className="sticky bottom-0 pt-4 bg-background">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEdit}>
-              {formData.id === 0 ? 'Add Product' : 'Update Product'}
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isLoading}>Cancel</Button>
+            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddEdit} disabled={isLoading}>
+              {isLoading ? 'Saving...' : (formData.id === 0 ? 'Add Product' : 'Update Product')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -527,8 +602,10 @@ const AdminProductList = () => {
             <p>Are you sure you want to delete "{currentProduct?.name}"? This action cannot be undone.</p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isLoading}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
+              {isLoading ? 'Deleting...' : 'Delete'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -546,8 +623,10 @@ const AdminProductList = () => {
             <p>Are you sure you want to delete ALL products? This action cannot be undone and will remove all products from your catalog.</p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteAllDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteAll}>Delete All</Button>
+            <Button variant="outline" onClick={() => setIsDeleteAllDialogOpen(false)} disabled={isLoading}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeleteAll} disabled={isLoading}>
+              {isLoading ? 'Deleting...' : 'Delete All'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
